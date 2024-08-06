@@ -9,6 +9,7 @@ Categoría para los y lista de artículos
 
 class CategoryItemInline(admin.TabularInline):
     model = Item.category.through
+    autocomplete_fields = ['item']
     extra = 0
 
 

@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db import models
 from django.utils import timezone
 
 
@@ -11,6 +10,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = "Categories"
+
 
 class Item(models.Model):
     name = models.CharField(max_length=255)
@@ -19,6 +21,9 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = "Items"
 
 
 class Unit(models.Model):
@@ -33,6 +38,9 @@ class Unit(models.Model):
             models.Q(order_date__lt=end_date, return_date__gt=start_date)
         )
         return not overlapping_orders.exists()
+
+    class Meta:
+        verbose_name_plural = "Units"
 
 
 class Order(models.Model):
@@ -49,3 +57,6 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Order {self.id} - {self.user.username}'
+
+    class Meta:
+        verbose_name_plural = "Orders"
