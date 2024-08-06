@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import Category, Item, Unit, Order
 
 """
-Categoría para los y lista de artículos 
+Categoría y lista de artículos 
 """
 
 
@@ -43,7 +43,7 @@ Unidades de un artículo
 
 
 class UnitAdmin(admin.ModelAdmin):
-    list_display = ('item', 'serial_number')
+    list_display = ('item', 'serial_number', 'available')
     search_fields = ('serial_number', 'item__name')
     list_filter = ('item',)
 

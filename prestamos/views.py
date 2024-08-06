@@ -1,8 +1,10 @@
 # views.py
-from django.views.generic import CreateView, ListView, DetailView
 from django.urls import reverse_lazy
-from .models import Order
+from django.views.generic import CreateView, ListView, DetailView
+
 from .forms import OrderForm
+from .models import Order
+
 
 class OrderCreateView(CreateView):
     model = Order
@@ -14,6 +16,7 @@ class OrderCreateView(CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+
 class OrderListView(ListView):
     model = Order
     template_name = 'order_list.html'
@@ -21,6 +24,7 @@ class OrderListView(ListView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
+
 
 class OrderDetailView(DetailView):
     model = Order
