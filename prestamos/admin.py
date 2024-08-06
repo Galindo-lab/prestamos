@@ -33,6 +33,7 @@ class UnitAdmin(admin.ModelAdmin):
 
 class UnitInlineForOrder(admin.TabularInline):
     model = Order.units.through  # Through table for the many-to-many relationship
+    autocomplete_fields = ['unit']
     extra = 1
 
 
@@ -41,6 +42,7 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'user__email')
     list_filter = ('order_date', 'return_date')
     exclude = ('units',)
+    autocomplete_fields = ['user']
     inlines = [UnitInlineForOrder]
 
 

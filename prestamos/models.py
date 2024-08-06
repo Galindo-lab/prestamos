@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db import models
 from django.utils import timezone
@@ -39,6 +40,11 @@ class Order(models.Model):
     order_date = models.DateTimeField(default=timezone.now)
     return_date = models.DateTimeField(blank=True, null=True)
     units = models.ManyToManyField(Unit, related_name='orders')
+
+    def clean(self):
+        # Validar que order_date sea anterior a return_date
+        if self.return_date and self.order_date > self.return_date:
+            raise ValidationError('La fecha de inicio de la orden debe ser anterior a la fecha de finalización.')
 
     def __str__(self):
         return f'Order {self.id} - {self.user.username}'
