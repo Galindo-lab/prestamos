@@ -1,0 +1,13 @@
+<!-- templates/order_list.html -->
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>My Orders</h2>
+  <ul>
+    {% for order in orders %}
+      <li>
+        <a href="{% url 'order_detail' order.pk %}">Order {{ order.id }} - {{ order.order_date }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

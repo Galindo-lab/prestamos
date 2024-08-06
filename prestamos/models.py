@@ -34,6 +34,7 @@ class Unit(models.Model):
         return f'{self.item.name} - {self.serial_number}'
 
     def is_available(self, start_date, end_date):
+
         overlapping_orders = self.orders.filter(
             models.Q(order_date__lt=end_date, return_date__gt=start_date)
         )
