@@ -40,6 +40,7 @@ class Order(models.Model):
     order_date = models.DateTimeField(default=timezone.now)
     return_date = models.DateTimeField(blank=True, null=True)
     units = models.ManyToManyField(Unit, related_name='orders')
+    is_canceled = models.BooleanField(default=False)
 
     def clean(self):
         # Validar que order_date sea anterior a return_date

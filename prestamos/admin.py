@@ -2,9 +2,14 @@ from django.contrib import admin
 
 from .models import Category, Item, Unit, Order
 
+"""
+Categoría para los y lista de artículos 
+"""
+
+
 class CategoryItemInline(admin.TabularInline):
     model = Item.category.through
-    extra = 1
+    extra = 0
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -12,17 +17,28 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     inlines = [CategoryItemInline]  # Añadir el TabularInline aquí
 
+
+"""
+Artículos y lista de unidades
+"""
+
+
 class UnitInlineForItem(admin.TabularInline):
     model = Unit
-    extra = 1
+    extra = 0
 
 
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
-    search_fields = ('name', )
+    search_fields = ('name',)
     list_filter = ('category',)
     filter_horizontal = ('category',)
     inlines = [UnitInlineForItem]
+
+
+"""
+Unidades de un artículo
+"""
 
 
 class UnitAdmin(admin.ModelAdmin):
@@ -31,10 +47,15 @@ class UnitAdmin(admin.ModelAdmin):
     list_filter = ('item',)
 
 
+"""
+Ordenes de un articulo
+"""
+
 class UnitInlineForOrder(admin.TabularInline):
     model = Order.units.through  # Through table for the many-to-many relationship
     autocomplete_fields = ['unit']
-    extra = 1
+    extra = 0
+
 
 
 class OrderAdmin(admin.ModelAdmin):
