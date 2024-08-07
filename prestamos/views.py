@@ -1,9 +1,24 @@
 # views.py
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import CreateView
+from django.views.generic import DetailView
+from django.views.generic import ListView
+from django.views.generic import UpdateView
 
-from .forms import OrderForm
-from .models import Order
+from .forms import OrderForm, AproveForm
+from .models import Order, OrderStatusChoices
+
+
+class OrderAprove(UpdateView):
+    model = Order
+    form_class = AproveForm
+    template_name = 'order_form.html'
+    success_url = reverse_lazy('order_list')
+
+    def form_valid(self, form):
+        form.instance.status = OrderStatusChoices.APPROVED
+        form.instance.approved_by = self.request.user
+        return super().form_valid(form)
 
 
 class OrderCreateView(CreateView):
