@@ -60,7 +60,7 @@ class UnitInlineForOrder(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'order_date', 'return_date')
+    list_display = ('id', 'user', 'order_date', 'return_date', 'approved_by')
     search_fields = ('user__username', 'user__email')
     list_filter = ('order_date', 'return_date')
     exclude = ('units',)
