@@ -42,12 +42,15 @@ class Unit(models.Model):
     available = models.BooleanField(default=True)
 
     def is_available(self, start_date, end_date):
-        overlapping_orders = self.orders \
-            .filter(models.Q(order_date__lt=end_date, return_date__gt=start_date, canceled=False))
+        overlapping_orders = self.orders.filter(models.Q(order_date__lt=end_date, return_date__gt=start_date,
+                                                         status__in=[OrderStatusChoices.PENDING,
+                                                                     OrderStatusChoices.APPROVED,
+                                                                     OrderStatusChoices.DELIVERED]))
         return not overlapping_orders.exists() and self.available
 
     def __str__(self):
         return f'{self.item.name} - {self.serial_number}'
+
 
 """
 Ordenes y estados
@@ -56,11 +59,11 @@ Ordenes y estados
 
 class OrderStatusChoices(models.TextChoices):
     PENDING = 'pending', _('Pendiente')
-    CANCELLED = 'cancelled', _('Cancelado')
-    APPROVED = 'approved', _('Aprobado')
-    REJECTED = 'rejected', _('Rechazado')
-    DELIVERED = 'delivered', _('Entregado')
-    RETURNED = 'returned', _('Devuelto')
+    CANCELLED = 'cancelled', _('Cancelada')
+    APPROVED = 'approved', _('Aprobada')
+    REJECTED = 'rejected', _('Rechazada')
+    DELIVERED = 'delivered', _('Entregada')
+    RETURNED = 'returned', _('Devuelta')
 
 
 class Order(models.Model):

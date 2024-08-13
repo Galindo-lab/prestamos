@@ -9,15 +9,16 @@
         </ul>
     {% endfor %}
 
+    <h2>Crear Orden</h2>
+
     <form method="post">
         {% csrf_token %}
         {{ order_form.as_p }}
 
         {{ item_formset.management_form }}
         {% for form in item_formset %}
-            <div class="item-form">
-                {{ form.as_p }}
-            </div>
+            {{ form.as_div }}
+            <br>
         {% endfor %}
 
         <button type="submit">Crear Orden</button>

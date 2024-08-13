@@ -3,7 +3,7 @@ from random import shuffle
 
 from django.contrib import messages
 from django.db import transaction
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DetailView
@@ -60,6 +60,11 @@ class OrderCreateView(View):
 
             except Exception as e:
                 messages.error(request, e)
+
+            else:
+                # redirigir a la pagina de detalles de la orden
+                messages.success(request, "La orden se ha creado exitosamente.")
+                return redirect('order_detail', order.pk)
 
         return render(request, self.template, {
             'order_form': order_form,

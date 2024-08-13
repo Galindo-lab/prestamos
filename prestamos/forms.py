@@ -30,8 +30,8 @@ class OrderItemForm(forms.Form):
     quantity = forms.IntegerField(min_value=0)
 
 
-# cantidad maxima de articulos por solicitud
-OrderItemFormSet = formset_factory(OrderItemForm)
+# cantidad maxima de artículos por solicitud
+OrderItemFormSet = formset_factory(OrderItemForm, min_num=1, max_num=5, extra=0)
 
 """
 Formulario de Orden
