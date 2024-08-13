@@ -1,4 +1,6 @@
 # views.py
+from random import random, shuffle
+
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -40,6 +42,8 @@ class OrderCreateView(View):
             for item_form in item_formset:
                 item, quantity = item_form.cleaned_data['item'], item_form.cleaned_data['quantity']
                 units = item.units_available(order.order_date, order.return_date)
+
+                shuffle(units)  # revolver los elementos de la lista
 
                 if quantity > len(units):
                     print("No hay suficientes unidades")

@@ -1,5 +1,6 @@
 # forms.py
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import formset_factory
 
 from .models import Order, Item
@@ -14,6 +15,16 @@ class AproveForm(forms.ModelForm):
 class OrderItemForm(forms.Form):
     item = forms.ModelChoiceField(queryset=Item.objects.all())
     quantity = forms.IntegerField(min_value=0)
+    def clean(self):
+       cleaned_data = super().clean()
+       order_date = cleaned_data.get('order_date')
+       return_date = cleaned_data.get('return_date')
+
+       if order_date and return_date and order_date >= return_date:
+           raise ValidationError('La fecha de inicio de la orden debe ser anterior a la fecha de finalización.')
+
+       return cleaned_data
+
 
 
 # cantidad maxima de articulos por solicitud
