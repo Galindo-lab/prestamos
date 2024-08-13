@@ -2,10 +2,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>Create Order</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Order</button>
-  </form>
+    <form method="post">
+        {% csrf_token %}
+        {{ order_form.as_p }}
+
+        {{ item_formset.management_form }}
+        {% for form in item_formset %}
+            <div class="item-form">
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+
+        <button type="button" id="add-item">Agregar Artículo</button>
+        <button type="submit">Crear Orden</button>
+    </form>
 {% endblock %}
