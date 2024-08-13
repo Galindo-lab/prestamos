@@ -41,14 +41,13 @@ class Unit(models.Model):
     serial_number = models.CharField(max_length=255, unique=True)
     available = models.BooleanField(default=True)
 
-    def __str__(self):
-        return f'{self.item.name} - {self.serial_number}'
-
     def is_available(self, start_date, end_date):
         overlapping_orders = self.orders \
             .filter(models.Q(order_date__lt=end_date, return_date__gt=start_date, canceled=False))
         return not overlapping_orders.exists() and self.available
 
+    def __str__(self):
+        return f'{self.item.name} - {self.serial_number}'
 
 """
 Ordenes y estados
@@ -72,7 +71,7 @@ class Order(models.Model):
     order_date = models.DateTimeField(default=timezone.now, null=False)
     return_date = models.DateTimeField(default=timezone.now, null=False)
     units = models.ManyToManyField(Unit, related_name='orders')
-    status = models.CharField(max_length=10, choices=OrderStatusChoices.choices, default='pending')
+    status = models.CharField(max_length=10, choices=OrderStatusChoices.choices, default=OrderStatusChoices.PENDING)
     approved_by = models.ForeignKey(to=User, related_name='approved_orders', null=True, blank=True,
                                     on_delete=models.SET_NULL, default=None)
 

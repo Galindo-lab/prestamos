@@ -10,10 +10,14 @@ Formulario para aprobar una orden
 """
 
 
-class AproveForm(forms.ModelForm):
+class AuthorizeForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['approved_by', 'status']
+        widgets = {
+            'approved_by': forms.HiddenInput(),
+            'status': forms.RadioSelect,  # Cambiar a botones de radio
+        }
 
 
 """
@@ -27,7 +31,7 @@ class OrderItemForm(forms.Form):
 
 
 # cantidad maxima de articulos por solicitud
-OrderItemFormSet = formset_factory(OrderItemForm, min_num=1)
+OrderItemFormSet = formset_factory(OrderItemForm)
 
 """
 Formulario de Orden

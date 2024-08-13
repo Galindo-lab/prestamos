@@ -10,18 +10,17 @@ from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import UpdateView
 
-from .forms import OrderForm, AproveForm, OrderItemFormSet
+from .forms import OrderForm, AuthorizeForm, OrderItemFormSet
 from .models import Order, OrderStatusChoices
 
 
-class OrderAprove(UpdateView):
+class OrderAuthorize(UpdateView):
     model = Order
-    form_class = AproveForm
-    template_name = 'order_form.html'
+    form_class = AuthorizeForm
+    template_name = 'order_authorize.html'
     success_url = reverse_lazy('order_list')
 
     def form_valid(self, form):
-        form.instance.status = OrderStatusChoices.APPROVED
         form.instance.approved_by = self.request.user
         return super().form_valid(form)
 
@@ -42,7 +41,7 @@ class OrderCreateView(View):
         if order_form.is_valid() and item_formset.is_valid():
             try:
                 with transaction.atomic():
-                    # crear la orden
+
                     order = order_form.save(commit=False)
                     order.user = request.user
                     order.save()
