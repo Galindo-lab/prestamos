@@ -9,16 +9,19 @@ Información de artículos
 
 
 class Category(models.Model):
+    class Meta:
+        verbose_name_plural = "Categorías"
+
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
 
-    class Meta:
-        verbose_name_plural = "Categorías"
-
 
 class Item(models.Model):
+    class Meta:
+        verbose_name_plural = "Artículo"
+
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     category = models.ManyToManyField(Category, related_name='items')
@@ -29,11 +32,11 @@ class Item(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
-        verbose_name_plural = "Artículo"
-
 
 class Unit(models.Model):
+    class Meta:
+        verbose_name_plural = "Unidades"
+
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='units')
     serial_number = models.CharField(max_length=255, unique=True)
     available = models.BooleanField(default=True)
@@ -46,9 +49,6 @@ class Unit(models.Model):
             .filter(models.Q(order_date__lt=end_date, return_date__gt=start_date, canceled=False))
         return not overlapping_orders.exists() and self.available
 
-    class Meta:
-        verbose_name_plural = "Unidades"
-
 
 """
 Ordenes y estados
@@ -56,14 +56,19 @@ Ordenes y estados
 
 
 class OrderStatusChoices(models.TextChoices):
-    PENDING = 'pending', _('Pending')
-    APPROVED = 'approved', _('Approved')
-    REJECTED = 'rejected', _('Rejected')
+    PENDING = 'pending', _('Pendiente')
+    CANCELLED = 'cancelled', _('Cancelado')
+    APPROVED = 'approved', _('Aprobado')
+    REJECTED = 'rejected', _('Rechazado')
+    DELIVERED = 'delivered', _('Entregado')
+    RETURNED = 'returned', _('Devuelto')
 
 
 class Order(models.Model):
+    class Meta:
+        verbose_name_plural = "Ordenes"
+
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    canceled = models.BooleanField(default=False)
     order_date = models.DateTimeField(default=timezone.now, null=False)
     return_date = models.DateTimeField(default=timezone.now, null=False)
     units = models.ManyToManyField(Unit, related_name='orders')
@@ -73,6 +78,3 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Orden {self.id} - {self.user.username}'
-
-    class Meta:
-        verbose_name_plural = "Ordenes"
