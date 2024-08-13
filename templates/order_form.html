@@ -2,6 +2,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+    {% for message in messages %}
+        <ul class="message">
+            <li>{{ message }}</li>
+        </ul>
+    {% endfor %}
+
     <form method="post">
         {% csrf_token %}
         {{ order_form.as_p }}
@@ -13,7 +20,6 @@
             </div>
         {% endfor %}
 
-        <button type="button" id="add-item">Agregar Artículo</button>
         <button type="submit">Crear Orden</button>
     </form>
 {% endblock %}

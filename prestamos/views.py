@@ -1,7 +1,9 @@
 # views.py
-from random import random, shuffle
+from random import shuffle
 
-from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db import transaction
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DetailView
@@ -9,7 +11,7 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView
 
 from .forms import OrderForm, AproveForm, OrderItemFormSet
-from .models import Order, OrderStatusChoices, Unit
+from .models import Order, OrderStatusChoices
 
 
 class OrderAprove(UpdateView):
@@ -25,33 +27,45 @@ class OrderAprove(UpdateView):
 
 
 class OrderCreateView(View):
+    template = 'order_form.html'
+
     def get(self, request, *args, **kwargs):
-        order_form = OrderForm()
-        item_formset = OrderItemFormSet()
-        return render(request, 'order_form.html', {'order_form': order_form, 'item_formset': item_formset})
+        return render(request, self.template, {
+            'order_form': OrderForm(),
+            'item_formset': OrderItemFormSet()
+        })
 
     def post(self, request, *args, **kwargs):
         order_form = OrderForm(request.POST)
         item_formset = OrderItemFormSet(request.POST)
 
         if order_form.is_valid() and item_formset.is_valid():
-            order = order_form.save(commit=False)
-            order.user = request.user
-            order.save()
+            try:
+                with transaction.atomic():
+                    # crear la orden
+                    order = order_form.save(commit=False)
+                    order.user = request.user
+                    order.save()
 
-            for item_form in item_formset:
-                item, quantity = item_form.cleaned_data['item'], item_form.cleaned_data['quantity']
-                units = item.units_available(order.order_date, order.return_date)
+                    for item_form in item_formset:
+                        # agregar unidades a la orden
+                        item, quantity = item_form.cleaned_data['item'], item_form.cleaned_data['quantity']
+                        units = item.units_available(order.order_date, order.return_date)
 
-                shuffle(units)  # revolver los elementos de la lista
+                        if quantity > len(units):
+                            # verificar que hay suficientes unidades
+                            raise Exception("No hay suficientes unidades de '" + str(item.name) + "' diponibles")
 
-                if quantity > len(units):
-                    print("No hay suficientes unidades")
-                    render(request, 'order_form.html', {'order_form': order_form, 'item_formset': item_formset})
+                        shuffle(units)  # revolver los elementos de la lista
+                        order.units.add(*(units[:quantity]))  # agregar la cantidad de unidades especificadas
 
-                order.units.add(*(units[:quantity]))
+            except Exception as e:
+                messages.error(request, e)
 
-        return render(request, 'order_form.html', {'order_form': order_form, 'item_formset': item_formset})
+        return render(request, self.template, {
+            'order_form': order_form,
+            'item_formset': item_formset
+        })
 
 
 class OrderListView(ListView):

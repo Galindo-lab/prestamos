@@ -5,6 +5,10 @@ from django.forms import formset_factory
 
 from .models import Order, Item
 
+"""
+Formulario para aprobar una orden
+"""
+
 
 class AproveForm(forms.ModelForm):
     class Meta:
@@ -12,23 +16,22 @@ class AproveForm(forms.ModelForm):
         fields = ['approved_by', 'status']
 
 
+"""
+Formulario de artículos y unidades
+"""
+
+
 class OrderItemForm(forms.Form):
     item = forms.ModelChoiceField(queryset=Item.objects.all())
     quantity = forms.IntegerField(min_value=0)
-    def clean(self):
-       cleaned_data = super().clean()
-       order_date = cleaned_data.get('order_date')
-       return_date = cleaned_data.get('return_date')
-
-       if order_date and return_date and order_date >= return_date:
-           raise ValidationError('La fecha de inicio de la orden debe ser anterior a la fecha de finalización.')
-
-       return cleaned_data
-
 
 
 # cantidad maxima de articulos por solicitud
-OrderItemFormSet = formset_factory(OrderItemForm)
+OrderItemFormSet = formset_factory(OrderItemForm, min_num=1)
+
+"""
+Formulario de Orden
+"""
 
 
 class OrderForm(forms.ModelForm):
@@ -39,6 +42,16 @@ class OrderForm(forms.ModelForm):
             'order_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'return_date': forms.DateTimeInput(attrs={'type': 'datetime-local'})
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        order_date = cleaned_data.get('order_date')
+        return_date = cleaned_data.get('return_date')
+
+        if order_date and return_date and order_date >= return_date:
+            raise ValidationError('La fecha de inicio de la orden debe ser anterior a la fecha de finalización.')
+
+        return cleaned_data
 
 # class OrderForm(forms.ModelForm):
 #     class Meta:
