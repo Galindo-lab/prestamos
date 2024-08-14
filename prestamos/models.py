@@ -53,7 +53,7 @@ class Unit(models.Model):
 
 
 """
-Ordenes y estados
+Ordenes, Reportes y estados
 """
 
 
@@ -80,3 +80,13 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Orden {self.id} - {self.user.username}'
+
+
+class Report(models.Model):
+    class Meta:
+        verbose_name_plural = "Reportes"
+
+    user = models.ForeignKey(to=User, on_delete=models.SET_NULL, related_name='reports', null=True)
+    order = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name='reports')
+    active = models.BooleanField(default=True)
+    details = models.TextField(blank=True, null=True)
