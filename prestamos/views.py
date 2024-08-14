@@ -3,7 +3,8 @@ from random import shuffle
 
 from django.contrib import messages
 from django.db import transaction
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DetailView
@@ -11,7 +12,7 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView
 
 from .forms import OrderForm, AuthorizeForm, OrderItemFormSet
-from .models import Order, OrderStatusChoices
+from .models import Order
 
 
 class OrderAuthorize(UpdateView):

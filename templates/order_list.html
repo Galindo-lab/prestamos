@@ -2,12 +2,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>My Orders</h2>
-  <ul>
-    {% for order in orders %}
-      <li>
-        <a href="{% url 'order_detail' order.pk %}">Order #{{ order.id }} ({{ order.status }})</a> [<a href="{% url 'order_aprove' order.pk %}">autorizar</a>]
-      </li>
-    {% endfor %}
-  </ul>
+    <h2>Ordenes de {{ user.get_username }}</h2>
+    <ul>
+        {% for order in orders %}
+            <li>
+                <a href="{% url 'order_detail' order.pk %}">Order #{{ order.id }} ({{ order.status }})</a>
+                [<a href="{% url 'order_aprove' order.pk %}">autorizar</a>]
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
