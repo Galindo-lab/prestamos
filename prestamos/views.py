@@ -2,6 +2,7 @@
 from random import shuffle
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
@@ -16,7 +17,7 @@ from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
 from .models import Order, Report, Item
 
 
-class ReportCreateView(CreateView):
+class ReportCreateView(LoginRequiredMixin, CreateView):
     model = Report
     form_class = ReporteForm
     template_name = 'report_create.html'
@@ -31,7 +32,7 @@ class ReportCreateView(CreateView):
         return super().form_valid(form)
 
 
-class OrderAuthorize(UpdateView):
+class OrderAuthorize(LoginRequiredMixin, UpdateView):
     model = Order
     form_class = AuthorizeForm
     template_name = 'order_authorize.html'
@@ -42,7 +43,7 @@ class OrderAuthorize(UpdateView):
         return super().form_valid(form)
 
 
-class OrderCreateView(View):
+class OrderCreateView(LoginRequiredMixin, View):
     template = 'order_form.html'
 
     def get(self, request, *args, **kwargs):
@@ -102,7 +103,7 @@ class OrderCreateView(View):
         })
 
 
-class OrderListView(ListView):
+class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'order_list.html'
     context_object_name = 'orders'
@@ -111,7 +112,7 @@ class OrderListView(ListView):
         return Order.objects.filter(user=self.request.user)
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(LoginRequiredMixin, DetailView):
     model = Order
     template_name = 'order_detail.html'
     context_object_name = 'order'
