@@ -1,9 +1,40 @@
 <!-- templates/order_form.html -->
 {% extends "base.html" %}
 
+{% block script %}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('dropdown', () => ({
+                items: [],
+
+                addItem(id, name) {
+                    // no agregar repetidos
+                    if(this.items.find(item => item.id === id )) return;
+
+                    // agregar elemntos nuevos
+                    this.items.push({ id: id, name:name, quantity:0 })
+                    console.log(this.items)
+                }
+            }))
+        })
+    </script>
+{% endblock %}
+
+
 {% block content %}
 
-    <div class="container py-4">
+
+    <div class="container" x-data="dropdown">
+
+        <div class="pb-4">
+            <h2>Articulos</h2>
+            {% for item in items %}
+                <button @click="addItem( {{ item.pk }}, '{{ item.name }}' )">
+                    {{ item.name }}
+                </button>
+            {% endfor %}
+        </div>
+
         <h2>Crear Orden</h2>
 
         {% for message in messages %}
@@ -17,12 +48,22 @@
             {{ order_form.as_p }}
 
             <h4>Items</h4>
+            {{ item_formset.management_form }}
+
+            <template x-for="item in items" :key="item.id">
+                <div class="p-3 mb-2 bg-primary text-white" x-text="item.name"></div>
+                <br>
+            </template>
+
+
             <div id="items">
-                {{ item_formset.management_form }}
                 {{ item_formset.as_p }}
             </div>
 
-            <br>
+
+            {% comment %}
+            {% endcomment %}
+
             <button type="submit">Crear Orden</button>
         </form>
     </div>

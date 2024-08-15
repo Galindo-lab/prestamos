@@ -12,7 +12,7 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView
 
 from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
-from .models import Order, Report
+from .models import Order, Report, Item
 
 
 class ReportCreateView(CreateView):
@@ -47,7 +47,8 @@ class OrderCreateView(View):
     def get(self, request, *args, **kwargs):
         return render(request, self.template, {
             'order_form': OrderForm(),
-            'item_formset': OrderItemFormSet()
+            'item_formset': OrderItemFormSet(),
+            'items': Item.objects.all()
         })
 
     def post(self, request, *args, **kwargs):

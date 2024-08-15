@@ -26,12 +26,15 @@ Formulario de artículos y unidades
 
 
 class OrderItemForm(forms.Form):
-    item = forms.ModelChoiceField(queryset=Item.objects.all())
+    item = forms.ModelChoiceField(
+        queryset=Item.objects.all(),
+        widget=forms.TextInput()
+    )
     quantity = forms.IntegerField(min_value=0)
 
 
 # cantidad maxima de artículos por solicitud
-OrderItemFormSet = formset_factory(OrderItemForm, min_num=1, max_num=5, extra=2)
+OrderItemFormSet = formset_factory(OrderItemForm, min_num=1, max_num=5, extra=0)
 
 """
 Formulario de Reporte

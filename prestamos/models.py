@@ -24,7 +24,7 @@ class Item(models.Model):
 
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    category = models.ManyToManyField(Category, related_name='items')
+    category = models.ManyToManyField(Category, related_name='items', blank=True)
 
     def units_available(self, start_date, end_date):
         return [item for item in Unit.objects.filter(item=self) if item.is_available(start_date, end_date)]
