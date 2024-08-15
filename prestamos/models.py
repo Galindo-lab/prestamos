@@ -69,6 +69,7 @@ class OrderStatusChoices(models.TextChoices):
 class Order(models.Model):
     class Meta:
         verbose_name_plural = "Ordenes"
+        ordering = ["-order_date"]
 
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     order_date = models.DateTimeField(default=timezone.now, null=False)
@@ -88,5 +89,5 @@ class Report(models.Model):
 
     user = models.ForeignKey(to=User, on_delete=models.SET_NULL, related_name='reports', null=True)
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name='reports')
-    active = models.BooleanField(default=True)
     details = models.TextField(blank=True, null=True)
+    active = models.BooleanField(default=True)

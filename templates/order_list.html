@@ -8,6 +8,7 @@
             <li>
                 <a href="{% url 'order_detail' order.pk %}">Order #{{ order.id }} ({{ order.status }})</a>
                 [<a href="{% url 'order_aprove' order.pk %}">autorizar</a>]
+            [Reportar]
             </li>
         {% endfor %}
     </ul>

@@ -3,7 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import formset_factory
 
-from .models import Order, Item
+from .models import Order, Item, Report
 
 """
 Formulario para aprobar una orden
@@ -32,6 +32,21 @@ class OrderItemForm(forms.Form):
 
 # cantidad maxima de artículos por solicitud
 OrderItemFormSet = formset_factory(OrderItemForm, min_num=1, max_num=5, extra=0)
+
+"""
+Formulario de Reporte
+"""
+
+
+class ReporteForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = '__all__'
+        widgets = {
+            'user': forms.HiddenInput(),
+            'order': forms.HiddenInput(),
+        }
+
 
 """
 Formulario de Orden

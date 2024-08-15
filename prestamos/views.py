@@ -7,12 +7,18 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import DetailView
+from django.views.generic import DetailView, CreateView
 from django.views.generic import ListView
 from django.views.generic import UpdateView
 
-from .forms import OrderForm, AuthorizeForm, OrderItemFormSet
-from .models import Order
+from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
+from .models import Order, Report
+
+
+class ReportCreateView(CreateView):
+    model = Report
+    form_class = ReporteForm
+    template_name = 'report_create.html'
 
 
 class OrderAuthorize(UpdateView):
