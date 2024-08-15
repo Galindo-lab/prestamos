@@ -1,4 +1,5 @@
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
 
 from .models import Category, Item, Unit, Order, Report
 
@@ -31,7 +32,7 @@ class UnitInlineForItem(admin.TabularInline):
 
 
 @admin.register(Item)
-class ItemAdmin(admin.ModelAdmin):
+class ItemAdmin(ImportExportModelAdmin):
     list_display = ('name', 'description')
     search_fields = ('name',)
     list_filter = ('category',)
@@ -45,7 +46,7 @@ Unidades de un artículo
 
 
 @admin.register(Unit)
-class UnitAdmin(admin.ModelAdmin):
+class UnitAdmin(ImportExportModelAdmin):
     list_display = ('item', 'serial_number', 'available')
     search_fields = ('serial_number', 'item__name')
     list_filter = ('item',)

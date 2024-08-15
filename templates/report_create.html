@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <div class="container">
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}  <!-- This renders the form fields -->
-        <button type="submit">Submit</button>
-    </form>
+    <h2>Reportar Orden</h2>
 
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}  <!-- This renders the form fields -->
+            <button type="submit">Submit</button>
+        </form>
+
+    </div>
 {% endblock %}

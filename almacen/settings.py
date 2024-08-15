@@ -31,7 +31,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # para el admin
+    'admin_interface',
+    'colorfield',
     'django.contrib.admin',
+    'import_export',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

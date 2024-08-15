@@ -59,9 +59,10 @@ class Unit(models.Model):
     class Meta:
         verbose_name = "Unidad"
         verbose_name_plural = "Unidades"
+        unique_together = ('item', 'serial_number')
 
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='units')
-    serial_number = models.CharField(max_length=255, unique=True)
+    serial_number = models.CharField(max_length=255)
     available = models.BooleanField(default=True)
 
     def is_available(self, start_date, end_date):
