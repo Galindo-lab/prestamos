@@ -3,7 +3,7 @@ from random import shuffle
 
 from django.contrib import messages
 from django.db import transaction
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
@@ -19,6 +19,15 @@ class ReportCreateView(CreateView):
     model = Report
     form_class = ReporteForm
     template_name = 'report_create.html'
+    success_url = reverse_lazy('order_list')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+
+        pk = self.kwargs.get('pk')  # pk de la orden en la url
+        form.instance.order = get_object_or_404(Order, pk=pk)
+
+        return super().form_valid(form)
 
 
 class OrderAuthorize(UpdateView):
@@ -59,7 +68,7 @@ class OrderCreateView(View):
                         units = item.units_available(order.order_date, order.return_date)
 
                         if quantity > len(units):
-                            # verificar que hay suficientes unidades
+                            # Veríficar que hay suficientes unidades
                             raise Exception("No hay suficientes unidades de '" + str(item.name) + "' diponibles")
 
                         shuffle(units)  # revolver los elementos de la lista

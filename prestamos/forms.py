@@ -41,11 +41,7 @@ Formulario de Reporte
 class ReporteForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = '__all__'
-        widgets = {
-            'user': forms.HiddenInput(),
-            'order': forms.HiddenInput(),
-        }
+        fields = ['details', 'active']
 
 
 """
