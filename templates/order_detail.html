@@ -12,11 +12,16 @@
     <p>Order Date: {{ order.order_date }}</p>
     <p>Return Date: {{ order.return_date }}</p>
     <p>Status: {{ order.status }}</p>
-    <p>Report: {{ order. }}</p>
     <p>Units:</p>
     <ul>
         {% for unit in order.units.all %}
             <li>{{ unit.item.name }} - {{ unit.serial_number }}</li>
         {% endfor %}
     </ul>
+
+    {% if order.get_report %}
+        <h2>Report</h2>
+        <p>details: {{ order.get_report.details }}</p>
+    {% endif %}
+
 {% endblock %}

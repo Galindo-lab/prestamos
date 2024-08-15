@@ -79,6 +79,9 @@ class Order(models.Model):
     approved_by = models.ForeignKey(to=User, related_name='approved_orders', null=True, blank=True,
                                     on_delete=models.SET_NULL, default=None)
 
+    def get_report(self):
+        return getattr(self, 'reports', None)
+
     def __str__(self):
         return f'Orden {self.id} - {self.user.username}'
 
@@ -88,6 +91,6 @@ class Report(models.Model):
         verbose_name_plural = "Reportes"
 
     user = models.ForeignKey(to=User, on_delete=models.SET_NULL, related_name='reports', null=True)
-    order = models.ForeignKey(to=Order, on_delete=models.CASCADE, related_name='reports')
+    order = models.OneToOneField(to=Order, on_delete=models.CASCADE, related_name='reports')
     details = models.TextField(blank=True, null=True)
     active = models.BooleanField(default=True)
