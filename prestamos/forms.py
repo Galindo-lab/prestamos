@@ -31,7 +31,7 @@ class OrderItemForm(forms.Form):
 
 
 # cantidad maxima de artículos por solicitud
-OrderItemFormSet = formset_factory(OrderItemForm, min_num=1, max_num=5, extra=0)
+OrderItemFormSet = formset_factory(OrderItemForm, min_num=1, max_num=5, extra=3)
 
 """
 Formulario de Reporte

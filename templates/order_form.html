@@ -11,16 +11,17 @@
 
     <h2>Crear Orden</h2>
 
+
     <form method="post">
         {% csrf_token %}
         {{ order_form.as_p }}
 
-        {{ item_formset.management_form }}
-        {% for form in item_formset %}
-            {{ form.as_div }}
-            <br>
-        {% endfor %}
+        <div id="items">
+            {{ item_formset.management_form }}
+            {{ item_formset }}
+        </div>
 
+        <br>
         <button type="submit">Crear Orden</button>
     </form>
 {% endblock %}
