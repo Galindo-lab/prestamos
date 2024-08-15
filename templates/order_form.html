@@ -3,25 +3,28 @@
 
 {% block content %}
 
-    {% for message in messages %}
-        <ul class="message">
-            <li>{{ message }}</li>
-        </ul>
-    {% endfor %}
+    <div class="container py-4">
+        <h2>Crear Orden</h2>
 
-    <h2>Crear Orden</h2>
+        {% for message in messages %}
+            <ul class="message">
+                <li>{{ message }}</li>
+            </ul>
+        {% endfor %}
 
+        <form method="post">
+            {% csrf_token %}
+            {{ order_form.as_p }}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ order_form.as_p }}
+            <h4>Items</h4>
+            <div id="items">
+                {{ item_formset.management_form }}
+                {{ item_formset.as_p }}
+            </div>
 
-        <div id="items">
-            {{ item_formset.management_form }}
-            {{ item_formset }}
-        </div>
+            <br>
+            <button type="submit">Crear Orden</button>
+        </form>
+    </div>
 
-        <br>
-        <button type="submit">Crear Orden</button>
-    </form>
 {% endblock %}
