@@ -25,6 +25,12 @@
     <nav class="container py-3">
         [<a href="{% url 'order_list' %}">My Orders</a>]
         [<a href="{% url 'order_create' %}">Create Order</a>]
+        [<a href="{% url 'login' %}">Login</a>]
+
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button name="logout-submit" type="submit">logout</button>
+        </form>
     </nav>
 </header>
 
