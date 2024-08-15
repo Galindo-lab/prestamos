@@ -1,3 +1,5 @@
+from random import shuffle
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -9,7 +11,12 @@ Información de artículos
 
 
 class Category(models.Model):
+    """
+
+    """
+
     class Meta:
+        verbose_name = "Categoría"
         verbose_name_plural = "Categorías"
 
     name = models.CharField(max_length=255)
@@ -19,14 +26,25 @@ class Category(models.Model):
 
 
 class Item(models.Model):
+    """
+
+    """
+
     class Meta:
-        verbose_name_plural = "Artículo"
+        verbose_name = "Artículo"
+        verbose_name_plural = "Artículos"
 
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     category = models.ManyToManyField(Category, related_name='items', blank=True)
 
     def units_available(self, start_date, end_date):
+        """
+
+        :param start_date:
+        :param end_date:
+        :return:
+        """
         return [item for item in Unit.objects.filter(item=self) if item.is_available(start_date, end_date)]
 
     def __str__(self):
@@ -34,7 +52,12 @@ class Item(models.Model):
 
 
 class Unit(models.Model):
+    """
+
+    """
+
     class Meta:
+        verbose_name = "Unidad"
         verbose_name_plural = "Unidades"
 
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='units')
@@ -58,6 +81,10 @@ Ordenes, Reportes y estados
 
 
 class OrderStatusChoices(models.TextChoices):
+    """
+
+    """
+
     PENDING = 'pending', _('Pendiente')
     CANCELLED = 'cancelled', _('Cancelada')
     APPROVED = 'approved', _('Aprobada')
@@ -67,7 +94,12 @@ class OrderStatusChoices(models.TextChoices):
 
 
 class Order(models.Model):
+    """
+
+    """
+
     class Meta:
+        verbose_name = "Orden"
         verbose_name_plural = "Ordenes"
         ordering = ["-order_date"]
 
@@ -79,7 +111,26 @@ class Order(models.Model):
     approved_by = models.ForeignKey(to=User, related_name='approved_orders', null=True, blank=True,
                                     on_delete=models.SET_NULL, default=None)
 
+    def add_item(self, item, quantity):
+        """
+
+        :param item:
+        :param quantity:
+        :return:
+        """
+        units = item.units_available(self.order_date, self.return_date)
+
+        if quantity > len(units):  # Veríficar que hay suficientes unidades
+            raise Exception("No hay suficientes unidades de '" + str(item.name) + "' diponibles")
+
+        shuffle(units)  # revolver los elementos de la lista
+        self.units.add(*(units[:quantity]))  # agregar la cantidad de unidades especificadas
+
     def get_report(self):
+        """
+
+        :return:
+        """
         return getattr(self, 'reports', None)
 
     def __str__(self):

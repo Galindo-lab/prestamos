@@ -1,5 +1,4 @@
 # views.py
-from random import shuffle
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,8 +7,8 @@ from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import DetailView
 from django.views.generic import CreateView
+from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import UpdateView
 
@@ -68,25 +67,14 @@ class OrderCreateView(LoginRequiredMixin, View):
                         # agregar unidades a la orden
                         item, quantity = item_form.cleaned_data['item'], item_form.cleaned_data['quantity']
 
-                        # TODO: extraer esto y convertirlo en un método para orden
-                        # -----
                         if quantity < 0:
                             # si solicito 0 unidades del articulo ignorar
                             continue
 
-                        units = item.units_available(order.order_date, order.return_date)
-
-                        if quantity > len(units):
-                            # Veríficar que hay suficientes unidades
-                            raise Exception("No hay suficientes unidades de '" + str(item.name) + "' diponibles")
-
-                        shuffle(units)  # revolver los elementos de la lista
-                        order.units.add(*(units[:quantity]))  # agregar la cantidad de unidades especificadas
-                        # -----
+                        order.add_item(item, quantity)
 
                     if order.units.count() <= 0:
                         raise Exception("La orden no tiene unidades")
-
 
             except Exception as e:
                 messages.error(request, e)
