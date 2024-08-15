@@ -7,7 +7,8 @@ from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, CreateView
+from django.views.generic import DetailView
+from django.views.generic import CreateView
 from django.views.generic import ListView
 from django.views.generic import UpdateView
 
@@ -59,13 +60,19 @@ class OrderCreateView(View):
             try:
                 with transaction.atomic():
 
-                    order = order_form.save(commit=False)
-                    order.user = request.user
-                    order.save()
+                    order_form.instance.user = self.request.user
+                    order = order_form.save()
 
                     for item_form in item_formset:
                         # agregar unidades a la orden
                         item, quantity = item_form.cleaned_data['item'], item_form.cleaned_data['quantity']
+
+                        # TODO: extraer esto y convertirlo en un método para orden
+                        # -----
+                        if quantity < 0:
+                            # si solicito 0 unidades del articulo ignorar
+                            continue
+
                         units = item.units_available(order.order_date, order.return_date)
 
                         if quantity > len(units):
@@ -74,6 +81,11 @@ class OrderCreateView(View):
 
                         shuffle(units)  # revolver los elementos de la lista
                         order.units.add(*(units[:quantity]))  # agregar la cantidad de unidades especificadas
+                        # -----
+
+                    if order.units.count() <= 0:
+                        raise Exception("La orden no tiene unidades")
+
 
             except Exception as e:
                 messages.error(request, e)
@@ -85,7 +97,8 @@ class OrderCreateView(View):
 
         return render(request, self.template, {
             'order_form': order_form,
-            'item_formset': item_formset
+            'item_formset': item_formset,
+            'items': Item.objects.all()
         })
 
 

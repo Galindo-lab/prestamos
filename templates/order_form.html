@@ -8,15 +8,29 @@
                 items: [],
 
                 addItem(id, name) {
-                    // no agregar repetidos
-                    if(this.items.find(item => item.id === id )) return;
+                    // No agregar elementos duplicados
+                    if (this.items.find(item => item.id === id)) return;
 
-                    // agregar elemntos nuevos
-                    this.items.push({ id: id, name:name, quantity:0 })
-                    console.log(this.items)
+                    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+                    totalForms.value = this.items.length + 1;
+
+                    // Agregar elemento al array items
+                    this.items.push({id: id, name: name, quantity: 1});
+                    console.log(this.items);
+                },
+
+                removeItem(index) {
+                    // Eliminar el elemento del array en el índice especificado
+                    this.items.splice(index, 1);
+
+                    // Actualizar el total de formularios
+                    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+                    totalForms.value = this.items.length;
+
+                    console.log(this.items);
                 }
-            }))
-        })
+            }));
+        });
     </script>
 {% endblock %}
 
@@ -50,21 +64,17 @@
             <h4>Items</h4>
             {{ item_formset.management_form }}
 
-            <template x-for="item in items" :key="item.id">
-                <div class="p-3 mb-2 bg-primary text-white" x-text="item.name"></div>
-                <br>
+            <template x-for="(item, index) in items" :key="item.id">
+                <div class="p-3 mb-2 bg-primary text-white">
+                    <label x-text="item.name"></label>
+                    <input type="hidden" x-model="item.id" :name="`form-${index}-item`">
+                    <input type="number" min="0" x-model="item.quantity" :name="`form-${index}-quantity`">
+
+                    <button type="button" @click="removeItem(index)">x</button>
+                </div>
             </template>
 
-
-            <div id="items">
-                {{ item_formset.as_p }}
-            </div>
-
-
-            {% comment %}
-            {% endcomment %}
-
-            <button type="submit">Crear Orden</button>
+            <input type="submit">
         </form>
     </div>
 
