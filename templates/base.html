@@ -22,20 +22,22 @@
 </head>
 <body>
 <header>
-    <nav class="container py-3">
-        [<a href="{% url 'order_list' %}">Mis Ordenes</a>]
-        [<a href="{% url 'order_create' %}">Crear Orden</a>]
-        [<a href="{% url 'login' %}">Login</a>]
-        [<a href="/admin/">Admin</a>]
+    {% block header %}
+        <nav class="container py-3">
+            [<a href="{% url 'order_list' %}">Mis Ordenes</a>]
+            [<a href="{% url 'order_create' %}">Crear Orden</a>]
+            [<a href="{% url 'login' %}">Login</a>]
+            [<a href="/admin/">Admin</a>]
 
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button name="logout-submit" type="submit">logout</button>
-        </form>
-    </nav>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button name="logout-submit" type="submit">logout</button>
+            </form>
+        </nav>
+    {% endblock %}
 </header>
 
-<main>
+<main class="container-flex">
     {% block content %}
         {# Aqui va el contenido #}
     {% endblock %}

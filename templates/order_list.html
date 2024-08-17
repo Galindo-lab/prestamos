@@ -1,16 +1,73 @@
 <!-- templates/order_list.html -->
 {% extends "base.html" %}
 
+{% block header %}
+    {% comment %}
+    <nav class="navbar fixed-top fw-medium">
+        <div class="container-fluid pr-0">
+            <a class="navbar-brand" href="#">
+                Ordenes
+            </a>
+
+            <div class="d-flex align-items-center">
+            </div>
+        </div>
+    </nav>
+     style="margin-block: 4rem; margin-bottom: 5rem;"
+    {% endcomment %}
+{% endblock %}
+
+
 {% block content %}
-    <div class="container">
-        <h2>Ordenes de {{ user.get_username }}</h2>
-        <ul>
+    <div class="container pt-3">
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Special title treatment</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+
+
+        <ul class="list-group list-group-flush pt-3">
             {% for order in orders %}
-                <li>
+                <a class="list-group-item" href="{% url 'order_detail' order.pk %}">
+
+                    <div class="d-flex">
+                        <div class="row">
+                            <span class="fw-medium w-100">Orden #{{ order.id }}</span>
+                            <span class="small text-body-secondary">{{ order.order_date }}</span>
+                        </div>
+
+                        <div class="row">
+                            <div class="align-middle">
+                                {% if order.status in 'pending' %}
+                                    <span class="">
+                                    <i class="bi bi-dash"></i>
+                                </span>
+                                {% elif order.status in 'cancelled, rejected' %}
+                                    <span class="text-danger">
+                                    <i class="bi bi-x-circle"></i>
+                                </span>
+                                {% elif order.status in 'approved, delivered, returned' %}
+                                    <span class="text-success">
+                                    <i class="bi bi-check-circle"></i>
+                                </span>
+                                {% else %}
+
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {% comment %}
                     <a href="{% url 'order_detail' order.pk %}">Order #{{ order.id }} ({{ order.status }})</a>
                     [<a href="{% url 'order_aprove' order.pk %}">autorizar</a>]
                     [<a href="{% url 'order_report' order.pk %}">Reportar</a>]
-                </li>
+                    {% endcomment %}
+                </a>
             {% endfor %}
         </ul>
     </div>
