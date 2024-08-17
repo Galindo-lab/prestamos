@@ -2,69 +2,93 @@
 {% extends "base.html" %}
 
 {% block header %}
-    {% comment %}
-    <nav class="navbar fixed-top fw-medium">
-        <div class="container-fluid pr-0">
-            <a class="navbar-brand" href="#">
-                Ordenes
-            </a>
-
-            <div class="d-flex align-items-center">
-            </div>
-        </div>
-    </nav>
-     style="margin-block: 4rem; margin-bottom: 5rem;"
-    {% endcomment %}
 {% endblock %}
 
 
 {% block content %}
-    <div class="container pt-3">
 
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
+    <!-- Barra inferior -->
+    <div class="fixed-bottom ">
+
+        <!-- Botón flotante -->
+        <div class="text-end">
+            <a href="{% url 'order_create' %}" class="btn btn-lg btn-primary shadow-sm m-3">
+                <i class="bi bi-plus-lg"></i>
+            </a>
         </div>
 
+        <!-- $ botones -->
+        <div class="d-flex justify-content-center border-top align-items-end">
 
-        <ul class="list-group list-group-flush pt-3">
-            {% for order in orders %}
-                <a class="list-group-item" href="{% url 'order_detail' order.pk %}">
+            <button class="col-3 text-center btn btn-sm py-2">
+                <i class="bi bi-chat"></i>
+                <br>
+                <span class="small">Activas</span>
+            </button>
 
-                    <div class="d-flex">
-                        <div class="row">
-                            <span class="fw-medium w-100">Orden #{{ order.id }}</span>
-                            <span class="small text-body-secondary">{{ order.order_date }}</span>
+            <a href="wp_animation.html" class="col-3 text-center btn btn-sm py-2">
+                <i class="bi bi-archive"></i>
+                <br>
+                <span class="small">Pendientes</span>
+            </a>
+
+            <a class="col-3 text-center btn btn-sm py-2">
+                <i class="bi bi-people"></i>
+                <br>
+                <span class="small">Historial</span>
+            </a>
+
+            <a class="col-3 text-center btn btn-sm py-2">
+                <i class="bi bi-telephone"></i>
+                <br>
+                <span class="small">Notificaciones</span>
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+
+    <div class="min-vh-100 container" style=margin-block: 4rem; margin-bottom: 5rem;>
+
+        {# historial <span class="small text-body-secondary">Anteriores</span> #}
+        <div class="pt-3">
+
+
+            <ul class="list-group list-group-flush">
+                {% for order in orders %}
+                    <a class="list-group-item" href="{% url 'order_detail' order.pk %}">
+
+
+                        <div class="d-flex flex-fill">
+
+                            <div class="d-flex align-items-center pe-4" >
+                                {% if order.status in 'cancelled, rejected' %}
+
+                                    <i class="bi bi-x-circle text-body-secondary"></i>
+                                    </span>
+                                {% elif order.status in 'approved, delivered, returned' %}
+
+                                    <i class="bi bi-check-circle text-body-secondary"></i>
+                                    </span>
+                                {% else %}
+                                    <i class="bi bi-dash text-body-secondary"></i>
+                                    </span>
+                                {% endif %}
+                            </div>
+
+
+                            <div class="d-flex flex-column w-100">
+                                <span class="">Orden #{{ order.id }}</span>
+                                <span class="small text-body-secondary">{{ order.order_date }}</span>
+                            </div>
+
                         </div>
-
-                        <div class="d-flex align-items-center">
-                            {% if order.status in 'cancelled, rejected' %}
-                                <span class="text-danger">
-                                    <i class="bi bi-x-circle"></i>
-                                </span>
-                            {% elif order.status in 'approved, delivered, returned' %}
-                                <span class="text-success">
-                                    <i class="bi bi-check-circle"></i>
-                                </span>
-                            {% else %}
-                                <span class="">
-                                    <i class="bi bi-dash"></i>
-                                </span>
-                            {% endif %}
-                        </div>
-                    </div>
-
-
-                    {% comment %}
-                    <a href="{% url 'order_detail' order.pk %}">Order #{{ order.id }} ({{ order.status }})</a>
-                    [<a href="{% url 'order_aprove' order.pk %}">autorizar</a>]
-                    [<a href="{% url 'order_report' order.pk %}">Reportar</a>]
-                    {% endcomment %}
-                </a>
-            {% endfor %}
-        </ul>
+                    </a>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 {% endblock %}
