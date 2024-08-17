@@ -1,9 +1,23 @@
 <!-- templates/order_detail.html -->
-{% extends "base.html" %}
+{% extends "bases/base-nav.html" %}
+
+
+{% block nav %}
+    <div class="d-flex align-items-center">
+        <a class="navbar-brand fw-light" href="{% url 'order_list' %}">
+            <i class="bi bi-x-lg"></i>
+        </a>
+    </div>
+{% endblock %}
+
+
 
 {% block content %}
     <div class="container">
-        <h2>Order {{ order.id }}</h2>
+
+
+        <span class="fw-medium">Order {{ order.id }}</span>
+
 
         {% for message in messages %}
             <ul class="message">
@@ -25,8 +39,10 @@
             <h2>Report</h2>
             <p>details: {{ order.get_report.details }}</p>
         {% endif %}
+
+        [<a href="{% url 'order_aprove' order.pk %}">autorizar</a>]
+        [<a href="{% url 'order_report' order.pk %}">Reportar</a>]
     </div>
 
-                        [<a href="{% url 'order_aprove' order.pk %}">autorizar</a>]
-                    [<a href="{% url 'order_report' order.pk %}">Reportar</a>]
+
 {% endblock %}
