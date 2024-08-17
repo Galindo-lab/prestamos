@@ -40,24 +40,22 @@
                             <span class="small text-body-secondary">{{ order.order_date }}</span>
                         </div>
 
-                        <div class="row">
-                            <div class="align-middle">
-                                {% if order.status in 'pending' %}
-                                    <span class="">
+                        <div class="d-flex align-items-center">
+                            {% if order.status in 'pending' %}
+                                <span class="">
                                     <i class="bi bi-dash"></i>
                                 </span>
-                                {% elif order.status in 'cancelled, rejected' %}
-                                    <span class="text-danger">
+                            {% elif order.status in 'cancelled, rejected' %}
+                                <span class="text-danger">
                                     <i class="bi bi-x-circle"></i>
                                 </span>
-                                {% elif order.status in 'approved, delivered, returned' %}
-                                    <span class="text-success">
+                            {% elif order.status in 'approved, delivered, returned' %}
+                                <span class="text-success">
                                     <i class="bi bi-check-circle"></i>
                                 </span>
-                                {% else %}
+                            {% else %}
 
-                                {% endif %}
-                            </div>
+                            {% endif %}
                         </div>
                     </div>
 
