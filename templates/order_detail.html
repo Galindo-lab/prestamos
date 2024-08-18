@@ -1,27 +1,50 @@
 <!-- templates/order_detail.html -->
 {% extends "bases/base-nav.html" %}
 
+{% comment %}
 
-{% block nav %}
-
-    <div class="container ">
-        <a class="navbar-brand fw-light" href="{{ request.META.HTTP_REFERER }}">
-            <i class="bi bi-x-lg"></i>
+        <a class="navbar-brand fw-light col-1" href="{{ request.META.HTTP_REFERER }}">
+            <i class="bi bi-arrow-left"></i>
         </a>
 
         <div class="flex-fill text-center">
             Detalles
         </div>
 
-        <label class="btn btn-primary" for="SubmitButton"><i class="bi bi-check2"></i></label>
+        <div class="col-1">
+
+        </div>
+
+
+        <div class="">
+            <a class="btn" href="{{ request.META.HTTP_REFERER }}">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            Detalles
+        </div>
+
+{% endcomment %}
+
+{% block nav %}
+
+    <div class="container-fluid ">
+        <div class="navbar-brand">
+            Detalles
+        </div>
+        <a class="btn" href="{{ request.META.HTTP_REFERER }}">
+            <i class="bi bi-x-lg"></i>
+        </a>
     </div>
+
+
+
 
 {% endblock %}
 
 
 
 {% block content %}
-    <div class="container">
+    <div class="">
 
 
         <span class="fw-medium">Order {{ order.id }}</span>
