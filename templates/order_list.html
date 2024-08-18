@@ -73,13 +73,21 @@
 
             <ul class="list-group list-group-flush">
                 {% for order in orders %}
-                    <a class="list-group-item px-0 {{ order.get_report|yesno:"list-group-item-danger," }}"
+                    <a class="list-group-item {{ order.get_report|yesno:"list-group-item-danger," }}"
                        href="{% url 'order_detail' order.pk %}">
 
                         <div class="d-flex flex-fill">
 
+
+                            {# descripcion #}
+                            <div class="d-flex flex-column w-100">
+                                <span class="">Orden #{{ order.id }}</span>
+                                <span class="small opacity-75">{{ order.order_date }}</span>
+                            </div>
+
+
                             {# Icono #}
-                            <div class="d-flex align-items-center ps-3 pe-3 h5 m-0">
+                            <div class="d-flex align-items-center ps-3 pe-3 h5 m-0 small opacity-75">
                                 {% if order.status in 'cancelled, rejected' %}
                                     <i class="bi bi-x-circle"></i>
                                 {% elif order.status in 'approved, delivered, returned' %}
@@ -87,12 +95,6 @@
                                 {% else %}
                                     <i class="bi bi-dash"></i>
                                 {% endif %}
-                            </div>
-
-                            {# descripcion #}
-                            <div class="d-flex flex-column w-100">
-                                <span class="fw-medium">Orden #{{ order.id }}</span>
-                                <span class="small text-body-secondary">{{ order.order_date }}</span>
                             </div>
 
                         </div>

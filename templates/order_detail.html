@@ -75,5 +75,14 @@
         [<a href="{% url 'order_report' order.pk %}">Reportar</a>]
     </div>
 
+    {% if order.status == 'pending' %}
+        <div class="fixed-bottom">
+            <div class="d-grid gap-2 m-3">
+                <button class="btn btn-lg btn-primary" type="button">Cancelar Orden</button>
+            </div>
+        </div>
+    {% endif %}
+
+
 
 {% endblock %}
