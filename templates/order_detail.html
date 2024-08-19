@@ -36,9 +36,6 @@
         </a>
     </div>
 
-
-
-
 {% endblock %}
 
 
@@ -48,40 +45,66 @@
 
     <div class="container">
 
-
-        <div class="card my-2">
+        <div class="card mb-2">
+            <div class="card-header"><i class="bi bi-info-circle"></i> Información</div>
 
             <div class="card-body ">
-
                 <div class="row">
                     <div class="row align-items-start">
 
                         <div class="col">
                             <span class="fw-medium"><i class="bi bi-box-arrow-in-right"></i> Entrega</span>
                             <br>
-                            <span>{{ order.order_date|date:"d M, Y · H:i" }}</span>
+                            <span class="text-secondary text-nowrap">{{ order.order_date|date:"d M · H:i" }}</span>
                         </div>
 
                         <div class="col border-start">
                             <span class="fw-medium"><i class="bi bi-box-arrow-in-left"></i> Retorno</span>
                             <br>
-                            <span>{{ order.return_date|date:"d M, Y · H:i" }}</span>
+                            <span class="text-secondary text-nowrap">{{ order.return_date|date:"d M · H:i" }}</span>
                         </div>
+
                     </div>
                 </div>
 
 
+            </div>
+
+            <div class="card-footer">
+                {% if order.status in 'cancelled, rejected' %}
+                    <span class="badge text-bg-danger">{{ order.get_status_display }}</span>
+                {% elif order.status in 'approved, delivered, returned' %}
+                    <span class="badge text-bg-success">{{ order.get_status_display }}</span>
+                {% else %}
+                    <span class="badge text-bg-secondary">{{ order.get_status_display }}</span>
+                {% endif %}
 
             </div>
 
 
-            <div class="card-footer text-body-secondary">
-                <span class="badge text-bg-danger">{{ order.get_status_display }}</span>
-            </div>
         </div>
 
 
-        <div class="card  text-bg-light my-4 ">
+
+
+
+
+
+        {% if order.get_report %}
+            <div class="card my-3">
+                <div class="card-header"><i class="bi bi-exclamation-circle"></i> Reporte</div>
+                <div class="card-body">
+                    {{ order.get_report.details }}
+                </div>
+            </div>
+        {% endif %}
+
+
+
+
+
+        <div class="card my-3 ">
+            <div class="card-header"><i class="bi bi-list-ul"></i> Artículos</div>
             <ul class="list-group list-group-flush">
 
                 {% for unit in order.units.all %}
@@ -108,19 +131,16 @@
                     </li>
 
                 {% endfor %}
+{% comment %}
+
+        <a href="{% url 'order_aprove' order.pk %}">autorizar</a>
+        <a href="{% url 'order_report' order.pk %}">Reportar</a>
+
+        {% endcomment %}
 
             </ul>
-
         </div>
     </div>
-
-
-
-
-
-
-
-
 
 
 
@@ -133,32 +153,9 @@
     {% endfor %}
 
 
-
-
-    <div class="py-3">
-
-
-    </div>
-
-
-    {% if order.get_report %}
-        <div class="card text-bg-danger mb-3">
-            <div class="card-header">Reporte</div>
-            <div class="card-body">
-                <p class="card-text">
-                    {{ order.get_report.details }}
-                </p>
-            </div>
-        </div>
-    {% endif %}
-
-    [<a href="{% url 'order_aprove' order.pk %}">autorizar</a>]
-    [<a href="{% url 'order_report' order.pk %}">Reportar</a>]
-    </div>
-
     {% if order.status == 'pending' %}
-        <div class="fixed-bottom">
-            <div class="d-grid mx-4 mb-3">
+        <div class="container">
+            <div class="d-grid mb-3">
                 <button class="btn btn-primary" type="button">Cancelar Orden</button>
             </div>
         </div>

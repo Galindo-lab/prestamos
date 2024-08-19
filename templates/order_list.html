@@ -14,6 +14,20 @@
 
             Historial
         </a>
+
+        <div class="d-flex align-items-center">
+            <!-- Dropdown -->
+            <div class="flex-shrink-0 dropdown">
+                <a href="#" class="d-block btn" data-bs-toggle="dropdown" aria-expanded="true">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu text-small shadow-sm"
+                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 34px, 0px);"
+                    data-popper-placement="bottom-end">
+                    <li><a class="dropdown-item py-2" href="#">Ajustes</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 
 {% endblock %}
@@ -22,7 +36,7 @@
 {% block content %}
 
     <!-- Barra inferior -->
-    <div class="fixed-bottom ">
+    <div class="fixed-bottom">
 
         <!-- Botón flotante -->
         <div class="text-end">
@@ -32,7 +46,7 @@
         </div>
 
         <!-- botones -->
-        <div class="d-flex justify-content-center border-top align-items-end">
+        <div class="d-flex justify-content-center border-top align-items-end bg-body">
 
             <button class="col-3 text-center btn btn-sm py-2">
                 <i class="bi bi-chat"></i>
@@ -67,62 +81,60 @@
 
     <div class="min-vh-100 ">
 
-        {# lista de ordenes anteriores #}
-        <div class="container">
-
-            <ul class="list-group list-group-flush">
-
-                {% for order in orders %}
+    {# lista de ordenes anteriores #}
+    <div class="container">
 
 
-                    <a class="list-group-item d-flex justify-content-between align-items-start"
-                       href="{% url 'order_detail' order.pk %}">
-                        <div class="ms-2 me-auto">
-                            <div class="fw-medium">Solicitud #{{ order.id }}</div>
-                            {{ order.order_date|date:"F d, Y" }}
-                        </div>
+        <ul class="list-group pb-3">
+
+            {% for order in orders %}
 
 
-                        {% if order.get_report %}
-                            <span class="badge text-bg-danger rounded-pill">Reporte</span>
-                        {% endif %}
+
+                <a class="list-group-item d-flex justify-content-between align-items-start"
+                   href="{% url 'order_detail' order.pk %}">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-medium">{{ order.order_date|date:"F d, Y" }}</div>
+                        <span class="text-secondary">{{ order.order_date|date:"H:i" }}</span>
+                    </div>
+
+                    {% if order.get_report %}
+                        <span class="badge text-bg-light rounded-pill fw-normal">Reporte</span>
+                    {% endif %}
+                </a>
 
 
-                    </a>
+            {% endfor %}
 
+        </ul>
 
-                    {% comment %}
-                    <a class="list-group-item {{ order.get_report|yesno:"list-group-item-danger," }}"
-                       href="{% url 'order_detail' order.pk %}">
-
-                        <div class="d-flex flex-fill">
-
-                            {# descripción #}
-                            <div class="d-flex flex-column w-100">
-                                <span class="">Orden #{{ order.id }}</span>
-                                <span class="small opacity-75">{{ order.order_date }}</span>
-                            </div>
-
-                            {# Icono #}
-                            <div class="d-flex align-items-center ps-3 pe-3 h5 m-0 small opacity-75">
-                                {% if order.status in 'cancelled, rejected' %}
-                                    <i class="bi bi-x-circle"></i>
-                                {% elif order.status in 'approved, delivered, returned' %}
-                                    <i class="bi bi-check-circle"></i>
-                                {% else %}
-                                    <i class="bi bi-dash"></i>
-                                {% endif %}
-                            </div>
-
-                        </div>
-                    </a>
-                    {% endcomment %}
-
-
-                {% endfor %}
-
-            </ul>
-
-        </div>
     </div>
 {% endblock %}
+
+
+{% comment %}
+<a class="list-group-item {{ order.get_report|yesno:"list-group-item-danger," }}"
+   href="{% url 'order_detail' order.pk %}">
+
+    <div class="d-flex flex-fill">
+
+        {# descripción #}
+        <div class="d-flex flex-column w-100">
+            <span class="">Orden #{{ order.id }}</span>
+            <span class="small opacity-75">{{ order.order_date }}</span>
+        </div>
+
+        {# Icono #}
+        <div class="d-flex align-items-center ps-3 pe-3 h5 m-0 small opacity-75">
+            {% if order.status in 'cancelled, rejected' %}
+                <i class="bi bi-x-circle"></i>
+            {% elif order.status in 'approved, delivered, returned' %}
+                <i class="bi bi-check-circle"></i>
+            {% else %}
+                <i class="bi bi-dash"></i>
+            {% endif %}
+        </div>
+
+    </div>
+</a>
+{% endcomment %}
