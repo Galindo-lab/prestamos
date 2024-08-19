@@ -37,25 +37,25 @@
             <button class="col-3 text-center btn btn-sm py-2">
                 <i class="bi bi-chat"></i>
                 <br>
-                <span class="small">Activas</span>
+                <span class="small">Ordenes</span>
             </button>
 
             <a href="wp_animation.html" class="col-3 text-center btn btn-sm py-2">
                 <i class="bi bi-archive"></i>
                 <br>
-                <span class="small">Pendientes</span>
+                <span class="small">Historial</span>
             </a>
 
             <a class="col-3 text-center btn btn-sm py-2">
                 <i class="bi bi-people"></i>
                 <br>
-                <span class="small">Historial</span>
+                <span class="small">Reportes</span>
             </a>
 
             <a class="col-3 text-center btn btn-sm py-2">
                 <i class="bi bi-telephone"></i>
                 <br>
-                <span class="small">Ajustes</span>
+                <span class="small">Usuario</span>
             </a>
 
         </div>
@@ -68,23 +68,40 @@
     <div class="min-vh-100 ">
 
         {# lista de ordenes anteriores #}
-        <div class="">
-
+        <div class="container">
 
             <ul class="list-group list-group-flush">
+
                 {% for order in orders %}
+
+
+                    <a class="list-group-item d-flex justify-content-between align-items-start"
+                       href="{% url 'order_detail' order.pk %}">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-medium">Solicitud #{{ order.id }}</div>
+                            {{ order.order_date|date:"F d, Y" }}
+                        </div>
+
+
+                        {% if order.get_report %}
+                            <span class="badge text-bg-danger rounded-pill">Reporte</span>
+                        {% endif %}
+
+
+                    </a>
+
+
+                    {% comment %}
                     <a class="list-group-item {{ order.get_report|yesno:"list-group-item-danger," }}"
                        href="{% url 'order_detail' order.pk %}">
 
                         <div class="d-flex flex-fill">
 
-
-                            {# descripcion #}
+                            {# descripción #}
                             <div class="d-flex flex-column w-100">
                                 <span class="">Orden #{{ order.id }}</span>
                                 <span class="small opacity-75">{{ order.order_date }}</span>
                             </div>
-
 
                             {# Icono #}
                             <div class="d-flex align-items-center ps-3 pe-3 h5 m-0 small opacity-75">
@@ -99,8 +116,13 @@
 
                         </div>
                     </a>
+                    {% endcomment %}
+
+
                 {% endfor %}
+
             </ul>
+
         </div>
     </div>
 {% endblock %}
