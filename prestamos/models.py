@@ -105,6 +105,8 @@ class Order(models.Model):
         ordering = ["-order_date"]
 
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     order_date = models.DateTimeField(default=timezone.now, null=False)
     return_date = models.DateTimeField(default=timezone.now, null=False)
     units = models.ManyToManyField(Unit, related_name='orders')
@@ -143,6 +145,8 @@ class Report(models.Model):
         verbose_name_plural = "Reportes"
 
     user = models.ForeignKey(to=User, on_delete=models.SET_NULL, related_name='reports', null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     order = models.OneToOneField(to=Order, on_delete=models.CASCADE, related_name='reports')
     details = models.TextField(blank=True, null=True)
     active = models.BooleanField(default=True)
