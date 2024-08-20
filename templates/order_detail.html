@@ -31,10 +31,18 @@
 
         <div class="card mb-4">
             <div class="card-header fw-medium align-middle">
-                    <div class="me-auto">
-                        <i class="bi bi-info-circle"></i>
-                        <span class="fw-medium">Información</span>
-                    </div>
+                <div class="me-auto">
+                    <i class="bi bi-info-circle"></i>
+                    <span class="fw-medium">Información</span>
+
+                    {% if order.status in 'cancelled, rejected' %}
+                        <span class="badge text-bg-danger">{{ order.get_status_display }}</span>
+                    {% elif order.status in 'approved, delivered, returned' %}
+                        <span class="badge text-bg-success">{{ order.get_status_display }}</span>
+                    {% else %}
+                        <span class="badge text-bg-secondary">{{ order.get_status_display }}</span>
+                    {% endif %}
+                </div>
 
             </div>
 
@@ -45,15 +53,15 @@
                     <div class="row align-items-start ">
 
                         <div class="col py-1">
-                            <span class=""><i class="bi bi-box-arrow-in-right"></i> Entrega</span>
+                            <span class="text-secondary "><i class="bi bi-box-arrow-in-right"></i> Entrega</span>
                             <br>
-                            <span class="text-secondary text-nowrap">{{ order.order_date|date:"d M · H:i" }}</span>
+                            <span class="text-nowrap">{{ order.order_date|date:"d M · H:i" }}</span>
                         </div>
 
                         <div class="col border-start py-1">
-                            <span class=""><i class="bi bi-box-arrow-in-left"></i> Devolución</span>
+                            <span class="text-secondary "><i class="bi bi-box-arrow-in-left"></i> Devolución</span>
                             <br>
-                            <span class="text-secondary text-nowrap">{{ order.return_date|date:"d M · H:i" }}</span>
+                            <span class="text-nowrap">{{ order.return_date|date:"d M · H:i" }}</span>
                         </div>
 
                     </div>
@@ -64,13 +72,9 @@
 
 
             <div class="card-footer bg-transparent ">
-                {% if order.status in 'cancelled, rejected' %}
-                    <span class="badge text-bg-danger">{{ order.get_status_display }}</span>
-                {% elif order.status in 'approved, delivered, returned' %}
-                    <span class="badge text-bg-success">{{ order.get_status_display }}</span>
-                {% else %}
-                    <span class="badge text-bg-secondary">{{ order.get_status_display }}</span>
-                {% endif %}
+                <span class="small text-secondary">
+                    {{ order.created_at|date:"d/m/y · H:i" }}
+                </span>
             </div>
 
         </div>
@@ -87,7 +91,7 @@
 
                 <div class="card-footer bg-transparent ">
                     <span class="small text-secondary">
-                        {{ order.get_report.created_at|date:"d F · H:i" }}
+                        {{ order.get_report.created_at|date:"d/m/y · H:i"  }}
                     </span>
                 </div>
             </div>
