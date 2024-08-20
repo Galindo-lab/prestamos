@@ -85,7 +85,7 @@
     <div class="container">
 
 
-        <ul class="list-group pb-3">
+        <ul class="list-group list-group-flush pb-3">
 
             {% for order in orders %}
 
@@ -94,7 +94,7 @@
                 <a class="list-group-item d-flex justify-content-between align-items-start"
                    href="{% url 'order_detail' order.pk %}">
                     <div class="ms-2 me-auto">
-                        <div class="fw-medium">{{ order.order_date|date:"F d, Y" }}</div>
+                        <div class="">{{ order.order_date|date:"F d, Y" }}</div>
                         <span class="text-secondary">{{ order.order_date|date:"H:i" }}</span>
                     </div>
 
