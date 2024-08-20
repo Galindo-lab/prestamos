@@ -4,7 +4,7 @@
 {% block nav %}
 
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand fw-bold" href="#">
 
             {% comment %}
             <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="30"
@@ -48,28 +48,34 @@
         <!-- botones -->
         <div class="d-flex justify-content-center border-top align-items-end bg-body">
 
-            <button class="col-3 text-center btn btn-sm py-2">
-                <i class="bi bi-chat"></i>
+            <button class="col-3 text-center btn btn-sm p-2">
+                <i class="bi bi-list-ul h4"></i>
                 <br>
                 <span class="small">Ordenes</span>
             </button>
 
             <a href="wp_animation.html" class="col-3 text-center btn btn-sm py-2">
-                <i class="bi bi-archive"></i>
-                <br>
+                <div class="bg-primary-subtle rounded-pill pt-2">
+                    <i class="bi bi-archive-fill h4"></i>
+                </div>
                 <span class="small">Historial</span>
+
             </a>
 
-            <a class="col-3 text-center btn btn-sm py-2">
-                <i class="bi bi-people"></i>
-                <br>
+            <a href="wp_animation.html" class="col-3 text-center btn btn-sm py-2">
+                <div class="rounded-pill pt-2">
+                    <i class="bi bi-card-text h4"></i>
+                </div>
                 <span class="small">Reportes</span>
+
             </a>
 
-            <a class="col-3 text-center btn btn-sm py-2">
-                <i class="bi bi-telephone"></i>
-                <br>
+            <a href="wp_animation.html" class="col-3 text-center btn btn-sm py-2">
+                <div class="rounded-pill pt-2">
+                    <i class="bi bi-person h4"></i>
+                </div>
                 <span class="small">Usuario</span>
+
             </a>
 
         </div>
@@ -81,60 +87,32 @@
 
     <div class="min-vh-100 ">
 
-    {# lista de ordenes anteriores #}
-    <div class="container">
+        {# lista de ordenes anteriores #}
+        <div class="container">
 
 
-        <ul class="list-group list-group-flush pb-3">
+            <ul class="list-group pb-3">
 
-            {% for order in orders %}
-
-
-
-                <a class="list-group-item d-flex justify-content-between align-items-start"
-                   href="{% url 'order_detail' order.pk %}">
-                    <div class="ms-2 me-auto">
-                        <div class="">{{ order.order_date|date:"F d, Y" }}</div>
-                        <span class="text-secondary">{{ order.order_date|date:"H:i" }}</span>
-                    </div>
-
-                    {% if order.get_report %}
-                        <span class="badge rounded-pill text-bg-light">Reporte</span>
-                    {% endif %}
-                </a>
+                {% for order in orders %}
 
 
-            {% endfor %}
 
-        </ul>
+                    <a class="list-group-item d-flex justify-content-between align-items-start"
+                       href="{% url 'order_detail' order.pk %}">
+                        <div class="ms-2 me-auto">
+                            <div class="">{{ order.order_date|date:"F d, Y" }}</div>
+                            <span class="text-secondary">{{ order.order_date|date:"H:i" }}</span>
+                        </div>
 
-    </div>
+                        {% if order.get_report %}
+                            <span class="badge rounded-pill text-bg-light">Reporte</span>
+                        {% endif %}
+                    </a>
+
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
 {% endblock %}
-
-
-{% comment %}
-<a class="list-group-item {{ order.get_report|yesno:"list-group-item-danger," }}"
-   href="{% url 'order_detail' order.pk %}">
-
-    <div class="d-flex flex-fill">
-
-        {# descripción #}
-        <div class="d-flex flex-column w-100">
-            <span class="">Orden #{{ order.id }}</span>
-            <span class="small opacity-75">{{ order.order_date }}</span>
-        </div>
-
-        {# Icono #}
-        <div class="d-flex align-items-center ps-3 pe-3 h5 m-0 small opacity-75">
-            {% if order.status in 'cancelled, rejected' %}
-                <i class="bi bi-x-circle"></i>
-            {% elif order.status in 'approved, delivered, returned' %}
-                <i class="bi bi-check-circle"></i>
-            {% else %}
-                <i class="bi bi-dash"></i>
-            {% endif %}
-        </div>
-
-    </div>
-</a>
-{% endcomment %}
