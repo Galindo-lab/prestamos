@@ -5,7 +5,7 @@
 {% block nav %}
 
     <div class="container-fluid ">
-        <div class="navbar-brand">
+        <div class="navbar-brand fw-bold">
             Detalles
         </div>
         <a class="btn" href="{{ request.META.HTTP_REFERER }}">
@@ -29,16 +29,30 @@
             </ul>
         {% endfor %}
 
-        <div class="card mb-4">
-            <div class="card-header fw-medium align-middle">
-                <div class="me-auto">
-                    <i class="bi bi-info-circle"></i>
-                    <span class="fw-medium">Información</span>
 
+
+        <div class="mx-2 mb-4">
+            <div class="row align-items-start mb-1">
+
+                <div class="col py-2 border-end">
+                    <div class="small text-secondary">
+                        <i class="bi bi-box-arrow-in-right"></i> Entrega
+                    </div>
+                    <span class="text-nowrap fw-medium">{{ order.order_date|date:"d M, H:i" }}</span>
+                </div>
+
+                <div class="col py-2">
+                    <div class="small text-secondary">
+                        <i class="bi bi-box-arrow-in-left"></i> Devolución
+                    </div>
+                    <span class="text-nowrap fw-medium">{{ order.return_date|date:"d M, H:i" }}</span>
+                </div>
+
+                <div class="text-secondary">
                     {% if order.status in 'cancelled, rejected' %}
                         <span class="badge text-bg-danger">{{ order.get_status_display }}</span>
                     {% elif order.status in 'approved, delivered, returned' %}
-                        <span class="badge text-bg-success">{{ order.get_status_display }}</span>
+                        <span class="badge text-bg-success">Aprobada</span>
                     {% else %}
                         <span class="badge text-bg-secondary">{{ order.get_status_display }}</span>
                     {% endif %}
@@ -47,76 +61,60 @@
             </div>
 
 
-            <div class="card-body">
 
-                <div class="row ">
-                    <div class="row align-items-start ">
-
-                        <div class="col py-1">
-                            <span class="text-secondary "><i class="bi bi-box-arrow-in-right"></i> Entrega</span>
-                            <br>
-                            <span class="text-nowrap">{{ order.order_date|date:"d M · H:i" }}</span>
-                        </div>
-
-                        <div class="col border-start py-1">
-                            <span class="text-secondary "><i class="bi bi-box-arrow-in-left"></i> Devolución</span>
-                            <br>
-                            <span class="text-nowrap">{{ order.return_date|date:"d M · H:i" }}</span>
-                        </div>
-
+            {% if order.get_report %}
+                <div class="pt-4">
+                    <div class="text-secondary small">
+                        <i class="bi bi-exclamation-circle"></i> Reporte
                     </div>
+
+                    <span>{{ order.get_report.details }}</span>
                 </div>
+            {% endif %}
 
-
-            </div>
-
-
-            <div class="card-footer bg-transparent ">
-                <span class="small text-secondary">
-                    {{ order.created_at|date:"d/m/y · H:i" }}
-                </span>
-            </div>
 
         </div>
 
 
+        <div class="card mt-4">
 
-
-        {% if order.get_report %}
-            <div class="card my-4">
-                <div class="card-header fw-medium"><i class="bi bi-exclamation-circle"></i> Reporte</div>
-                <div class="card-body">
-                    <p>{{ order.get_report.details }}</p>
-                </div>
+            <div class="card-header">
+                <span class="small text-secondary">
+                    Artículos
+                </span>
             </div>
-        {% endif %}
 
-
-        <div class="card my-4">
-            <div class="card-header fw-medium">
-                Artículos
-            </div>
             <ul class="list-group list-group-flush">
                 {% for unit in order.units.all %}
 
                     <li class="list-group-item">
                         <div class="ms-2 me-auto">
-                            <div class="">{{ unit.item.name }}</div>
-                            <span class="text-secondary">{{ unit.serial_number }}</span>
+                            <div class="fw-medium">{{ unit.item.name }}</div>
+                            <span class="text-secondary small">{{ unit.serial_number }}</span>
                         </div>
                     </li>
 
                 {% endfor %}
             </ul>
         </div>
+
+
+    </div>
+
+
+    <div class="container my-3">
+        <span class="small text-secondary">
+            Creado el {{ order.created_at|date:"d/m/Y, H:i" }}
+        </span>
     </div>
 
 
 
+
     {% if order.status == 'pending' %}
-        <div class="container fixed-bottom">
-            <div class="d-grid mb-3">
-                <button class="btn btn-primary" type="button">Cancelar Orden</button>
+        <div class="container fixed-bottom bg-body">
+            <div class="d-grid my-3">
+                <button class="btn btn-primary btn-lg" type="button">Cancelar Orden</button>
             </div>
         </div>
     {% endif %}
