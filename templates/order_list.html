@@ -18,6 +18,8 @@
                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 34px, 0px);"
                     data-popper-placement="bottom-end">
                     <li><a class="dropdown-item py-2" href="{% url 'settings' %}">Ajustes</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'settings' %}">Información</a></li>
                 </ul>
             </div>
         </div>
@@ -45,22 +47,20 @@
 
 
     <div class="min-vh-100 ">
-
-        {# lista de ordenes anteriores #}
         <div class="container">
 
+            {# lista de ordenes anteriores #}
             <ul class="list-group list-group-flush pb-4">
 
                 {% for order in orders %}
-
                     <a class="list-group-item d-flex justify-content-between align-items-start"
                        href="{% url 'order_detail' order.pk %}">
 
                         <div class=" me-auto">
-                            <div class="fw-medium">{{ order.order_date|date:"F d, Y" }}</div>
+                            <div class="">{{ order.order_date|date:"F d, Y" }}</div>
 
                             {% if order.get_report.active %}
-                                <span class="text-secondary text-danger small">Reportada</span>
+                                <span class="text-secondary text-danger small fw-medium">Reportada</span>
                             {% else %}
                                 <span class="text-secondary small">{{ order.get_status_display }}</span>
                             {% endif %}
@@ -69,8 +69,8 @@
 
                         <span class="text-secondary small">{{ order.created_at|date:"d/m/y" }}</span>
                     </a>
-
                 {% endfor %}
+
             </ul>
         </div>
 {% endblock %}
