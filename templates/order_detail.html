@@ -19,16 +19,15 @@
 
 {% block content %}
 
-
-    <div class="container">
-
+    <div class="container mb-4">
 
         {% for message in messages %}
-            <ul class="message">
-                <li>{{ message }}</li>
-            </ul>
+            <div class="mt-2 mb-3" role="alert">
+                <div class="alert alert-primary d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill"></i><span class="ps-1">{{ message }}</span>
+                </div>
+            </div>
         {% endfor %}
-
 
 
         <div class="mb-4 mt-3 mx-2">
@@ -59,71 +58,55 @@
                 </div>
 
             </div>
-
-
-
         </div>
 
-     {% if order.get_report %}
 
-                <div class="card mt-4">
-
-                    <div class="card-header">
-                        <div class="text-secondary small">
-                            <i class="bi bi-exclamation-circle"></i> Reporte
-                        </div>
-                    </div>
-
-                    <div class="card-body">
-                        <span>{{ order.get_report.details }}</span>
+        {# Detalles de reporte #}
+        {% if order.get_report %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <div class="text-secondary small">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span>Reporte</span>
                     </div>
                 </div>
-            {% endif %}
+                <div class="card-body">
+                    <span>{{ order.get_report.details }}</span>
+                </div>
+            </div>
+        {% endif %}
 
 
+        {# Lista de Artículos #}
         <div class="card mt-4">
-
             <div class="card-header">
                 <span class="small text-secondary">
-                    <i class="bi bi-list-ul"></i> Artículos
+                    <i class="bi bi-list-ul"></i>
+                    <span>Artículos</span>
                 </span>
             </div>
-
             <ul class="list-group list-group-flush">
                 {% for unit in order.units.all %}
-
                     <li class="list-group-item">
                         <div class="ms-2 me-auto">
                             <div class="fw-medium">{{ unit.item.name }}</div>
                             <span class="text-secondary small">{{ unit.serial_number }}</span>
                         </div>
                     </li>
-
                 {% endfor %}
             </ul>
         </div>
 
 
-    </div>
-
-
-    <div class="container my-3">
-        <span class="small text-secondary">
-            Creado el {{ order.created_at|date:"d/m/Y, H:i" }}
-        </span>
-    </div>
-
-
-
-
-    {% if order.status == 'pending' %}
-        <div class="container fixed-bottom bg-body">
-            <div class="d-grid my-3">
-                <button class="btn btn-primary btn-lg" type="button">Cancelar Orden</button>
+        {# Botón de Cancelar para ordenes pendientes #}
+        {% if order.status == 'pending' %}
+            <div class="fixed-bottom bg-body">
+                <div class="d-grid my-3 mx-2">
+                    <button class="btn btn-primary btn-lg" type="button">Cancelar Orden</button>
+                </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
 
-
+    </div>
 
 {% endblock %}

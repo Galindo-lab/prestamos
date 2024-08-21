@@ -92,7 +92,7 @@
                        href="{% url 'order_detail' order.pk %}">
 
                         <div class=" me-auto">
-                            <div class="fw-medium">{{ order.created_at|date:"F d, Y" }}</div>
+                            <div class="fw-medium">{{ order.order_date|date:"F d, Y" }}</div>
 
                             {% if order.get_report.active %}
                                 <span class="text-secondary text-danger small">Reportada</span>
@@ -101,13 +101,13 @@
                             {% endif %}
                         </div>
 
-                        <span class="text-secondary small">{{ order.created_at|date:"H:i" }}</span>
+                        <span class="text-secondary small">{{ order.created_at|date:"d/m/y" }}</span>
 
                     </a>
 
                 {% endfor %}
 
-            </ul>
 
+            </ul>
         </div>
 {% endblock %}
