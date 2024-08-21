@@ -18,7 +18,9 @@
                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 34px, 0px);"
                     data-popper-placement="bottom-end">
                     <li><a class="dropdown-item py-2" href="{% url 'settings' %}">Ajustes</a></li>
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li><a class="dropdown-item py-2" href="{% url 'settings' %}">Información</a></li>
                 </ul>
             </div>
@@ -50,7 +52,7 @@
         <div class="container">
 
             {# lista de ordenes anteriores #}
-            <ul class="list-group list-group-flush pb-4">
+            <ul class="list-group list-group-flush">
 
                 {% for order in orders %}
                     <a class="list-group-item d-flex justify-content-between align-items-start"
@@ -71,6 +73,14 @@
                     </a>
                 {% endfor %}
 
+
             </ul>
+
+            {% if page_obj.has_next %}
+                <p class="text-center text-secondary pt-2 pb-3">
+                    Ver <a class="link-underline link-underline-opacity-0" href="/orders/history?page={{ page_obj.next_page_number }}">Ordenes anteriores</a>...
+                </p>
+            {% endif %}
+
         </div>
 {% endblock %}
