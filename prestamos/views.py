@@ -16,6 +16,14 @@ from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
 from .models import Order, Report, Item
 
 
+class ReportListView(LoginRequiredMixin, ListView):
+    model = Report
+    template_name = 'report_list.html'
+    context_object_name = 'reports'
+
+    def get_queryset(self):
+        return Report.objects.filter(order__user=self.request.user)
+
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'order_list.html'

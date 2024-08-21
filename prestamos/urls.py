@@ -1,7 +1,7 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path, reverse_lazy
 
-from prestamos.views import OrderAuthorize, SettingsView, OrderHistoryListView, OrderListView
+from prestamos.views import OrderAuthorize, SettingsView, OrderHistoryListView, OrderListView, ReportListView
 from prestamos.views import ReportCreateView
 from prestamos.views import OrderCreateView
 from prestamos.views import OrderDetailView
@@ -23,6 +23,7 @@ urlpatterns = [
     path('orders/create/', OrderCreateView.as_view(), name='order_create'),
     path(r'orders/history/', OrderHistoryListView.as_view(), name='order_history_list'),
     path('orders/', OrderListView.as_view(), name='order_list'),
+    path('reports/', ReportListView.as_view(), name='report_list'),
     path('orders/<int:pk>/', OrderDetailView.as_view(), name='order_detail'),
     path('orders/authorize/<int:pk>/', OrderAuthorize.as_view(), name='order_aprove'),
     path('orders/report/<int:pk>/', ReportCreateView.as_view(), name='order_report'),
