@@ -7,13 +7,17 @@ from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView
+from django.views.generic import CreateView, TemplateView
 from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import UpdateView
 
 from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
 from .models import Order, Report, Item
+
+
+class SettingsView(TemplateView):
+    template_name = "settings.html"
 
 
 class ReportCreateView(LoginRequiredMixin, CreateView):

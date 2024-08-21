@@ -1,0 +1,15 @@
+<!-- templates/order_form.html -->
+{% extends "bases/base.html" %}
+
+{% block nav %}
+
+    <div class="container-fluid ">
+        <div class="navbar-brand fw-bold">
+            Ajustes
+        </div>
+        <a class="btn" href="{{ request.META.HTTP_REFERER }}">
+            <i class="bi bi-x-lg"></i>
+        </a>
+    </div>
+
+{% endblock %}
