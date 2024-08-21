@@ -106,7 +106,7 @@ class OrderCreateView(LoginRequiredMixin, View):
 
 class OrderHistoryListView(LoginRequiredMixin, ListView):
     model = Order
-    template_name = 'order_list.html'
+    template_name = 'order_history_list.html'
     context_object_name = 'orders'
 
     def get_queryset(self):
