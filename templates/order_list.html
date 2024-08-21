@@ -17,7 +17,7 @@
                 <ul class="dropdown-menu text-small shadow-sm"
                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 34px, 0px);"
                     data-popper-placement="bottom-end">
-                    <li><a class="dropdown-item py-2" href="{%  url 'settings' %}">Ajustes</a></li>
+                    <li><a class="dropdown-item py-2" href="{% url 'settings' %}">Ajustes</a></li>
                 </ul>
             </div>
         </div>
@@ -28,16 +28,15 @@
 
 {% block content %}
 
-    <!-- Barra inferior -->
+    {# Barra inferior #}
     <div class="fixed-bottom">
 
-        <!-- Botón flotante -->
+        {#  Botón flotante  #}
         <div class="text-end">
             <a href="{% url 'order_create' %}" class="btn btn-lg btn-primary shadow-sm m-3">
                 <i class="bi bi-plus-lg"></i>
             </a>
         </div>
-
 
         {# barra de navegacion inferior #}
         {% include "navegation/bottom.html" with option=3 %}
@@ -45,15 +44,12 @@
     </div>
 
 
-
-
     <div class="min-vh-100 ">
 
         {# lista de ordenes anteriores #}
         <div class="container">
 
-
-            <ul class="list-group list-group-flush pb-3">
+            <ul class="list-group list-group-flush pb-4">
 
                 {% for order in orders %}
 
@@ -68,15 +64,13 @@
                             {% else %}
                                 <span class="text-secondary small">{{ order.get_status_display }}</span>
                             {% endif %}
+
                         </div>
 
                         <span class="text-secondary small">{{ order.created_at|date:"d/m/y" }}</span>
-
                     </a>
 
                 {% endfor %}
-
-
             </ul>
         </div>
 {% endblock %}

@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" x-data x-init="
-    document.documentElement.setAttribute('data-bs-theme', localStorage.getItem('theme') || 'dark')
-">
+<html lang="en" x-data x-init="document.documentElement.setAttribute('data-bs-theme', localStorage.getItem('theme'))">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -31,7 +29,7 @@
     </nav>
 </header>
 
-<main style="padding-top: 4rem; padding-bottom: 0rem;" class="container-flex">
+<main style="padding-top: 4rem; padding-bottom: 8rem;" class="container-flex">
     {% block content %}
         {# Aqui va el contenido #}
     {% endblock %}

@@ -13,3 +13,39 @@
     </div>
 
 {% endblock %}
+
+{% block content %}
+
+    <div class="d-flex">
+        <button class="btn btn-light"
+                :class="{'btn-secondary': $store.theme === 'dark'}"
+                @click="$store.theme = 'light'; saveTheme()">
+            <i class="bi bi-brightness-high"></i> Light
+        </button>
+        <button class="btn btn-dark ms-2"
+                :class="{'btn-secondary': $store.theme === 'light'}"
+                @click="$store.theme = 'dark'; saveTheme()">
+            <i class="bi bi-moon-stars"></i> Dark
+        </button>
+    </div>
+
+{% endblock %}
+
+
+{% block script %}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            // Inicializar el store de Alpine con el tema actual o el tema por defecto (light)
+            Alpine.store('theme', localStorage.getItem('theme') || 'light');
+
+            // Función para guardar el tema en localStorage y actualizar el atributo data-bs-theme
+            window.saveTheme = function () {
+                localStorage.setItem('theme', Alpine.store('theme'));
+                document.documentElement.setAttribute('data-bs-theme', Alpine.store('theme'));
+            };
+
+            // Aplicar el tema al cargar la página
+            document.documentElement.setAttribute('data-bs-theme', Alpine.store('theme'));
+        });
+    </script>
+{% endblock %}
