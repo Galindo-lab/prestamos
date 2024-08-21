@@ -64,14 +64,13 @@
 
                         <span class="text-secondary small">{{ order.created_at|date:"d/m/y" }}</span>
                     </a>
+
                 {% endfor %}
-
-
             </ul>
 
             {% if page_obj.has_next %}
                 <p class="text-center text-secondary pt-2 pb-3">
-                    Ver <a class="link-underline link-underline-opacity-0" href="/orders/history?page={{ page_obj.next_page_number }}">Ordenes anteriores</a>...
+                    Ver <a class="link-underline small link-underline-opacity-0" href="/orders/history?page={{ page_obj.next_page_number }}">Ordenes anteriores</a>...
                 </p>
             {% endif %}
 
