@@ -1,0 +1,47 @@
+<!-- templates/order_list.html -->
+{% extends "bases/base-nav.html" %}
+
+{% block nav %}
+
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="#">
+            Historial
+        </a>
+
+        <div class="d-flex align-items-center">
+            <!-- Dropdown -->
+            <div class="flex-shrink-0 dropdown">
+                <a href="#" class="d-block btn" data-bs-toggle="dropdown" aria-expanded="true">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu text-small shadow-sm"
+                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 34px, 0px);"
+                    data-popper-placement="bottom-end">
+                    <li><a class="dropdown-item py-2" href="{% url 'settings' %}">Ajustes</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item py-2" href="{% url 'settings' %}">Información</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    {# Barra inferior #}
+    <div class="fixed-bottom">
+
+        {#  Botón flotante  #}
+        <div class="text-end">
+            <a href="{% url 'order_create' %}" class="btn btn-lg btn-primary shadow-sm m-3">
+                <i class="bi bi-plus-lg"></i>
+            </a>
+        </div>
+
+        {# barra de navegacion inferior #}
+        {% include "navegation/bottom.html" with option=1 %}
+
+    </div>
+{% endblock %}
