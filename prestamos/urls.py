@@ -8,17 +8,11 @@ from prestamos.views import OrderDetailView
 
 
 urlpatterns = [
-    # login
-    path(route='', name='', view=LoginView.as_view(
-        template_name='login.html'
-    )),
-
-        path(route='login/', name='login', view=LoginView.as_view(
-        template_name='login.html'
-    )),
-
-    # logout
+    # login y logout
+    path(route='', name='', view=LoginView.as_view(template_name='login.html')),path(route='login/', name='login', view=LoginView.as_view(template_name='login.html')),
     path('logout/', LogoutView.as_view(), name='logout'),
+
+    # vistas
     path('orders/create/', OrderCreateView.as_view(), name='order_create'),
     path('orders/history/', OrderHistoryListView.as_view(), name='order_history_list'),
     path('orders/', OrderListView.as_view(), name='order_list'),
