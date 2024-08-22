@@ -1,7 +1,13 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en" x-data
       x-init="document.documentElement.setAttribute('data-bs-theme', localStorage.getItem('theme') || 'dark' )"
       data-bs-theme="dark">
+
+    {% load pwa %}
+    {% progressive_web_app_meta %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
