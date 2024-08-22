@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -27,7 +26,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -36,6 +34,7 @@ INSTALLED_APPS = [
     'colorfield',
     'django.contrib.admin',
     'import_export',
+    'pwa',
 
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,7 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'almacen.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -85,7 +83,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -105,7 +102,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -117,11 +113,14 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    "/var/www/static/",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -130,3 +129,41 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login
 LOGIN_REDIRECT_URL = ""
+
+# PWA
+PWA_APP_NAME = 'Prueba de Prestamos'
+PWA_APP_DESCRIPTION = "Prueba de prestamos"
+PWA_APP_THEME_COLOR = '#000000'
+PWA_APP_BACKGROUND_COLOR = '#000000'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+    {
+        'src': 'static/img.jpg',
+        'sizes': '160x160'
+    }
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        'src': 'static/img.jpg',
+        'sizes': '160x160'
+    }
+]
+PWA_APP_SPLASH_SCREEN = [
+    {
+        'src': 'static/img.jpg',
+        'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+    }
+]
+PWA_APP_SCREENSHOTS = [
+    {
+        'src': 'static/screenshot.jpg',
+        'sizes': '750x1334',
+        "type": "image/jpg"
+    }
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'en-US'
