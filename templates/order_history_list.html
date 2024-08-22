@@ -17,7 +17,7 @@
     </div>
 
 
-    <div class="min-vh-100 ">
+    <div class="">
         <div class="container">
 
             {# lista de ordenes anteriores #}
@@ -45,8 +45,8 @@
             </ul>
 
             {% if page_obj.has_next %}
-                <div class="text-center pt-3 verical-align-center">
-                    <a class="btn btn-outline-secondary" href="{% url 'order_history_list' %}?page={{ page_obj.next_page_number }}">Ver más Ordenes</a>
+                <div class="text-center verical-align-center">
+                    <a class="btn btn-outline-secondary mb-5" href="{% url 'order_history_list' %}?page={{ page_obj.next_page_number }}">Ver más Ordenes</a>
                 </div>
             {% endif %}
 
