@@ -1,5 +1,135 @@
 <!-- templates/order_form.html -->
-{% extends "bases/base.html" %}
+{% extends "bases/base-nav.html" %}
+
+{% block nav %}
+    <div class="container-fluid">
+
+
+        <div class="ms-0">
+            <a class="btn" href="{{ request.META.HTTP_REFERER }}">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+            <span class="fw-bold">Artículos</span>
+        </div>
+
+    <a class="btn" href="{{ request.META.HTTP_REFERER }}">
+<i class="bi bi-search"></i>
+        </a>
+
+    </div>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+    <div class="fixed-bottom">
+
+        {#  Botón flotante  #}
+        <div class="text-end">
+            <a href="{% url 'order_create' %}" class="btn btn-lg btn-primary shadow-sm m-3 position-relative">
+                <i class="bi bi-cart"></i>
+
+                <span class="position-absolute fw-normal top-0 start-0 translate-middle badge rounded-pill bg-danger">
+                    1
+                    <span class="visually-hidden">unread messages</span>
+                </span>
+
+            </a>
+        </div>
+
+    </div>
+
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Crear Orden</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    {% for message in messages %}
+                        <ul class="message">
+                            <li>{{ message }}</li>
+                        </ul>
+
+                    {% endfor %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ order_form.as_p }}
+
+                        <h4>Items</h4>
+                        {{ item_formset.management_form }}
+
+                        <template x-for="(item, index) in items" :key="item.id">
+                            <div class="p-3 mb-2 bg-primary text-white">
+                                <label x-text="item.name"></label>
+                                <input type="hidden" x-model="item.id" :name="`form-${index}-item`">
+                                <input type="number" min="0" x-model="item.quantity" :name="`form-${index}-quantity`">
+
+                                <button type="button" @click="removeItem(index)">x</button>
+                            </div>
+                        </template>
+
+                        <input type="submit">
+                    </form>
+
+
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="container" x-data="dropdown">
+
+        <div class="container">
+            {% for item in items %}
+                <span href="#" class="row pb-3">
+                    <div class="col-4 my-auto p-0">
+                        <img src="https://picsum.photos/200/200" class="img-fluid h-100 rounded-1" alt="Laptop"/>
+                    </div>
+                    <div class="col-8">
+                        <div class="mt-auto">
+
+                            <p class="mb-0 fw-medium text-truncate">{{ item.name }}</p>
+
+                            <p class="text-muted small text-truncate">
+                                {{ item.description }}
+                            </p>
+
+                            <button class="btn btn-outline-primary btn-sm mt-auto"
+                                    @click="addItem( {{ item.pk }},'{{ item.name }}')">
+                                Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </span>
+            {% endfor %}
+        </div>
+
+
+        {% comment %}
+        {% endcomment %}
+    </div>
+
+{% endblock %}
+
+
 
 {% block script %}
     <script>
@@ -32,50 +162,4 @@
             }));
         });
     </script>
-{% endblock %}
-
-
-{% block content %}
-
-
-    <div class="container" x-data="dropdown">
-
-        <div class="pb-4">
-            <h2>Articulos</h2>
-            {% for item in items %}
-                <button @click="addItem( {{ item.pk }}, '{{ item.name }}' )">
-                    {{ item.name }}
-                </button>
-            {% endfor %}
-        </div>
-
-        <h2>Crear Orden</h2>
-
-        {% for message in messages %}
-            <ul class="message">
-                <li>{{ message }}</li>
-            </ul>
-        {% endfor %}
-
-        <form method="post">
-            {% csrf_token %}
-            {{ order_form.as_p }}
-
-            <h4>Items</h4>
-            {{ item_formset.management_form }}
-
-            <template x-for="(item, index) in items" :key="item.id">
-                <div class="p-3 mb-2 bg-primary text-white">
-                    <label x-text="item.name"></label>
-                    <input type="hidden" x-model="item.id" :name="`form-${index}-item`">
-                    <input type="number" min="0" x-model="item.quantity" :name="`form-${index}-quantity`">
-
-                    <button type="button" @click="removeItem(index)">x</button>
-                </div>
-            </template>
-
-            <input type="submit">
-        </form>
-    </div>
-
 {% endblock %}
