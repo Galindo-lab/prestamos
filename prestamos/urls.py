@@ -21,7 +21,7 @@ urlpatterns = [
     # logout
     path('logout/', LogoutView.as_view(), name='logout'),
     path('orders/create/', OrderCreateView.as_view(), name='order_create'),
-    path(r'orders/history/', OrderHistoryListView.as_view(), name='order_history_list'),
+    path('orders/history', OrderHistoryListView.as_view(), name='order_history_list'),
     path('orders/', OrderListView.as_view(), name='order_list'),
     path('reports/', ReportListView.as_view(), name='report_list'),
     path('orders/<int:pk>/', OrderDetailView.as_view(), name='order_detail'),

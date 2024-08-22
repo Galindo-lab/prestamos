@@ -45,10 +45,11 @@
             </ul>
 
             {% if page_obj.has_next %}
-                <p class="text-center text-secondary pt-2">
-                    Ver <a class="link-underline small link-underline-opacity-0" href="/orders/history?page={{ page_obj.next_page_number }}">Ordenes anteriores</a>...
-                </p>
+                <div class="text-center pt-4 verical-align-center">
+                    <a class="btn btn-outline-secondary" href="{% url 'order_history_list' %}?page={{ page_obj.next_page_number }}">Ver más Ordenes</a>
+                </div>
             {% endif %}
 
         </div>
+    </div>
 {% endblock %}
