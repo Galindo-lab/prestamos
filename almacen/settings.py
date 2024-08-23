@@ -127,9 +127,11 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login
-LOGIN_REDIRECT_URL = ""
+LOGIN_REDIRECT_URL = 'order_list'
 
 # PWA
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = LANGUAGE_CODE
 PWA_APP_NAME = 'Prueba de Prestamos'
 PWA_APP_DESCRIPTION = "Prueba de prestamos"
 PWA_APP_THEME_COLOR = '#000000'
@@ -164,5 +166,4 @@ PWA_APP_SCREENSHOTS = [
         "type": "image/jpg"
     }
 ]
-PWA_APP_DIR = 'ltr'
-PWA_APP_LANG = 'en-US'
+

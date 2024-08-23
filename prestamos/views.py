@@ -118,7 +118,7 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
     context_object_name = 'orders'
     
     # TODO agregar esto a una configuracion del sistema
-    paginate_by = 10 
+    paginate_by = 100 
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)

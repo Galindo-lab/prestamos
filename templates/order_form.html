@@ -7,13 +7,13 @@
 
         <div class="ms-0">
             <a class="btn" href="{{ request.META.HTTP_REFERER }}">
-            <i class="bi bi-arrow-left"></i>
-        </a>
+                <i class="bi bi-arrow-left"></i>
+            </a>
             <span class="fw-bold">Artículos</span>
         </div>
 
-    <a class="btn" href="{{ request.META.HTTP_REFERER }}">
-<i class="bi bi-search"></i>
+        <a class="btn" href="{{ request.META.HTTP_REFERER }}">
+            <span class="small">10</span>                 <i class="bi bi-cart"></i>
         </a>
 
     </div>
@@ -23,23 +23,6 @@
 
 
 {% block content %}
-
-    <div class="fixed-bottom">
-
-        {#  Botón flotante  #}
-        <div class="text-end">
-            <a href="{% url 'order_create' %}" class="btn btn-lg btn-primary shadow-sm m-3 position-relative">
-                <i class="bi bi-cart"></i>
-
-                <span class="position-absolute fw-normal top-0 start-0 translate-middle badge rounded-pill bg-danger">
-                    1
-                    <span class="visually-hidden">unread messages</span>
-                </span>
-
-            </a>
-        </div>
-
-    </div>
 
     <!-- The Modal -->
     <div class="modal" id="myModal">
@@ -98,28 +81,34 @@
     <div class="container" x-data="dropdown">
 
         <div class="container">
+
             {% for item in items %}
-                <span href="#" class="row pb-3">
-                    <div class="col-4 my-auto p-0">
+                <div href="#" class="row pb-3">
+
+                    <div class="col-3 my-auto ps-0">
                         <img src="https://picsum.photos/200/200" class="img-fluid h-100 rounded-1" alt="Laptop"/>
                     </div>
-                    <div class="col-8">
-                        <div class="mt-auto">
 
-                            <p class="mb-0 fw-medium text-truncate">{{ item.name }}</p>
+                    <div class="col-6 ps-0">
 
-                            <p class="text-muted small text-truncate">
-                                {{ item.description }}
-                            </p>
+                        <span class="mb-0 fw-medium text-truncate">{{ item.name }}</span>
 
-                            <button class="btn btn-outline-primary btn-sm mt-auto"
-                                    @click="addItem( {{ item.pk }},'{{ item.name }}')">
-                                Agregar al carrito
-                            </button>
-                        </div>
+                        <p class="text-muted small text-truncate">
+                            {{ item.description }}
+                        </p>
+
                     </div>
-                </span>
+
+                    <div class="col-3">
+                        <button class="btn btn-outline-primary btn-sm mt-auto"
+                                @click="addItem( {{ item.pk }},'{{ item.name }}')">
+                            Agregar
+                        </button>
+                    </div>
+
+                </div>
             {% endfor %}
+
         </div>
 
 
