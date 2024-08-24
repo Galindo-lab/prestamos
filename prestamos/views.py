@@ -13,7 +13,7 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView
 
 from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
-from .models import Order, Report, Item
+from .models import Order, Report, Item, Category
 
 
 class ReportListView(LoginRequiredMixin, ListView):
@@ -70,7 +70,8 @@ class OrderCreateView(LoginRequiredMixin, View):
         return render(request, self.template, {
             'order_form': OrderForm(),
             'item_formset': OrderItemFormSet(),
-            'items': Item.objects.all()
+            'items': Item.objects.all(),
+            'categories': Category.objects.all()
         })
 
     def post(self, request, *args, **kwargs):
@@ -108,7 +109,8 @@ class OrderCreateView(LoginRequiredMixin, View):
         return render(request, self.template, {
             'order_form': order_form,
             'item_formset': item_formset,
-            'items': Item.objects.all()
+            'items': Item.objects.all(),
+            'categories': Category.objects.all()
         })
 
 

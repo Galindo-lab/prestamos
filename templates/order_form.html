@@ -1,9 +1,47 @@
 <!-- templates/order_form.html -->
 {% extends "bases/base-nav.html" %}
 
+
+{% block script %}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('app', () => ({
+                items: [],
+                a: "b",
+
+                getItemsLength() {  // Cambié "getItemsLenght" a "getItemsLength"
+                    return this.items.length;  // Cambié "lenght" a "length"
+                },
+
+                addItem(id, name) {
+                    // No agregar elementos duplicados
+                    if (this.items.find(item => item.id === id)) return;
+
+                    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+                    totalForms.value = this.items.length + 1;
+
+                    // Agregar elemento al array items
+                    this.items.push({id: id, name: name, quantity: 1});
+                    console.log(this.items);
+                },
+
+                removeItem(index) {
+                    // Eliminar el elemento del array en el índice especificado
+                    this.items.splice(index, 1);
+
+                    // Actualizar el total de formularios
+                    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+                    totalForms.value = this.items.length;
+
+                    console.log(this.items);
+                }
+            }));
+        });
+    </script>
+{% endblock %}
+
 {% block nav %}
     <div class="container-fluid">
-
 
         <div class="ms-0">
             <a class="btn" href="{{ request.META.HTTP_REFERER }}">
@@ -12,20 +50,18 @@
             <span class="fw-bold">Artículos</span>
         </div>
 
-        <a class="btn" href="{{ request.META.HTTP_REFERER }}">
-            <span class="small">10</span>                 <i class="bi bi-cart"></i>
-        </a>
+        <btn class="btn text-primary" data-bs-toggle="modal" data-bs-target="#modal">
+            <span class="small" x-text="getItemsLength()"></span> <i class="bi bi-cart"></i>
+        </btn>
 
     </div>
-
 {% endblock %}
-
 
 
 {% block content %}
 
     <!-- The Modal -->
-    <div class="modal" id="myModal">
+    <div class="modal" id="modal">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
 
@@ -56,7 +92,6 @@
                                 <label x-text="item.name"></label>
                                 <input type="hidden" x-model="item.id" :name="`form-${index}-item`">
                                 <input type="number" min="0" x-model="item.quantity" :name="`form-${index}-quantity`">
-
                                 <button type="button" @click="removeItem(index)">x</button>
                             </div>
                         </template>
@@ -78,38 +113,45 @@
 
 
 
-    <div class="container" x-data="dropdown">
+    <div class="container">
 
-        <div class="container">
-
-            {% for item in items %}
-                <div href="#" class="row pb-3">
-
-                    <div class="col-3 my-auto ps-0">
-                        <img src="https://picsum.photos/200/200" class="img-fluid h-100 rounded-1" alt="Laptop"/>
-                    </div>
-
-                    <div class="col-6 ps-0">
-
-                        <span class="mb-0 fw-medium text-truncate">{{ item.name }}</span>
-
-                        <p class="text-muted small text-truncate">
-                            {{ item.description }}
-                        </p>
-
-                    </div>
-
-                    <div class="col-3">
-                        <button class="btn btn-outline-primary btn-sm mt-auto"
-                                @click="addItem( {{ item.pk }},'{{ item.name }}')">
-                            Agregar
-                        </button>
-                    </div>
-
-                </div>
-            {% endfor %}
-
+        <div class="mb-2">
+            <div class="input-group input-group-md">
+                <input type="search" class="form-control" placeholder="Buscar artículos">
+            </div>
         </div>
+
+        <div class="mb-3">
+            {% for categories in categories %}
+                <a class="badge rounded-pill text-bg-primary">{{ categories.name }}</a>
+            {% endfor %}
+        </div>
+
+
+        {% for item in items %}
+            <div class="row mb-3 mx-1">
+
+                <div class="col-3 my-auto ps-0">
+                    <img src="https://picsum.photos/200/200" class="img-fluid h-100 rounded-1" alt="Laptop"/>
+                </div>
+
+                <a class="col-6 ps-0 text-body link-underline link-underline-opacity-0" href="#">
+                    <p class="mb-0 fw-medium text-truncate">{{ item.name }}</p>
+                    <p class="text-muted small text-truncate m-0">
+                        {{ item.description }}
+                    </p>
+                </a>
+
+                <div class="col-3 m-0">
+                    <button class="btn btn-outline-primary btn-sm mt-auto"
+                            @click="addItem( {{ item.pk }}, '{{ item.name }}')">
+                        Agregar
+                    </button>
+                </div>
+
+            </div>
+        {% endfor %}
+
 
 
         {% comment %}
@@ -119,36 +161,3 @@
 {% endblock %}
 
 
-
-{% block script %}
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('dropdown', () => ({
-                items: [],
-
-                addItem(id, name) {
-                    // No agregar elementos duplicados
-                    if (this.items.find(item => item.id === id)) return;
-
-                    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
-                    totalForms.value = this.items.length + 1;
-
-                    // Agregar elemento al array items
-                    this.items.push({id: id, name: name, quantity: 1});
-                    console.log(this.items);
-                },
-
-                removeItem(index) {
-                    // Eliminar el elemento del array en el índice especificado
-                    this.items.splice(index, 1);
-
-                    // Actualizar el total de formularios
-                    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
-                    totalForms.value = this.items.length;
-
-                    console.log(this.items);
-                }
-            }));
-        });
-    </script>
-{% endblock %}

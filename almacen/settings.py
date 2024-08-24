@@ -169,3 +169,6 @@ PWA_APP_SCREENSHOTS = [
     }
 ]
 
+# admin personalizado
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
