@@ -6,6 +6,7 @@ from django.db import transaction
 from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views import View
 from django.views.generic import CreateView, TemplateView
 from django.views.generic import DetailView
@@ -23,6 +24,7 @@ class ReportListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Report.objects.filter(order__user=self.request.user)
+
 
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
@@ -118,12 +120,13 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'order_history_list.html'
     context_object_name = 'orders'
-    
+
     # TODO agregar esto a una configuracion del sistema
-    paginate_by = 100 
+    paginate_by = 100
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        # ordenes del usuario que ya hayan pasado
+        return Order.objects.filter(user=self.request.user, order_date__gt=timezone.now())
 
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
