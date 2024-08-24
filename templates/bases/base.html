@@ -5,8 +5,8 @@
       x-init="document.documentElement.setAttribute('data-bs-theme', localStorage.getItem('theme') || 'dark' )"
       data-bs-theme="dark">
 
-    {% load pwa %}
-    {% progressive_web_app_meta %}
+{% load pwa %}
+{% progressive_web_app_meta %}
 
 <head>
     <meta charset="UTF-8">
@@ -35,28 +35,13 @@
 
 <header>
     {% block header %}
-        <nav class="container py-3 d-flex justify-content-between align-items-center">
-            <div>
-                [<a href="{% url 'order_history_list' %}">Mis Ordenes</a>]
-                [<a href="{% url 'order_create' %}">Crear Orden</a>]
-                [<a href="{% url 'login' %}">Login</a>]
-                [<a href="/admin/">Admin</a>]
 
-                <form method="post" action="{% url 'logout' %}" class="d-inline">
-                    {% csrf_token %}
-                    <button name="logout-submit" type="submit" class="btn btn-link p-0">Logout</button>
-                </form>
-            </div>
-
-        </nav>
     {% endblock %}
 </header>
 
-<main class="container mt-4">
-    {% block content %}
-        {# Aquí va el contenido #}
-    {% endblock %}
-</main>
+{% block content %}
+    {# Aquí va el contenido #}
+{% endblock %}
 
 <footer class="container mt-4">
     {% block footer %}

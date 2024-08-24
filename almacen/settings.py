@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'colorfield',
     'django.contrib.admin',
     'import_export',
+    'widget_tweaks',
     'pwa',
 
     'django.contrib.auth',
@@ -128,6 +129,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login
 LOGIN_REDIRECT_URL = 'order_list'
+LOGOUT_REDIRECT_URL = '/'
 
 # PWA
 PWA_APP_DIR = 'ltr'

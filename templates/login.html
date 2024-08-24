@@ -1,12 +1,70 @@
 {% extends "bases/base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block script %}
+    <style>
+        body, html {
+            height: 100%;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h2>Iniciar sesión</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Iniciar sesión</button>
-        </form>
+    <div class="container d-flex h-100" x-data="{ show: false }">
+        <div class="align-self-center w-100 p-4">
+            <div class="col mx-auto">
+
+                <img class="mb-4" src="{% static 'img.jpg' %}" alt="" width="57" height="57">
+
+                <h2 class="mb-3 fw-normal">Iniciar sesión</h2>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <div class="input-group mb-3 border rounded">
+                        <div class="form-floating">
+                            {% render_field form.username autocorrect="off" autocapitalize="off" class="form-control border border-0" id="floatingInput" placeholder="" %}
+                            <label for="floatingInput">Usuario</label>
+                        </div>
+                    </div>
+
+                    <div class="input-group mb-2 border rounded">
+                        <div class="form-floating">
+                            <input :type="show ? 'text' : 'password'" class="form-control border border-0"
+                                   id="floatingPassword" placeholder="Password" name="password">
+                            <label for="floatingPassword">Contraseña</label>
+                        </div>
+
+                        <button class="btn text-muted" type="button" @click="show = !show">
+                            <i :class="show ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                        </button>
+                    </div>
+
+                    {% if form.errors %}
+                        <ul class="list-group mt-3">
+                            <li class="list-group-item list-group-item-danger small">
+                                <i class="bi bi-exclamation-circle"></i> Nombre de usuario o contraseña incorrectos.
+                                Intente nuevamente. Si el problema persiste, contacte al administrador del sistema.
+                            </li>
+                        </ul>
+                    {% endif %}
+
+                    <button class="btn btn-primary w-100 mt-3 py-2" type="submit">
+                        Iniciar sesión
+                    </button>
+
+                </form>
+
+
+                <div class="mt-3 text-center">
+                    <a class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                       href="#">Olvide mi contraseña</a>
+                </div>
+
+            </div>
+        </div>
     </div>
+
 {% endblock %}

@@ -9,7 +9,7 @@ from prestamos.views import OrderDetailView
 
 urlpatterns = [
     # login y logout
-    path(route='', name='', view=LoginView.as_view(template_name='login.html')),path(route='login/', name='login', view=LoginView.as_view(template_name='login.html')),
+    path(route='', name='login', view=LoginView.as_view(template_name='login.html')),
     path('logout/', LogoutView.as_view(), name='logout'),
 
     # vistas
