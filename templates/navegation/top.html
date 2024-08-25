@@ -16,15 +16,16 @@
                     <a class="dropdown-item py-2" href="{% url 'settings' %}">Ajustes</a>
                 </li>
                 <li>
-                    <hr class="dropdown-divider">
-                </li>
-                <li>
                     <a class="dropdown-item py-2" href="{% url 'settings' %}">Información</a>
+                </li>
+
+                <li>
+                    <hr class="dropdown-divider">
                 </li>
                 <li>
                     <form method="post" action="{% url 'logout' %}" class="d-inline">
                     {% csrf_token %}
-                    <button name="logout-submit" type="submit" class="btn btn-link p-0">Logout</button>
+                    <button name="logout-submit" type="submit" class="dropdown-item py-2">Cerrar Sesión</button>
                 </form>
                 </li>
             </ul>
