@@ -16,8 +16,13 @@
     </a>
 
     <a href="{% url 'report_list' %}" class="col-3 text-center btn btn-sm py-2">
-        <div class="rounded-pill pt-2 pb-1 {% if option == 3 %} bg-primary-subtle {% endif %}">
-            <i class="bi bi-card-text h4"></i>
+        <div class="rounded-pill pt-2 pb-1  {% if option == 3 %} bg-primary-subtle {% endif %}">
+
+            <div class="position-relative">
+                <i class="bi bi-card-text h4 "></i>
+                {# <span class="position-absolute top-0 start-95 translate-middle p-1 bg-danger border border-light rounded-circle"> #}
+            </div>
+
         </div>
         <span class="small {% if option == 3 %} fw-medium {% endif %}">Reportes</span>
     </a>
