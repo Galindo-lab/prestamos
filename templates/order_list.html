@@ -35,14 +35,14 @@
                         <div class="row align-items-start">
                             <div class="col">
                                 <span class="text-nowrap fw-medium">{{ order.order_date|date:'g:i A' }}</span>
-                                <div class="small text-secondary">
+                                <div class="small text-muted">
                                     <i class="bi bi-box-arrow-in-right"></i> Entrega
                                 </div>
                             </div>
 
                             <div class="col">
                                 <span class="text-nowrap fw-medium">{{ order.return_date|date:'g:i A' }}</span>
-                                <div class="small text-secondary ">
+                                <div class="small text-muted">
                                     <i class="bi bi-box-arrow-in-left"></i> Devolución
                                 </div>
                             </div>
@@ -51,14 +51,14 @@
                         <div class="row align-items-start pt-3 ">
                             <div class="col">
                                 <span class="text-nowrap fw-medium">{{ order.order_date|date:'d F' }}</span>
-                                <div class="small text-secondary">
+                                <div class="small text-muted">
                                     <i class="bi bi-calendar2-date"></i> Fecha
                                 </div>
                             </div>
 
                             <div class="col">
                                 <span class="text-nowrap fw-medium">{{ order.get_status_display }}</span>
-                                <div class="small text-secondary">
+                                <div class="small text-muted">
                                     <i class="bi bi-clipboard2"></i> {% if order.units.count == 1 %} Artículo {% else %}
                                     Estado {% endif %}
                                 </div>
@@ -69,7 +69,7 @@
             {% endif %}
         {% endfor %}
 
-        <div class="mb-1 mt-4 text-muted">Proximas</div>
+        <div class="mb-1 mt-4 text-muted small">Proximas</div>
         <ul class="list-group pb-3">
             {% for order in orders %}
                 {% if order.status == 'approved' %}
@@ -78,7 +78,7 @@
 
                         <div class=" me-auto text-truncate">
                             {{ order.order_date|date:"d" }} de {{ order.order_date|date:"F" }} <br>
-                            <span class="small text-muted">{{ order.order_date|date:"g:i A" }}</span>
+                            <span class="small text-secondary">{{ order.order_date|date:"g:i A" }}</span>
                         </div>
                     </a>
                 {% endif %}
