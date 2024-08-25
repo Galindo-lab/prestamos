@@ -20,76 +20,77 @@
             </div>
         {% endfor %}
 
-        <img src="{% qr_url_from_text request.build_absolute_uri  %}" alt="Hello World!">
+
+        <div class="card mb-2">
 
 
+            <div class="card-body">
 
-        <div class="mb-5 mt-4 mx-2">
-            <div class="row align-items-start my-1">
-                <div class="col py-2 mb-1 border-end">
-                    <div class="small text-secondary pb-1">
-                        <i class="bi bi-box-arrow-in-right"></i> Entrega
+                <div class="text-center mt-3 mb-4">
+                    <img src="{% qr_url_from_text request.build_absolute_uri border=3 size=16 %}" alt="qr orden">
+                </div>
+
+                <div class="row align-items-start pb-3 ">
+                    <div class="col">
+                        <span class="text-nowrap fw-medium">{{ order.order_date|date:'d F' }}</span>
+                        <div class="small text-secondary">
+                            <i class="bi bi-calendar2-date"></i> Fecha
+                        </div>
                     </div>
-                    <span class="text-nowrap fw-medium h5">{{ order.order_date|date:'d M, H:i' }}</span>
-                </div>
 
-                <div class="col py-2 mb-1">
-                    <div class="small text-secondary pb-1">
-                        <i class="bi bi-box-arrow-in-left"></i> Devolución
+                    <div class="col">
+                        <span class="text-nowrap fw-medium">{{ order.get_status_display }}</span>
+                        <div class="small text-secondary">
+                            <i class="bi bi-clipboard2"></i> {% if order.units.count == 1 %} Artículo {% else %}
+                            Estado {% endif %}
+                        </div>
                     </div>
-                    <span class="text-nowrap fw-medium h5">{{ order.return_date|date:'d M, H:i' }}</span>
                 </div>
 
-                <div class="pt-2">
-                    {% if order.status in 'cancelled, rejected' %}
-                        <span class="badge text-bg-danger">{{ order.get_status_display }}</span>
-                    {% elif order.status in 'approved, delivered, returned' %}
-                        <span class="badge text-bg-success">Aprobada</span>
-                    {% else %}
-                        <span class="badge text-bg-secondary">{{ order.get_status_display }}</span>
-                    {% endif %}
+                <div class="row align-items-start">
+                    <div class="col">
+                        <span class="text-nowrap fw-medium">{{ order.order_date|date:'g:i A' }}</span>
+                        <div class="small text-secondary">
+                            <i class="bi bi-box-arrow-in-right"></i> Entrega
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <span class="text-nowrap fw-medium">{{ order.return_date|date:'g:i A' }}</span>
+                        <div class="small text-secondary ">
+                            <i class="bi bi-box-arrow-in-left"></i> Devolución
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
 
         {# Detalles de reporte #}
         {% if order.get_report %}
-            <div class="card mt-4">
-                <div class="card-header">
-                    <div class="text-secondary small">
-                        <i class="bi bi-exclamation-circle"></i>
-                        <span>Reporte</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <span>{{ order.get_report.details }}</span>
-                </div>
+            <div class="mb-1 mt-4 text-muted">Reporte</div>
+            <div class="card">
+                <p class="card-body pb-0">{{ order.get_report.details }}</p>
             </div>
+
         {% endif %}
 
-        {# Lista de Artículos #}
-        <div class="card mt-4">
-            <div class="card-header">
-        <span class="small text-secondary">
-          <i class="bi bi-list-ul"></i>
-          <span>Artículos</span>
-        </span>
-            </div>
-            <ul class="list-group list-group-flush">
-                {% for unit in order.units.all %}
-                    <li class="list-group-item">
-                        <div class="ms-2 me-auto">
-                            <div class="">{{ unit.item.name }}</div>
-                            <span class="text-secondary small">{{ unit.serial_number }}</span>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+
+        <div class="mb-1 mt-4 text-muted">Artículos</div>
+        <ul class="list-group ">
+            {% for unit in order.units.all %}
+                <li class="list-group-item">
+                    <div class="ms-2 me-auto">
+                        <div class="">{{ unit.item.name }}</div>
+                        <span class="text-secondary small">{{ unit.serial_number }}</span>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
 
         {# Botón de Cancelar para ordenes pendientes #}
         {% if order.status == 'pending' %}
-            <div class="fixed-bottom bg-body">
+            <div class="fixed-bottom">
                 <div class="d-grid my-3 mx-2">
                     <button class="btn btn-primary btn-lg" type="button">Cancelar Orden</button>
                 </div>
