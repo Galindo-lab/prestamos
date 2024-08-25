@@ -14,7 +14,7 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView
 
 from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
-from .models import Order, Report, Item, Category
+from .models import Order, Report, Item, Category, OrderStatusChoices
 
 
 class ReportListView(LoginRequiredMixin, ListView):
@@ -32,7 +32,15 @@ class OrderListView(LoginRequiredMixin, ListView):
     context_object_name = 'orders'
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        return Order.objects.filter(
+            user=self.request.user,
+            order_date__gt=timezone.now(),
+            status__in=[
+                OrderStatusChoices.PENDING,
+                OrderStatusChoices.APPROVED,
+                OrderStatusChoices.DELIVERED
+            ],
+        )
 
 
 class SettingsView(LoginRequiredMixin, TemplateView):
@@ -126,7 +134,7 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         # ordenes del usuario que ya hayan pasado
-        return Order.objects.filter(user=self.request.user, order_date__gt=timezone.now())
+        return Order.objects.filter(user=self.request.user, order_date__lt=timezone.now())
 
 
 class OrderDetailView(LoginRequiredMixin, DetailView):

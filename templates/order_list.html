@@ -20,4 +20,90 @@
         {% include "navegation/bottom.html" with option=1 %}
 
     </div>
+
+
+    <div class="">
+        <div class="container">
+
+            {# lista de ordenes anteriores #}
+            <div class=" h5 mb-2 mt-2">Activas</div>
+            {% for order in orders %}
+                {% if order.status == 'delivered' %}
+                    <a class="card mb-2 border-0 bg-body-secondary link-underline link-underline-opacity-0" href="
+                    {% url 'order_detail' order.pk %}">
+
+                        <div class="card-body">
+
+                            <div class="row align-items-start">
+                                <div class="col">
+                                    <span class="text-nowrap fw-medium">{{ order.order_date|date:'g:i A' }}</span>
+                                    <div class="small text-secondary">
+                                        Entrega
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <span class="text-nowrap fw-medium">{{ order.return_date|date:'g:i A' }}</span>
+                                    <div class="small text-secondary ">
+                                        Devolución
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row align-items-start pt-3 ">
+                                <div class="col">
+                                    <span class="text-nowrap fw-medium">{{ order.order_date|date:'d F' }}</span>
+                                    <div class="small text-secondary">
+                                        Fecha
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <span class="text-nowrap fw-medium">{{ order.units.count }}</span>
+                                    <div class="small text-secondary">
+                                        {% if order.units.count == 1 %} Artículo {% else %} Artículos {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+                    </a>
+
+
+                {% endif %}
+            {% endfor %}
+
+
+            <div class="mb-2 mt-3 text-muted">Proximas</div>
+
+
+            <ul class="list-group pb-3">
+
+                {% for order in orders %}
+
+                    {% if order.status == 'approved' %}
+                        <a class="list-group-item d-flex justify-content-between align-items-start"
+                           href="{% url 'order_detail' order.pk %}">
+
+                            <div class=" me-auto">
+                                <div class="">{{ order.order_date|date:"F d, Y" }}</div>
+
+                                {% if order.get_report.active %}
+                                    <span class="text-secondary text-danger small fw-medium">Reportada</span>
+                                {% else %}
+                                    <span class="text-secondary small">{{ order.get_status_display }}</span>
+                                {% endif %}
+                            </div>
+
+                            <span class="text-secondary small">{{ order.created_at|date:"d/m/y" }}</span>
+                        </a>
+                    {% endif %}
+
+                {% endfor %}
+            </ul>
+
+
 {% endblock %}
