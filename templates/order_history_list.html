@@ -21,7 +21,7 @@
         <div class="container">
 
             {# lista de ordenes anteriores #}
-            <ul class="list-group list-group-flush pb-3">
+            <ul class="list-group pb-3">
 
                 {% for order in orders %}
                     <a class="list-group-item d-flex justify-content-between align-items-start"
@@ -32,6 +32,8 @@
 
                             {% if order.get_report.active %}
                                 <span class="text-secondary text-danger small fw-medium">Reportada</span>
+                            {% elif order.status == 'pending' %}
+                                <span class="text-secondary small">Vencida</span>
                             {% else %}
                                 <span class="text-secondary small">{{ order.get_status_display }}</span>
                             {% endif %}
