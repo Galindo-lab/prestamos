@@ -25,7 +25,7 @@
     <div class="container">
 
         {# lista de ordenes anteriores #}
-        <div class="h5 mb-2 mt-2 text-muted">Activas</div>
+        <div class="mb-2 mt-2 text-muted">Activas</div>
         {% for order in orders %}
             {% if order.status == 'delivered' %}
                 <a class="card mb-2 py-1 link-underline link-underline-opacity-0"
