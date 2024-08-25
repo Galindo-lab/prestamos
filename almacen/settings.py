@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'colorfield',
     'django.contrib.admin',
     'import_export',
+    'qr_code',
     'widget_tweaks',
     'pwa',
 

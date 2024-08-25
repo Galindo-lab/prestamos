@@ -23,4 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('prestamos.urls')),
     path('', include('pwa.urls')),
+    path('qr_code/', include('qr_code.urls', namespace="qr_code")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
