@@ -7,6 +7,7 @@
 
 {% block content %}
     <div class="container" style="padding-bottom: 6rem;">
+
         {# lista de ordenes anteriores #}
         {% for order in orders %}
             {% if order.status == 'delivered' %}
@@ -20,24 +21,25 @@
 
 
         {# Lista #}
-
         <div class="accordion" id="accordionExample">
             <div class="accordion-item">
                 <span class="accordion-header">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Proxímos
+                        <span class="small">Proxímos</span>
                     </button>
                 </span>
-                <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <ul class="list-group list-group-flush">
+                <div id="collapseOne" class="accordion collapse show" data-bs-parent="#accordionExample">
+
+                <div class="accordion-body p-0">
+                    <ul class="list-group list-group-flush rounded">
                         {% for order in orders %}
                             {% if order.status == 'approved' %}
                                 <a class="list-group-item d-flex"
                                    href="{% url 'order_detail' order.pk %}">
 
                                     <div class=" me-auto text-truncate">
-                                        <span class="fw-medium">{{ order.order_date|date:"d" }} de {{ order.order_date|date:"F" }} </span>
+                                        <span class="">{{ order.order_date|date:"d" }} de {{ order.order_date|date:"F" }} </span>
                                         <br>
                                         <span class="small text-secondary">{{ order.order_date|date:"g:i A" }}</span>
                                     </div>
@@ -46,24 +48,26 @@
                         {% endfor %}
                     </ul>
                 </div>
+
+
+                </div>
             </div>
         </div>
 
 
+        {# Barra inferior #}
         <div class="fixed-bottom">
-            {# Barra inferior #}
-
             <div class="text-end">
-                {#  Botón flotante  #}
+                {# Botón flotante #}
                 <a href="{% url 'order_create' %}" class="btn btn-lg btn-primary shadow-sm m-3">
                     <i class="bi bi-plus-lg"></i>
                 </a>
             </div>
 
-            {# barra de navegacion inferior #}
+            {# barra de navegación inferior #}
             {% include "navegation/bottom.html" with option=1 %}
-
         </div>
+
     </div>
 
 {% endblock %}
