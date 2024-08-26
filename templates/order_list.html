@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container" style="padding-bottom: 6rem;">
         {# lista de ordenes anteriores #}
         {% for order in orders %}
             {% if order.status == 'delivered' %}
@@ -17,6 +17,7 @@
                 </div>
             {% endif %}
         {% endfor %}
+
 
         {# Lista #}
         <div class="card mt-2">

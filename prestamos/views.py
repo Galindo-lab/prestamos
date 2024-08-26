@@ -23,7 +23,13 @@ class ReportListView(LoginRequiredMixin, ListView):
     context_object_name = 'reports'
 
     def get_queryset(self):
-        return Report.objects.filter(order__user=self.request.user)
+        return Order.objects.filter(
+            user=self.request.user,
+            order_date__gt=timezone.now(),
+            status__in=[
+                OrderStatusChoices.PENDING
+            ],
+        )
 
 
 class OrderListView(LoginRequiredMixin, ListView):
@@ -36,7 +42,6 @@ class OrderListView(LoginRequiredMixin, ListView):
             user=self.request.user,
             order_date__gt=timezone.now(),
             status__in=[
-                OrderStatusChoices.PENDING,
                 OrderStatusChoices.APPROVED,
                 OrderStatusChoices.DELIVERED
             ],
