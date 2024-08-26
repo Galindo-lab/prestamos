@@ -28,44 +28,13 @@
         <div class="mb-2 mt-2 text-muted">Activas</div>
         {% for order in orders %}
             {% if order.status == 'delivered' %}
-                <a class="card mb-2 py-1 link-underline link-underline-opacity-0"
-                   href="{% url 'order_detail' order.pk %}">
 
-                    <div class="card-body">
-                        <div class="row align-items-start">
-                            <div class="col">
-                                <span class="text-nowrap fw-medium">{{ order.order_date|date:'g:i A' }}</span>
-                                <div class="small text-muted">
-                                    <i class="bi bi-box-arrow-in-right"></i> Entrega
-                                </div>
-                            </div>
+                <div class="mb-2">
+                    <a class="link-underline link-underline-opacity-0" href="{% url 'order_detail' order.pk %}">
+                        {% include "components/order_details_card.html" with order=order %}
+                    </a>
+                </div>
 
-                            <div class="col">
-                                <span class="text-nowrap fw-medium">{{ order.return_date|date:'g:i A' }}</span>
-                                <div class="small text-muted">
-                                    <i class="bi bi-box-arrow-in-left"></i> Devolución
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row align-items-start pt-3 ">
-                            <div class="col">
-                                <span class="text-nowrap fw-medium">{{ order.order_date|date:'d F' }}</span>
-                                <div class="small text-muted">
-                                    <i class="bi bi-calendar2-date"></i> Fecha
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <span class="text-nowrap fw-medium">{{ order.get_status_display }}</span>
-                                <div class="small text-muted">
-                                    <i class="bi bi-clipboard2"></i> {% if order.units.count == 1 %} Artículo {% else %}
-                                    Estado {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
             {% endif %}
         {% endfor %}
 

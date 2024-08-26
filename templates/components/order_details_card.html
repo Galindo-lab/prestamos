@@ -1,0 +1,39 @@
+<div class="card">
+    <div class="card-body mx-1 my-1">
+
+        <div class="row align-items-start mb-3">
+            <div class="col ">
+                <span class="text-nowrap fw-medium">{{ order.order_date|date:'g:i A' }}</span>
+                <div class="small text-secondary">
+                    <i class="bi bi-box-arrow-in-right"></i> Entrega
+                </div>
+            </div>
+
+            <div class="col">
+                <span class="text-nowrap fw-medium">{{ order.return_date|date:'g:i A' }}</span>
+                <div class="small text-secondary">
+                    <i class="bi bi-box-arrow-in-left"></i> Devolución
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row align-items-start">
+            <div class="col">
+                <span class="text-nowrap fw-medium">{{ order.order_date|date:'d F' }}</span>
+                <div class="small text-secondary">
+                    <i class="bi bi-calendar2-date"></i> Fecha
+                </div>
+            </div>
+
+            <div class="col">
+                <span class="text-nowrap fw-medium">{{ order.get_status_display }}</span>
+                <div class="small text-secondary">
+                    <i class="bi bi-clipboard2"></i> {% if order.units.count == 1 %} Artículo {% else %}
+                    Estado {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
