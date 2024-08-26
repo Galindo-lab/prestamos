@@ -11,7 +11,8 @@
 
 {% block content %}
 
-    <div class="container mb-4">
+    <div class="container">
+
         {% for message in messages %}
             <div class="mt-2 mb-3" role="alert">
                 <div class="alert alert-primary d-flex align-items-center">
@@ -20,12 +21,7 @@
             </div>
         {% endfor %}
 
-        <div class="text-center mt-2 mb-4">
-            <img class="rounded border border-secondary-subtle"
-                 src="{% qr_url_from_text request.build_absolute_uri border=3 size=14 %}">
-        </div>
-
-        {% include "components/order_details_card.html" with order=order %}
+        {% include "components/order_details_card.html" with order=order qr_visible=True %}
 
 
         {# Detalles de reporte #}

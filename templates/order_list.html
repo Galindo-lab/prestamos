@@ -2,61 +2,60 @@
 {% extends "bases/base-nav.html" %}
 
 {% block nav %}
-    {% include "navegation/top.html" with title="Ordenes" %}
+    {% include "navegation/top.html" with title="Activas" %}
 {% endblock %}
 
 {% block content %}
-    {# Barra inferior #}
-    <div class="fixed-bottom">
+    <div class="container">
+        {# lista de ordenes anteriores #}
+        {% for order in orders %}
+            {% if order.status == 'delivered' %}
+                <div class="mb-2">
+                    <a class="link-underline link-underline-opacity-0" href="{% url 'order_detail' order.pk %}">
+                        {% include "components/order_details_card.html" with order=order %}
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
 
-        {#  Botón flotante  #}
-        <div class="text-end">
-            <a href="{% url 'order_create' %}" class="btn btn-lg btn-primary shadow-sm m-3">
-                <i class="bi bi-plus-lg"></i>
-            </a>
+        {# Lista #}
+        <div class="card mt-3">
+            <div class="card-header small text-muted">
+                Proximas
+            </div>
+
+            <ul class="list-group list-group-flush">
+                {% for order in orders %}
+                    {% if order.status == 'approved' %}
+                        <a class="list-group-item d-flex justify-content-between align-items-start"
+                           href="{% url 'order_detail' order.pk %}">
+
+                            <div class=" me-auto text-truncate">
+                                <span class="fw-medium">{{ order.order_date|date:"d" }} de {{ order.order_date|date:"F" }} </span>
+                                <br>
+                                <span class="small text-secondary">{{ order.order_date|date:"g:i A" }}</span>
+                            </div>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </ul>
         </div>
 
-        {# barra de navegacion inferior #}
-        {% include "navegation/bottom.html" with option=1 %}
 
-    </div>
+        <div class="fixed-bottom">
+            {# Barra inferior #}
 
-
-    <div class="container">
-
-    {# lista de ordenes anteriores #}
-    {% for order in orders %}
-        {% if order.status == 'delivered' %}
-
-            <div class="mb-2 mt-2">
-                <a class="link-underline link-underline-opacity-0" href="{% url 'order_detail' order.pk %}">
-                    {% include "components/order_details_card.html" with order=order %}
+            <div class="text-end">
+                {#  Botón flotante  #}+
+                <a href="{% url 'order_create' %}" class="btn btn-lg btn-primary shadow-sm m-3">
+                    <i class="bi bi-plus-lg"></i>
                 </a>
             </div>
 
-        {% endif %}
-    {% endfor %}
+            {# barra de navegacion inferior #}
+            {% include "navegation/bottom.html" with option=1 %}
 
-    {# Lista #}
-    <div class="card mt-3">
-        <div class="card-header small text-muted">
-            Proximas
         </div>
-
-        <ul class="list-group list-group-flush">
-            {% for order in orders %}
-                {% if order.status == 'approved' %}
-                    <a class="list-group-item d-flex justify-content-between align-items-start"
-                       href="{% url 'order_detail' order.pk %}">
-
-                        <div class=" me-auto text-truncate">
-                            {{ order.order_date|date:"d" }} de {{ order.order_date|date:"F" }} <br>
-                            <span class="small text-secondary">{{ order.order_date|date:"g:i A" }}</span>
-                        </div>
-                    </a>
-                {% endif %}
-            {% endfor %}
-        </ul>
     </div>
 
 {% endblock %}

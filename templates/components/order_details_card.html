@@ -1,11 +1,20 @@
+{% load qr_code %}
+
 <div class="card">
 
     <div class="card-header text-muted">
         Orden #{{ order.pk }}
     </div>
 
+    {% if qr_visible %}
+        <div class="card-img-top text-center">
+            <img class="my-4" src="{% qr_url_from_text request.build_absolute_uri border=3 size=14 %}">
+        </div>
+        <hr class="m-0">
+    {% endif %}
 
-    <div class="card-body mx-1">
+    <div class="card-body mx-1 ">
+
         <div class="row align-items-start mb-3">
             <div class="col">
                 <span class="text-nowrap fw-medium">{{ order.order_date|date:'g:i A' }}</span>
