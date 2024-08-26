@@ -17,41 +17,75 @@
     </div>
 
 
-    <div class="">
-        <div class="container">
+    <div class="container ">
 
-            {# lista de ordenes anteriores #}
-            <ul class="list-group pb-3">
+        <div class="card mt-2">
+            <div class="card-header text-muted">
+                Reportes
+            </div>
 
+            <ul class="list-group list-group-flush">
                 {% for order in orders %}
-                    <a class="list-group-item d-flex justify-content-between align-items-start"
-                       href="{% url 'order_detail' order.pk %}">
+                    {% if order.get_report.active %}
+                        <a class="list-group-item d-flex justify-content-between align-items-start"
+                           href="{% url 'order_detail' order.pk %}">
 
-                        <div class=" me-auto">
-                            <div class="">{{ order.order_date|date:"F d, Y" }}</div>
+                            <div class=" me-auto">
+                                <div class="">{{ order.order_date|date:"F d, Y" }}</div>
 
-                            {% if order.get_report.active %}
-                                <span class="text-secondary text-danger small fw-medium">Reportada</span>
-                            {% elif order.status == 'pending' %}
-                                <span class="text-secondary small">Vencida</span>
-                            {% else %}
-                                <span class="text-secondary small">{{ order.get_status_display }}</span>
-                            {% endif %}
+                                {% if order.get_report.active %}
+                                    <span class="text-secondary text-danger small fw-medium">Reportada</span>
+                                {% elif order.status == 'pending' %}
+                                    <span class="text-secondary small">Vencida</span>
+                                {% else %}
+                                    <span class="text-secondary small">{{ order.get_status_display }}</span>
+                                {% endif %}
 
-                        </div>
+                            </div>
 
-                        <span class="text-secondary small">{{ order.created_at|date:"d/m/y" }}</span>
-                    </a>
-
+                            <span class="text-secondary small">{{ order.created_at|date:"d/m/y" }}</span>
+                        </a>
+                    {% endif %}
                 {% endfor %}
             </ul>
-
-            {% if page_obj.has_next %}
-                <div class="text-center verical-align-center">
-                    <a class="btn btn-outline-secondary mb-5" href="{% url 'order_history_list' %}?page={{ page_obj.next_page_number }}">Ver más Ordenes</a>
-                </div>
-            {% endif %}
-
         </div>
+
+
+        <div class="card mt-3">
+            <div class="card-header small text-muted">
+                Anteriores
+            </div>
+
+            <ul class="list-group list-group-flush">
+                {% for order in orders %}
+                    {% if not order.get_report.active %}
+                        <a class="list-group-item d-flex justify-content-between align-items-start"
+                           href="{% url 'order_detail' order.pk %}">
+
+                            <div class=" me-auto">
+                                <div class="">{{ order.order_date|date:"F d, Y" }}</div>
+
+                                {% if order.status == 'pending' %}
+                                    <span class="text-secondary small">Vencida</span>
+                                {% else %}
+                                    <span class="text-secondary small">{{ order.get_status_display }}</span>
+                                {% endif %}
+
+                            </div>
+
+                            <span class="text-secondary small">{{ order.created_at|date:"d/m/y" }}</span>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if page_obj.has_next %}
+            <div class="text-center verical-align-center">
+                <a class="btn btn-outline-secondary mb-5"
+                   href="{% url 'order_history_list' %}?page={{ page_obj.next_page_number }}">Ver más Ordenes</a>
+            </div>
+        {% endif %}
+
     </div>
 {% endblock %}

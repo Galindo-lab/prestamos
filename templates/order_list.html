@@ -24,22 +24,26 @@
 
     <div class="container">
 
-        {# lista de ordenes anteriores #}
-        <div class="mb-2 mt-2 text-muted">Activas</div>
-        {% for order in orders %}
-            {% if order.status == 'delivered' %}
+    {# lista de ordenes anteriores #}
+    {% for order in orders %}
+        {% if order.status == 'delivered' %}
 
-                <div class="mb-2">
-                    <a class="link-underline link-underline-opacity-0" href="{% url 'order_detail' order.pk %}">
-                        {% include "components/order_details_card.html" with order=order %}
-                    </a>
-                </div>
+            <div class="mb-2 mt-2">
+                <a class="link-underline link-underline-opacity-0" href="{% url 'order_detail' order.pk %}">
+                    {% include "components/order_details_card.html" with order=order %}
+                </a>
+            </div>
 
-            {% endif %}
-        {% endfor %}
+        {% endif %}
+    {% endfor %}
 
-        <div class="mb-1 mt-4 text-muted small">Proximas</div>
-        <ul class="list-group pb-3">
+    {# Lista #}
+    <div class="card mt-3">
+        <div class="card-header small text-muted">
+            Proximas
+        </div>
+
+        <ul class="list-group list-group-flush">
             {% for order in orders %}
                 {% if order.status == 'approved' %}
                     <a class="list-group-item d-flex justify-content-between align-items-start"
@@ -53,5 +57,6 @@
                 {% endif %}
             {% endfor %}
         </ul>
+    </div>
 
 {% endblock %}
