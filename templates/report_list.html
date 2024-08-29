@@ -2,46 +2,50 @@
 {% extends 'bases/base-nav.html' %}
 
 {% block nav %}
-  {% include 'navegation/top.html' with title='Pendientes' %}
+  {% include 'navegation/top.html' with title='Solicitudes' %}
 {% endblock %}
 
 {% block content %}
   <div class="container">
 
-    
-      <div class="card">
-        <a class="card-header link-underline link-underline-opacity-0 small">Reportes</a>
-
-        <ul class="list-group list-group-flush">
-          {% for order in orders %}
-            {% if order.get_report.active %}
-              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start" href="{% url 'order_detail' order.pk %}">
-                <div class="me-auto">
-                  <div class="fw-medium">{{ order.order_date|date:'F d, Y' }}</div>
-
-                  {% if order.get_report.active %}
-                    <span class="text-secondary text-danger small fw-medium">Reportada</span>
-                  {% elif order.status == 'pending' %}
-                    <span class="text-secondary small">Vencida</span>
-                  {% else %}
-                    <span class="text-secondary small">{{ order.get_status_display }}</span>
-                  {% endif %}
-                </div>
-
-                <span class="text-secondary small">{{ order.created_at|date:'d/m/y' }}</span>
-              </a>
-            {% endif %}
-          {% endfor %}
-        </ul>
+    {# Mensajes de error #}
+    {% for message in messages %}
+      <div class="alert alert-danger d-flex align-items-center">
+        <i class="bi bi-check-circle-fill"></i><span class="ps-1">{{ message }}</span>
       </div>
+    {% endfor %}
 
 
+    {# Botones #}
+    <div class="d-flex gap-2 my-2 mb-3">
+      <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked />
+      <label class="btn btn-outline-primary col" for="option1">Autorizadas</label>
 
-  </div>
+      <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" />
+      <label class="btn btn-outline-primary col" for="option2">Pendientes</label>
+    </div>
+
+
+    {# Lista #}
+    <ul class="list-group">
+      {% for order in next %}
+        <a class="list-group-item list-group-item-action d-flex" href="{% url 'order_detail' order.pk %}">
+          <div class="me-auto text-truncate">
+            <span class="fw-medium">{{ order.order_date|date:'d' }} de {{ order.order_date|date:'F' }}</span>
+            <br />
+            <span class="small text-secondary">{{ order.order_date|date:'g:i A' }}</span>
+          </div>
+        </a>
+      {% endfor %}
+    </ul>
+
 
   {# Barra inferior #}
   <div class="fixed-bottom">
+
+
     {# barra de navegacion inferior #}
     {% include 'navegation/bottom.html' with option=3 %}
   </div>
+
 {% endblock %}

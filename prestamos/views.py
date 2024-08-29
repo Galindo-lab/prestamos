@@ -33,9 +33,14 @@ class ReportListView(LoginRequiredMixin, ListView):
         reported_orders = Order.objects.filter(
             id__in=reports.values_list('order', flat=True)
         )
-        
+
         return render(request, self.template_name, {
-            'orders': reported_orders
+            'orders': reported_orders,
+            'next': Order.objects.filter(
+            user=self.request.user,
+            order_date__gt=timezone.now(),
+            status__in=[OrderStatusChoices.APPROVED],
+            )
         })
 
 
@@ -48,10 +53,7 @@ class OrderListView(LoginRequiredMixin, ListView):
         return Order.objects.filter(
             user=self.request.user,
             order_date__gt=timezone.now(),
-            status__in=[
-                OrderStatusChoices.APPROVED,
-                OrderStatusChoices.DELIVERED
-            ],
+            status__in=[OrderStatusChoices.APPROVED, OrderStatusChoices.DELIVERED],
         )
 
 
@@ -146,7 +148,10 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         # ordenes del usuario que ya hayan pasado
-        return Order.objects.filter(user=self.request.user, order_date__lt=timezone.now())
+        return Order.objects.filter(
+            user=self.request.user, 
+            #order_date__lt=timezone.now()
+        )
 
 
 class OrderDetailView(LoginRequiredMixin, DetailView):

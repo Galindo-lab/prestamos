@@ -1,11 +1,12 @@
 <!-- botones -->
 <div class="d-flex justify-content-center border-top align-items-end bg-body">
 
+
     <a href="{% url 'order_list' %}" class="col-3 text-center btn btn-sm py-2">
         <div class="rounded-pill pt-2 pb-1 text-primary-emphasis {% if option == 1 %} bg-primary-subtle {% endif %}">
             <i class="bi bi-list-ul h4"></i>
         </div>
-        <span class="small {% if option == 1 %} fw-medium {% endif %}">Activas</span>
+        <span class="small {% if option == 1 %} fw-medium {% endif %}">Ordenes</span>
     </a>
 
     <a href="{% url 'report_list' %}" class="col-3 text-center btn btn-sm py-2">
@@ -17,8 +18,9 @@
             </div>
 
         </div>
-        <span class="small {% if option == 3 %} fw-medium {% endif %}">Pendientes</span>
+        <span class="small {% if option == 3 %} fw-medium {% endif %}">Solicitudes</span>
     </a>
+
 
     <a href="{% url 'order_history_list' %}" class="col-3 text-center btn btn-sm py-2">
         <div class="rounded-pill pt-2 pb-1 text-primary-emphasis {% if option == 2 %} bg-primary-subtle  {% endif %}">
