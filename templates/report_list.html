@@ -1,22 +1,44 @@
 <!-- templates/order_list.html -->
-{% extends "bases/base-nav.html" %}
+{% extends 'bases/base-nav.html' %}
 
 {% block nav %}
-    {% include "navegation/top.html" with title="Reportes" %}
+  {% include 'navegation/top.html' with title='Reportes' %}
 {% endblock %}
 
-
 {% block content %}
-    {# Barra inferior #}
-    <div class="fixed-bottom">
+  <div class="container">
+    {% for order in orders %}
+      <div class="card">
+        <a class="card-header link-underline link-underline-opacity-0 small">Reportes</a>
 
-        {# barra de navegacion inferior #}
-        {% include "navegation/bottom.html" with option=3 %}
+        <ul class="list-group list-group-flush">
+          {% for order in orders %}
+            {% if order.get_report.active %}
+              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start" href="{% url 'order_detail' order.pk %}">
+                <div class="me-auto">
+                  <div class="fw-medium">{{ order.order_date|date:'F d, Y' }}</div>
 
-    </div>
+                  {% if order.get_report.active %}
+                    <span class="text-secondary text-danger small fw-medium">Reportada</span>
+                  {% elif order.status == 'pending' %}
+                    <span class="text-secondary small">Vencida</span>
+                  {% else %}
+                    <span class="text-secondary small">{{ order.get_status_display }}</span>
+                  {% endif %}
+                </div>
 
-
-    {% for report in reports %}
-        <p>{{ report }}</p>
+                <span class="text-secondary small">{{ order.created_at|date:'d/m/y' }}</span>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
     {% endfor %}
+  </div>
+
+  {# Barra inferior #}
+  <div class="fixed-bottom">
+    {# barra de navegacion inferior #}
+    {% include 'navegation/bottom.html' with option=3 %}
+  </div>
 {% endblock %}

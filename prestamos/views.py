@@ -17,19 +17,26 @@ from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
 from .models import Order, Report, Item, Category, OrderStatusChoices
 
 
+
 class ReportListView(LoginRequiredMixin, ListView):
     model = Report
     template_name = 'report_list.html'
-    context_object_name = 'reports'
 
-    def get_queryset(self):
-        return Order.objects.filter(
-            user=self.request.user,
-            order_date__gt=timezone.now(),
-            status__in=[
-                OrderStatusChoices.PENDING
-            ],
+    def get(self, request, *args, **kwargs):
+        # ordenes pendientes 
+        pendigs = Order.objects.filter(user=self.request.user, order_date__gt=timezone.now(), status__in=[OrderStatusChoices.PENDING])
+        
+        # Obtiene los reportes asociados al usuario actual
+        reports = Report.objects.filter(order__user=self.request.user)
+
+        # Obtiene las órdenes únicas relacionadas con los reportes
+        reported_orders = Order.objects.filter(
+            id__in=reports.values_list('order', flat=True)
         )
+        
+        return render(request, self.template_name, {
+            'orders': reported_orders
+        })
 
 
 class OrderListView(LoginRequiredMixin, ListView):
