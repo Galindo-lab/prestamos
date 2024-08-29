@@ -2,12 +2,13 @@
 {% extends 'bases/base-nav.html' %}
 
 {% block nav %}
-  {% include 'navegation/top.html' with title='Reportes' %}
+  {% include 'navegation/top.html' with title='Pendientes' %}
 {% endblock %}
 
 {% block content %}
   <div class="container">
-    {% for order in orders %}
+
+    
       <div class="card">
         <a class="card-header link-underline link-underline-opacity-0 small">Reportes</a>
 
@@ -33,7 +34,9 @@
           {% endfor %}
         </ul>
       </div>
-    {% endfor %}
+
+
+
   </div>
 
   {# Barra inferior #}
