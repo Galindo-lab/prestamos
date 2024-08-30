@@ -53,7 +53,7 @@ class OrderListView(LoginRequiredMixin, ListView):
         return Order.objects.filter(
             user=self.request.user,
             order_date__gt=timezone.now(),
-            status__in=[OrderStatusChoices.APPROVED, OrderStatusChoices.DELIVERED],
+            status__in=[OrderStatusChoices.DELIVERED],
         )
 
 

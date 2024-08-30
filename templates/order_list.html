@@ -6,14 +6,24 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container" style="padding-bottom: 6rem;">
+  <div class="container" style="">
+
     {# lista de ordenes anteriores #}
     {% for order in orders %}
-      {% if order.status == 'delivered' %}
-        <div class="mb-2">
-          <a class="link-underline link-underline-opacity-0" href="{% url 'order_detail' order.pk %}">{% include 'components/order_details_card.html' with order=order %}</a>
-        </div>
-      {% endif %}
+      <div class="">
+        <a class="link-underline link-underline-opacity-0" href="{% url 'order_detail' order.pk %}">{% include 'components/order_details_card.html' with order=order %}</a>
+      </div>
+    {% empty %}
+
+    <div style="height: 55vh;" class="d-flex align-items-center justify-content-center">
+        <div class="text-center row text-secondary">
+        <i class="bi bi-inbox mb-2" style="font-size: 50px;"></i>
+        <span class="h5 text-muted">No hay solicitudes activas</span>
+        <span class="small text-secondary">Presiona '+' para hacer una solicitud.</span>
+      </div>
+    </div>
+
+
     {% endfor %}
 
   {# Barra inferior #}
