@@ -1,14 +1,20 @@
 {% load qr_code %}
 
-{% if qr_visible %}
-<div class="card-img-top text-center">
-  <img class="my-2 mb-4" alt="qr" src="{% qr_url_from_text request.build_absolute_uri border=3 size=14 %}" />
-</div>
-{% endif %}
-
 <div class="card">
 
+  <div class="card-header text-secondary">
+    Solicitud #{{ order.pk }}   
+  </div>
+
+  {% if qr_visible %}
+    <div class="card-img-top text-center  border-bottom">
+      <img class="my-4" alt="qr" src="{% qr_url_from_text request.build_absolute_uri border=3 size=14 %}" />
+    </div>
+  {% endif %}
+
+
   <div class="card-body">
+
     <div class="row align-items-start mb-3">
       <div class="col">
         <span class="text-nowrap fw-medium">{{ order.order_date|date:'g:i A' }}</span>
@@ -36,7 +42,8 @@
       <div class="col">
         <span class="text-nowrap fw-medium">{{ order.get_status_display }}</span>
         <div class="small text-secondary">
-          <i class="bi bi-clipboard2"></i> {% if order.units.count == 1 %}
+          <i class="bi bi-clipboard2"></i>
+          {% if order.units.count == 1 %}
             Artículo
           {% else %}
             Estado
@@ -44,8 +51,16 @@
         </div>
       </div>
     </div>
-
   </div>
-
-
 </div>
+
+{% if list == True %}
+  <ul class="nav nav-underline nav-fill nav-justified mt-3 mb-2 gap-4" id="myTab">
+    <li class="nav-item">
+      <a class="nav-link active" id="ordenes-tab" data-bs-toggle="tab" href="#ordenes" role="tab" aria-controls="ordenes" aria-selected="true">Anteriores</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="reportes-tab" data-bs-toggle="tab" href="#reportes" role="tab" aria-controls="reportes" aria-selected="false">Reportes</a>
+    </li>
+  </ul>
+{% endif %}

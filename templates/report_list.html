@@ -16,7 +16,7 @@
 
 
         {# Botones #}
-        <ul class="nav nav-pills nav-fill nav-justified mt-2 mb-3 gap-4" id="myTab">
+        <ul class="nav nav-pills nav-fill nav-justified mt-2 mb-3 gap-2" id="myTab">
             <li class="nav-item">
                 <a class="nav-link active" id="ordenes-tab" data-bs-toggle="tab" href="#ordenes" role="tab"
                    aria-controls="ordenes" aria-selected="true">Próximas</a>
@@ -38,7 +38,7 @@
                             <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start"
                                href="{% url 'order_detail' order.pk %}">
                                 <div class="me-auto">
-                                    <div class="">{{ order.order_date|date:'F d, Y' }}</div>
+                                    <div class="fw-medium">{{ order.order_date|date:'F d, Y' }}</div>
                                     <span class="text-secondary small">{{ order.get_status_display }}</span>
                                 </div>
 
@@ -58,7 +58,7 @@
                             <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start"
                                href="{% url 'order_detail' order.pk %}">
                                 <div class="me-auto">
-                                    <div class="">{{ order.order_date|date:'F d, Y' }}</div>
+                                    <div class="fw-medium">{{ order.order_date|date:'F d, Y' }}</div>
                                     <span class="text-secondary small">Pendiente</span>
                                 </div>
 

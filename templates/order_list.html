@@ -2,43 +2,38 @@
 {% extends 'bases/base-nav.html' %}
 
 {% block nav %}
-    {% include 'navegation/top.html' with title='Solicitudes' %}
+  {% include 'navegation/top.html' with title='Solicitudes' %}
 {% endblock %}
 
 {% block content %}
-    <div class="container" style="margin-bottom: 6em;">
-
-        {# lista de ordenes anteriores #}
-        {% for order in orders %}
-            <div class="mt-2">
-                <a class="link-underline link-underline-opacity-0"
-                   href="{% url 'order_detail' order.pk %}">{% include 'components/order_details_card.html' with order=order %}</a>
-            </div>
-        {% empty %}
-            <div class="align-items-center justify-content-center"  style="margin-top: 5em;">
-                <div class="text-center row text-secondary">
-                    <i class="bi bi-inbox mb-2" style="font-size: 50px;"></i>
-                    <span class="h5 text-muted">No hay solicitudes activas</span>
-                    <span class="small text-secondary">Presiona '+' para hacer una solicitud.</span>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
-    {# Barra inferior #}
-
-    <div class="fixed-bottom">
-        <div class="sticky-bottom">
-
-            {# Botón flotante #}
-            <div class="text-end">
-                <a href="{% url 'order_create' %}" class="btn btn-lg btn-primary shadow-sm m-3"><i
-                        class="bi bi-plus-lg"></i></a>
-            </div>
-
-            {# barra de navegación inferior #}
-            {% include 'navegation/bottom.html' with option=1 %}
+  <div class="container" style="margin-bottom: 6em;">
+    {# lista de ordenes anteriores #}
+    {% for order in orders %}
+      <div class="mt-2">
+        <a class="link-underline link-underline-opacity-0" href="{% url 'order_detail' order.pk %}">{% include 'components/order_details_card.html' with order=order %}</a>
+      </div>
+    {% empty %}
+      <div class="align-items-center justify-content-center" style="margin-top: 5em;">
+        <div class="text-center row text-secondary">
+          <i class="bi bi-inbox mb-2" style="font-size: 50px;"></i>
+          <span class="h5 text-muted">No hay solicitudes activas</span>
+          <span class="small text-secondary">Presiona '+' para hacer una solicitud.</span>
         </div>
-    </div>
+      </div>
+    {% endfor %}
+  </div>
 
+  {# Barra inferior #}
+
+  <div class="fixed-bottom">
+    <div class="sticky-bottom">
+      {# Botón flotante #}
+      <div class="text-end">
+        <a href="{% url 'order_create' %}" class="btn btn-lg btn-primary shadow-sm m-3"><i class="bi bi-plus-lg"></i></a>
+      </div>
+
+      {# barra de navegación inferior #}
+      {% include 'navegation/bottom.html' with option=1 %}
+    </div>
+  </div>
 {% endblock %}
