@@ -42,7 +42,7 @@
   </div>
 
   {# Botón de Cancelar para ordenes pendientes #}
-  {% if order.status == 'pending' %}
+  {% if order.status in 'pending, approved' %}
     <div class="fixed-bottom container bg-body">
       <div class="d-grid my-2 ">
         <button class="btn btn-primary btn-lg" type="button">Cancelar Orden</button>
