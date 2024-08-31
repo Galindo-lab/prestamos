@@ -2,59 +2,86 @@
 {% extends 'bases/base-nav.html' %}
 
 {% block nav %}
-  {% include 'navegation/top.html' with title='Historial' %}
+    {% include 'navegation/top.html' with title='Actividad' %}
 {% endblock %}
 
 {% block content %}
-  <div class="container" style="margin-bottom: 4.5em;">
-    {# Botones #}
-    <ul class="nav nav-pills nav-fill mt-2 mb-2 gap-2" id="myTab">
-      <li class="nav-item">
-        <a class="nav-link active" id="ordenes-tab" data-bs-toggle="tab" href="#ordenes" role="tab" aria-controls="ordenes" aria-selected="true">Órdenes</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="reportes-tab" data-bs-toggle="tab" href="#reportes" role="tab" aria-controls="reportes" aria-selected="false">Reportes</a>
-      </li>
-    </ul>
-
-    <div class="tab-content">
-      <div class="tab-pane fade show active" id="ordenes" role="tabpanel" aria-labelledby="ordenes-tab">
-        <ul class="list-group">
-          {% for order in orders %}
-            {% if not order.get_report.active %}
-              <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start" href="{% url 'order_detail' order.pk %}">
-                <div class="me-auto">
-                  <div class="fw-medium">{{ order.order_date|date:'F d, Y' }}</div>
-
-                  {% if order.status == 'pending' %}
-                    <span class="text-secondary small">Vencida</span>
-                  {% else %}
-                    <span class="text-secondary small">{{ order.get_status_display }}</span>
-                  {% endif %}
-                </div>
-
-                <span class="text-secondary small">{{ order.created_at|date:'d/m/y' }}</span>
-              </a>
-            {% endif %}
-          {% endfor %}
-
-          {% if page_obj.has_next %}
-            <a class="text-center text-secondary list-group-item list-group-item-action" href="{% url 'order_history_list' %}?page={{ page_obj.next_page_number }}">Ver más Ordenes...</a>
-          {% endif %}
+    <div class="container">
+        {# Botones #}
+        <ul class="nav nav-pills nav-fill nav-justified mt-2 mb-3 gap-2" id="myTab">
+            <li class="nav-item">
+                <a class="nav-link active" id="ordenes-tab" data-bs-toggle="tab" href="#ordenes" role="tab"
+                   aria-controls="ordenes" aria-selected="true">Anteriores</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="reportes-tab" data-bs-toggle="tab" href="#reportes" role="tab"
+                   aria-controls="reportes" aria-selected="false">Reportes</a>
+            </li>
         </ul>
-      </div>
-    </div>
-    <div class="tab-pane fade" id="reportes" role="tabpanel" aria-labelledby="reportes-tab">
-      <!-- Contenido para la pestaña Reportes -->
-      Aquí va el contenido de Reportes.
-    </div>
-  </div>
 
-  {# Barra inferior #}
-  <div class="fixed-bottom">
-    {# barra de navegacion inferior #}
-    {% include 'navegation/bottom.html' with option=2 %}
-  </div>
+        <div class="tab-content" style="margin-bottom: 6em;">
+            {# Historial de ordenes #}
+            <div class="tab-pane fade show active" id="ordenes" role="tabpanel" aria-labelledby="ordenes-tab">
+                <ul class="list-group">
+                    {% for order in orders %}
+                        {% if not order.get_report.active %}
+                            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start"
+                               href="{% url 'order_detail' order.pk %}">
+                                <div class="me-auto">
+                                    <div class="">{{ order.order_date|date:'F d, Y' }}</div>
+
+                                    {% if order.status == 'pending' %}
+                                        <span class="text-secondary small">Vencida</span>
+                                    {% else %}
+                                        <span class="text-secondary small">{{ order.get_status_display }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <span class="text-secondary small">{{ order.created_at|date:'d/m/y' }}</span>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a class="text-center text-secondary list-group-item list-group-item-action"
+                           href="{% url 'order_history_list' %}?page={{ page_obj.next_page_number }}">Ver más
+                            Ordenes...</a>
+                    {% endif %}
+                </ul>
+            </div>
+
+            {# Historial de reportes #}
+            <div class="tab-pane fade" id="reportes" role="tabpanel" aria-labelledby="reportes-tab">
+                <ul class="list-group">
+                    {% for order in orders %}
+                        {% if order.get_report %}
+                            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start"
+                               href="{% url 'order_detail' order.pk %}">
+                                <div class="me-auto">
+                                    <div class="">{{ order.order_date|date:'F d, Y' }}</div>
+
+                                    {% if order.get_report.active %}
+                                        <span class="text-danger small">Activo</span>
+                                    {% else %}
+                                        <span class="text-secondary small">Inactivo</span>
+                                    {% endif %}
+                                </div>
+
+                                <span class="text-secondary small">{{ order.created_at|date:'d/m/y' }}</span>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    {# Barra inferior #}
+    <div class="fixed-bottom">
+        {# barra de navegacion inferior #}
+        {% include 'navegation/bottom.html' with option=2 %}
+    </div>
 {% endblock %}
 
 {% block footer %}

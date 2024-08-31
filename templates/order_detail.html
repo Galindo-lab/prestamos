@@ -22,20 +22,20 @@
 
     {# Detalles de reporte #}
     {% if order.get_report %}
-      <div class="card mt-2">
+      <div class="card mt-3">
         <div class="card-header small text-muted">Reporte</div>
         <p class="card-body pb-0">{{ order.get_report.details }}</p>
       </div>
     {% endif %}
 
-    <div class="mt-2">
+    <div class="mt-3">
       {% include 'components/order_articles_card.html' with order=order %}
     </div>
   </div>
 
   {# Botón de Cancelar para ordenes pendientes #}
   {% if order.status == 'pending' %}
-    <div class="sticky-bottom container">
+    <div class="fixed-bottom container">
       <div class="d-grid my-2">
         <button class="btn btn-primary btn-lg" type="button">Cancelar Orden</button>
       </div>

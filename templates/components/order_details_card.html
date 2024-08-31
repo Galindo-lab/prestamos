@@ -2,13 +2,9 @@
 
 <div class="card">
 
-    <div class="card-header text-muted small">
-        ID: {{ order.pk }}
-    </div>
-
     {% if qr_visible %}
         <div class="card-img-top text-center">
-            <img class="my-4" src="{% qr_url_from_text request.build_absolute_uri border=3 size=14 %}">
+            <img class="my-4" alt="qr" src="{% qr_url_from_text request.build_absolute_uri border=3 size=14 %}">
         </div>
         <hr class="m-0">
     {% endif %}

@@ -154,7 +154,7 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
         # ordenes del usuario que ya hayan pasado
         return Order.objects.filter(
             user=self.request.user, 
-            #order_date__lt=timezone.now()
+            order_date__lt=timezone.now()
         )
 
 
