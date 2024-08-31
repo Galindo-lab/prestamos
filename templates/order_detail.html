@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container" style="padding-bottom: 6rem;">
+  <div class="container my-2">
 
     {% for message in messages %}
       <div class="alert alert-primary d-flex align-items-center">
@@ -35,7 +35,7 @@
 
   {# Botón de Cancelar para ordenes pendientes #}
   {% if order.status == 'pending' %}
-    <div class="fixed-bottom container">
+    <div class="sticky-bottom container">
       <div class="d-grid my-2">
         <button class="btn btn-primary btn-lg" type="button">Cancelar Orden</button>
       </div>

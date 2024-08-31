@@ -7,7 +7,6 @@
 
 {% block content %}
   <div class="container">
-
     {# Mensajes de error #}
     {% for message in messages %}
       <div class="alert alert-danger d-flex align-items-center">
@@ -15,37 +14,38 @@
       </div>
     {% endfor %}
 
+    <div style="margin-bottom: 6em;">
+      {# Botones #}
+      <div class="d-flex gap-2 my-2 mb-2">
+        <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked />
+        <label class="btn btn-outline-primary col" for="option1">Próximas</label>
 
-    {# Botones #}
-    <div class="d-flex gap-2 my-2 mb-2">
-      <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked />
-      <label class="btn btn-outline-primary col" for="option1">Autorizadas</label>
+        <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" />
+        <label class="btn btn-outline-primary col" for="option2">Pendientes</label>
+      </div>
 
-      <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" />
-      <label class="btn btn-outline-primary col" for="option2">Pendientes</label>
+      {# Lista #}
+      <ul class="list-group">
+        {% for order in next %}
+          <a class="list-group-item list-group-item-action d-flex" href="{% url 'order_detail' order.pk %}">
+            <div class="me-auto text-truncate">
+              <span class="fw-medium">{{ order.order_date|date:'d' }} de {{ order.order_date|date:'F' }}</span>
+              <br />
+              <span class="small text-secondary">{{ order.order_date|date:'g:i A' }}</span>
+            </div>
+          </a>
+        {% endfor %}
+      </ul>
     </div>
-
-
-    {# Lista #}
-    <ul class="list-group">
-      {% for order in next %}
-        <a class="list-group-item list-group-item-action d-flex" href="{% url 'order_detail' order.pk %}">
-          <div class="me-auto text-truncate">
-            <span class="fw-medium">{{ order.order_date|date:'d' }} de {{ order.order_date|date:'F' }}</span>
-            <br />
-            <span class="small text-secondary">{{ order.order_date|date:'g:i A' }}</span>
-          </div>
-        </a>
-      {% endfor %}
-    </ul>
-
+  </div>
 
   {# Barra inferior #}
   <div class="fixed-bottom">
-
-
     {# barra de navegacion inferior #}
     {% include 'navegation/bottom.html' with option=3 %}
   </div>
+{% endblock %}
+
+{% block footer %}
 
 {% endblock %}

@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container" style="padding-bottom: 6rem;">
+  <div class="container" style="margin-bottom: 6em;">
     {# Botones #}
     <div class="d-flex gap-2 my-2 mb-2">
       <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked />
@@ -34,13 +34,13 @@
           </a>
         {% endif %}
       {% endfor %}
-    </ul>
 
-    {% if page_obj.has_next %}
-      <div class="text-center verical-align-center">
-        <a class="btn btn-outline-secondary mb-5" href="{% url 'order_history_list' %}?page={{ page_obj.next_page_number }}">Ver más Ordenes</a>
-      </div>
-    {% endif %}
+      {% if page_obj.has_next %}
+          <a class="text-center text-secondary list-group-item list-group-item-action" href="{% url 'order_history_list' %}?page={{ page_obj.next_page_number }}">
+            Ver más Ordenes...
+        </a>
+      {% endif %}
+    </ul>
   </div>
 
   {# Barra inferior #}
@@ -48,4 +48,8 @@
     {# barra de navegacion inferior #}
     {% include 'navegation/bottom.html' with option=2 %}
   </div>
+{% endblock %}
+
+{% block footer %}
+
 {% endblock %}
