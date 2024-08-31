@@ -24,7 +24,11 @@ class ReportListView(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         # ordenes pendientes 
-        pendigs = Order.objects.filter(user=self.request.user, order_date__gt=timezone.now(), status__in=[OrderStatusChoices.PENDING])
+        pendigs = Order.objects.filter(
+            user=self.request.user, 
+            order_date__gt=timezone.now(), 
+            status__in=[OrderStatusChoices.PENDING]
+        )
         
         # Obtiene los reportes asociados al usuario actual
         reports = Report.objects.filter(order__user=self.request.user)
