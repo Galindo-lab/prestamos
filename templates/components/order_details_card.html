@@ -1,47 +1,51 @@
 {% load qr_code %}
 
+{% if qr_visible %}
+<div class="card-img-top text-center">
+  <img class="my-2 mb-4" alt="qr" src="{% qr_url_from_text request.build_absolute_uri border=3 size=14 %}" />
+</div>
+{% endif %}
+
 <div class="card">
 
-    {% if qr_visible %}
-        <div class="card-img-top text-center">
-            <img class="my-4" alt="qr" src="{% qr_url_from_text request.build_absolute_uri border=3 size=14 %}">
+  <div class="card-body">
+    <div class="row align-items-start mb-3">
+      <div class="col">
+        <span class="text-nowrap fw-medium">{{ order.order_date|date:'g:i A' }}</span>
+        <div class="small text-secondary">
+          <i class="bi bi-box-arrow-in-right"></i> Entrega
         </div>
-        <hr class="m-0">
-    {% endif %}
+      </div>
 
-    <div class="card-body mx-1 ">
-
-        <div class="row align-items-start mb-3">
-            <div class="col">
-                <span class="text-nowrap fw-medium">{{ order.order_date|date:'g:i A' }}</span>
-                <div class="small text-secondary">
-                    <i class="bi bi-box-arrow-in-right"></i> Entrega
-                </div>
-            </div>
-
-            <div class="col">
-                <span class="text-nowrap fw-medium">{{ order.return_date|date:'g:i A' }}</span>
-                <div class="small text-secondary">
-                    <i class="bi bi-box-arrow-in-left"></i> Devolución
-                </div>
-            </div>
+      <div class="col">
+        <span class="text-nowrap fw-medium">{{ order.return_date|date:'g:i A' }}</span>
+        <div class="small text-secondary">
+          <i class="bi bi-box-arrow-in-left"></i> Devolución
         </div>
-
-        <div class="row align-items-start">
-            <div class="col">
-                <span class="text-nowrap fw-medium">{{ order.order_date|date:'d F' }}</span>
-                <div class="small text-secondary">
-                    <i class="bi bi-calendar2-date"></i> Fecha
-                </div>
-            </div>
-
-            <div class="col">
-                <span class="text-nowrap fw-medium">{{ order.get_status_display }}</span>
-                <div class="small text-secondary">
-                    <i class="bi bi-clipboard2"></i> {% if order.units.count == 1 %} Artículo {% else %}
-                    Estado {% endif %}
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <div class="row align-items-start">
+      <div class="col">
+        <span class="text-nowrap fw-medium">{{ order.order_date|date:'d F' }}</span>
+        <div class="small text-secondary">
+          <i class="bi bi-calendar2-date"></i> Fecha
+        </div>
+      </div>
+
+      <div class="col">
+        <span class="text-nowrap fw-medium">{{ order.get_status_display }}</span>
+        <div class="small text-secondary">
+          <i class="bi bi-clipboard2"></i> {% if order.units.count == 1 %}
+            Artículo
+          {% else %}
+            Estado
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
 </div>

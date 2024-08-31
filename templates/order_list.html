@@ -10,7 +10,7 @@
 
         {# lista de ordenes anteriores #}
         {% for order in orders %}
-            <div class="">
+            <div class="mt-2">
                 <a class="link-underline link-underline-opacity-0"
                    href="{% url 'order_detail' order.pk %}">{% include 'components/order_details_card.html' with order=order %}</a>
             </div>
