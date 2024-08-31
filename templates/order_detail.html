@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container my-2">
+  <div class="container mt-2" style="margin-bottom: 6em;">
     {% for message in messages %}
       <div class="alert alert-primary d-flex align-items-center">
         <i class="bi bi-check-circle-fill"></i><span class="ps-1">{{ message }}</span>
@@ -18,17 +18,33 @@
     {% endfor %}
 
     {# Detalles de reporte #}
+    {% include 'components/order_details_card.html' with order=order qr_visible=True list=True %}
+
     {% if order.get_report %}
-      <div class="alert alert-danger d-flex align-items-center">{{ order.get_report.details }}</div>
+      <div class="card mt-3">
+        <div class="card-header small text-muted">Reporte</div>
+        <p class="card-body pb-0">{{ order.get_report.details }}</p>
+      </div>
     {% endif %}
 
-    {% include 'components/order_details_card.html' with order=order qr_visible=True list=True %}
+    <div class="card mt-3">
+      <div class="card-header small text-muted">Artículos</div>
+
+      <ul class="list-group list-group-flush">
+        {% for unit in order.units.all %}
+          <li class="list-group-item">
+            <div class="fw-medium">{{ unit.item.name }}</div>
+            <span class="text-secondary small">{{ unit.serial_number }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 
   {# Botón de Cancelar para ordenes pendientes #}
   {% if order.status == 'pending' %}
-    <div class="fixed-bottom container">
-      <div class="d-grid my-2">
+    <div class="fixed-bottom container bg-body">
+      <div class="d-grid my-2 ">
         <button class="btn btn-primary btn-lg" type="button">Cancelar Orden</button>
       </div>
     </div>
