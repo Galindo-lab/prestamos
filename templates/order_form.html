@@ -64,7 +64,7 @@
         <div class="row gy-2 gx-2 row-cols-2 row-cols-md-3 row-cols-xl-4" style="margin-bottom: 5em;">
             {% for articulo in items %}
                 <div class="col">
-                    <div class="card h-100 d-flex flex-column">
+                    <div class="card d-flex flex-column">
                         <a href="#">
                             <img class="card-img-top img-fluid" src="https://picsum.photos/200/200"
                                  alt="{{ articulo.nombre }}" style="height: 150px; object-fit: cover;">
@@ -74,8 +74,6 @@
                             <p class="small text-truncate text-secondary m-0"> {{ articulo.description }}</p>
                             <button class="btn btn-primary" @click="addItem( {{ articulo.pk }}, '{{ articulo.name }}')">Test</button>
                         </div>
-
-                        
                     </div>
                 </div>
             {% endfor %}
