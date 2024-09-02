@@ -112,57 +112,10 @@
 
     <div class="fixed-bottom container bg-body" x-show="getItemsLength() > 0">
         <div class="d-grid my-2 ">
-            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modal" type="button" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'">(2)</button>
+            <a class="btn btn-primary btn-lg" href="{% url 'cart' %}" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'"></a>
         </div>
     </div>
 
-    <!-- The Modal -->
-    <div class="modal  fade" id="modal">
-        <div class="modal-dialog modal-fullscreen modal-dialog-centered">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Crear Orden</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                    {% for message in messages %}
-                        <ul class="message">
-                            <li>{{ message }}</li>
-                        </ul>
-
-                    {% endfor %}
-
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ order_form.as_p }}
-
-                        <h4>Items</h4>
-                        {{ item_formset.management_form }}
-
-                        <template x-for="(item, index) in items" :key="item.id">
-                            <div class="p-3 mb-2 bg-primary text-white modal-dialog-scrollable">
-                                <label x-text="item.name"></label>
-                                <input type="hidden" x-model="item.id" :name="`form-${index}-item`">
-                                <input type="number" min="0" x-model="item.quantity" :name="`form-${index}-quantity`">
-                                <button type="button" @click="removeItem(index)">x</button>
-                            </div>
-                        </template>
-
-                         <input id="subm" type="submit">
-                    </form>
-                </div>
-
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                   <label for="subm">Enviar</label>
-                </div>
-            </div>
-        </div>
-    </div>
 
 {% endblock %}
 
