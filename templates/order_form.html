@@ -51,7 +51,7 @@
         </div>
 
 
-        <div class="mb-4">
+        <div class="mb-3">
             <div class="btn-group-sm">
                 {% for category in categories %}
                     <input type="radio" class="btn-check" name="btnradio" id="btnradio{{forloop.counter0}}" autocomplete="off">
@@ -72,9 +72,10 @@
                         <div class="card-body flex-grow-1">
                             <p class="card-title text-truncate m-0 small">{{ articulo.name }}</p>
                             <p class="small text-truncate text-secondary m-0"> {{ articulo.description }}</p>
+                            <button class="btn btn-primary" @click="addItem( {{ articulo.pk }}, '{{ articulo.name }}')">Test</button>
                         </div>
 
-                        <button class="btn btn-primary" @click="addItem( {{ articulo.pk }}, '{{ articulo.name }}')">Test</button>
+                        
                     </div>
                 </div>
             {% endfor %}
@@ -82,6 +83,9 @@
 
 
         {% comment %}
+
+        
+        
       {% for item in items %}
             <div class="row mb-3 mx-1">
 
