@@ -14,9 +14,6 @@
     <div class="container d-flex h-100" x-data="{ show: false }">
         <div class="align-self-center w-100 p-4">
             <div class="col mx-auto">
-
-                <img class="mb-4" src="{% static 'img.jpg' %}" alt="" width="57" height="57">
-
                 <h2 class="mb-3 fw-normal">Iniciar sesión</h2>
 
                 {% if form.errors %}
@@ -45,7 +42,7 @@
                             <label for="floatingPassword">Contraseña</label>
                         </div>
 
-                        <button class="btn text-muted" type="button" @click="show = !show">
+                        <button class="btn text-muted bg-body" type="button" @click="show = !show">
                             <i :class="show ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                         </button>
                     </div>

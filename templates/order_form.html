@@ -41,24 +41,65 @@
 {% endblock %}
 
 {% block nav %}
-    <div class="container-fluid">
-
-        <div class="ms-0">
-            <a class="btn" href="{{ request.META.HTTP_REFERER }}">
-                <i class="bi bi-arrow-left"></i>
-            </a>
-            <span class="fw-bold">Artículos</span>
-        </div>
-
-        <btn class="btn text-primary" data-bs-toggle="modal" data-bs-target="#modal">
-            <span class="small" x-text="getItemsLength()"></span> <i class="bi bi-cart"></i>
-        </btn>
-
-    </div>
+<div class="container-fluid">
+    <div class="navbar-brand fw-medium">Artículos</div>
+    <a class="btn" href="{{ request.META.HTTP_REFERER }}"><i class="bi bi-x-lg"></i></a>
+  </div>
 {% endblock %}
 
 
+
 {% block content %}
+
+<div class="fixed-bottom container bg-body">
+    <div class="d-grid my-2 ">
+      <button class="btn btn-primary btn-lg" type="button">Ver Carrito (2)</button>
+    </div>
+  </div>
+
+
+
+    <div class="container">
+
+
+        <div class="conainer mt-2 mb-3">
+            <div class="input-group input-group-lg">
+                <input type="search" class="form-control" placeholder="Buscar artículo...">
+            </div>
+        </div>
+
+
+
+        {% for item in items %}
+            <div class="row mb-3 mx-1">
+
+                <div class="col-3 my-auto ps-0">
+                    <img src="https://picsum.photos/200/200" class="img-fluid h-100 rounded-1" alt="Laptop"/>
+                </div>
+
+                <a class="col-6 ps-0 text-body link-underline link-underline-opacity-0" href="#">
+                    <p class="mb-0 fw-medium text-truncate">{{ item.name }}</p>
+                    <p class="text-muted small text-truncate m-0">
+                        {{ item.description }}
+                    </p>
+                </a>
+
+                <div class="col-3 m-0">
+                    <button class="btn btn-outline-primary btn-sm mt-auto"
+                            @click="addItem( {{ item.pk }}, '{{ item.name }}')">
+                        Agregar
+                    </button>
+                </div>
+
+            </div>
+        {% endfor %}
+
+
+
+        {% comment %}
+        {% endcomment %}
+    </div>
+
 
     <!-- The Modal -->
     <div class="modal" id="modal">
@@ -109,53 +150,6 @@
 
             </div>
         </div>
-    </div>
-
-
-
-    <div class="container">
-
-        <div class="mb-2">
-            <div class="input-group input-group-md">
-                <input type="search" class="form-control" placeholder="Buscar artículos">
-            </div>
-        </div>
-
-        <div class="mb-3">
-            {% for categories in categories %}
-                <a class="badge rounded-pill text-bg-primary">{{ categories.name }}</a>
-            {% endfor %}
-        </div>
-
-
-        {% for item in items %}
-            <div class="row mb-3 mx-1">
-
-                <div class="col-3 my-auto ps-0">
-                    <img src="https://picsum.photos/200/200" class="img-fluid h-100 rounded-1" alt="Laptop"/>
-                </div>
-
-                <a class="col-6 ps-0 text-body link-underline link-underline-opacity-0" href="#">
-                    <p class="mb-0 fw-medium text-truncate">{{ item.name }}</p>
-                    <p class="text-muted small text-truncate m-0">
-                        {{ item.description }}
-                    </p>
-                </a>
-
-                <div class="col-3 m-0">
-                    <button class="btn btn-outline-primary btn-sm mt-auto"
-                            @click="addItem( {{ item.pk }}, '{{ item.name }}')">
-                        Agregar
-                    </button>
-                </div>
-
-            </div>
-        {% endfor %}
-
-
-
-        {% comment %}
-        {% endcomment %}
     </div>
 
 {% endblock %}
