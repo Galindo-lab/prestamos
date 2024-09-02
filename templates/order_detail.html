@@ -4,7 +4,7 @@
 
 {% block nav %}
   <div class="container-fluid">
-    <div class="navbar-brand fw-medium">Detalles</div>
+    <div class="navbar-brand fw-medium">Orden #{{ order.id }} </div>
     <a class="btn" href="{{ request.META.HTTP_REFERER }}"><i class="bi bi-x-lg"></i></a>
   </div>
 {% endblock %}
@@ -22,13 +22,13 @@
 
     {% if order.get_report %}
       <div class="card mt-3">
-        <div class="card-header small text-muted">Reporte</div>
+        <div class="card-header text-secondary small">Reporte</div>
         <p class="card-body pb-0">{{ order.get_report.details }}</p>
       </div>
     {% endif %}
 
     <div class="card mt-3">
-      <div class="card-header small text-muted">Artículos</div>
+      <div class="card-header text-secondary small">Artículos</div>
 
       <ul class="list-group list-group-flush">
         {% for unit in order.units.all %}

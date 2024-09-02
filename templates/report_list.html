@@ -31,7 +31,7 @@
         <div class="tab-content" style="margin-bottom: 6em;">
             {# Historial de ordenes #}
             <div class="tab-pane fade show active" id="ordenes" role="tabpanel" aria-labelledby="ordenes-tab">
-                <ul class="list-group">
+                <ul class="list-group list-group-flush">
 
                     {% for order in orders %}
                         {% if order.status == "approved" %}
@@ -39,10 +39,10 @@
                                href="{% url 'order_detail' order.pk %}">
                                 <div class="me-auto">
                                     <div class="fw-medium">{{ order.order_date|date:'F d, Y' }}</div>
-                                    <span class="text-secondary small">{{ order.get_status_display }}</span>
+                                    <span class="text-muted small">{{ order.get_status_display }}</span>
                                 </div>
 
-                                <span class="text-secondary small">{{ order.created_at|date:'d/m/y' }}</span>
+                                <span class="text-muted small">{{ order.created_at|date:'d/m/y' }}</span>
                             </a>
                         {% endif %}
                     {% endfor %}
@@ -52,17 +52,17 @@
 
             {# Historial de reportes #}
             <div class="tab-pane fade" id="reportes" role="tabpanel" aria-labelledby="reportes-tab">
-                <ul class="list-group">
+                <ul class="list-group list-group-flush">
                     {% for order in orders %}
                         {% if order.status == "pending" %}
                             <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start"
                                href="{% url 'order_detail' order.pk %}">
                                 <div class="me-auto">
                                     <div class="fw-medium">{{ order.order_date|date:'F d, Y' }}</div>
-                                    <span class="text-secondary small">Pendiente</span>
+                                    <span class="text-muted small">Pendiente</span>
                                 </div>
 
-                                <span class="text-secondary small">{{ order.created_at|date:'d/m/y' }}</span>
+                                <span class="text-muted small">{{ order.created_at|date:'d/m/y' }}</span>
                             </a>
                         {% endif %}
                     {% endfor %}
