@@ -1,4 +1,3 @@
-<!-- templates/order_form.html -->
 {% extends 'bases/base-nav.html' %}
     
 {% block nav %}
@@ -16,18 +15,18 @@
 
 {% block content %}
 
-    <div class="d-flex">
-        <button class="btn btn-light"
-                :class="{'btn-secondary': $store.theme === 'dark'}"
-                @click="$store.theme = 'light'; saveTheme()">
-            <i class="bi bi-brightness-high"></i> Light
-        </button>
-        <button class="btn btn-dark ms-2"
-                :class="{'btn-secondary': $store.theme === 'light'}"
-                @click="$store.theme = 'dark'; saveTheme()">
-            <i class="bi bi-moon-stars"></i> Dark
-        </button>
+<div class="container">
+
+    <div class="form-check form-check-reverse form-switch mt-2 flex-d">
+        <input class="form-check-input " type="checkbox" role="switch" id="themeSwitch"
+            :checked="$store.theme === 'dark'"
+            @change="$store.theme = $event.target.checked ? 'dark' : 'light'; saveTheme()">
+        <div class="flex-fill text-start">
+            <label class="form-check-label " for="themeSwitch">Tema oscuro</label>
+        </div>
     </div>
+
+</div>
 
 {% endblock %}
 
