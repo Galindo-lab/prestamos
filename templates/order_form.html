@@ -6,33 +6,23 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('app', () => ({
-                items: [],
-                a: "b",
-
-                getItemsLength() {  // Cambié "getItemsLenght" a "getItemsLength"
-                    return this.items.length;  // Cambié "lenght" a "length"
+                items: JSON.parse(localStorage.getItem('selectedItems')) || [],
+    
+                getItemsLength() {
+                    return this.items.length;
                 },
-
+    
                 addItem(id, name) {
-                    // No agregar elementos duplicados
                     if (this.items.find(item => item.id === id)) return;
-
-                    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
-                    totalForms.value = this.items.length + 1;
-
-                    // Agregar elemento al array items
-                    this.items.push({id: id, name: name, quantity: 1});
+    
+                    this.items.push({ id: id, name: name, quantity: 1 });
+                    localStorage.setItem('selectedItems', JSON.stringify(this.items));
                     console.log(this.items);
                 },
-
+    
                 removeItem(index) {
-                    // Eliminar el elemento del array en el índice especificado
                     this.items.splice(index, 1);
-
-                    // Actualizar el total de formularios
-                    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
-                    totalForms.value = this.items.length;
-
+                    localStorage.setItem('selectedItems', JSON.stringify(this.items));
                     console.log(this.items);
                 }
             }));
@@ -41,32 +31,35 @@
 {% endblock %}
 
 {% block nav %}
-<div class="container-fluid">
-    <div class="navbar-brand fw-medium">Artículos</div>
-    <a class="btn" href="{{ request.META.HTTP_REFERER }}"><i class="bi bi-x-lg"></i></a>
-  </div>
+    <div class="container-fluid">
+        <div class="navbar-brand fw-medium">Artículos</div>
+        <a class="btn" href="{{ request.META.HTTP_REFERER }}"><i class="bi bi-x-lg"></i></a>
+    </div>
 {% endblock %}
 
 
 
 {% block content %}
 
-<div class="fixed-bottom container bg-body">
-    <div class="d-grid my-2 ">
-      <button class="btn btn-primary btn-lg" type="button">Ver Carrito (2)</button>
-    </div>
-  </div>
-
-
 
     <div class="container">
-
         <div class="mt-3 mb-3">
             <div class="input-group input-group-lg">
                 <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
                 <input type="search" class="form-control" placeholder="Buscar...">
             </div>
         </div>
+
+
+        <div class="mb-4">
+            <div class="btn-group-sm">
+                {% for category in categories %}
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio{{forloop.counter0}}" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnradio{{forloop.counter0}}">{{category.name}}</label>
+                {% endfor %}
+            </div>
+        </div>
+
 
         <div class="row gy-2 gx-2 row-cols-2 row-cols-md-3 row-cols-xl-4" style="margin-bottom: 5em;">
             {% for articulo in items %}
@@ -77,14 +70,15 @@
                                  alt="{{ articulo.nombre }}" style="height: 150px; object-fit: cover;">
                         </a>
                         <div class="card-body flex-grow-1">
-                            <p class="card-title text-truncate m-0">{{ articulo.name }}</h5>
+                            <p class="card-title text-truncate m-0 small">{{ articulo.name }}</p>
                             <p class="small text-truncate text-secondary m-0"> {{ articulo.description }}</p>
                         </div>
+
+                        <button class="btn btn-primary" @click="addItem( {{ articulo.pk }}, '{{ articulo.name }}')">Test</button>
                     </div>
                 </div>
             {% endfor %}
         </div>
-
 
 
         {% comment %}
@@ -115,9 +109,16 @@
     </div>
 
 
+
+    <div class="fixed-bottom container bg-body" x-show="getItemsLength() > 0">
+        <div class="d-grid my-2 ">
+            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modal" type="button" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'">(2)</button>
+        </div>
+    </div>
+
     <!-- The Modal -->
-    <div class="modal" id="modal">
-        <div class="modal-dialog modal-fullscreen">
+    <div class="modal  fade" id="modal">
+        <div class="modal-dialog modal-fullscreen modal-dialog-centered">
             <div class="modal-content">
 
                 <!-- Modal Header -->
@@ -143,7 +144,7 @@
                         {{ item_formset.management_form }}
 
                         <template x-for="(item, index) in items" :key="item.id">
-                            <div class="p-3 mb-2 bg-primary text-white">
+                            <div class="p-3 mb-2 bg-primary text-white modal-dialog-scrollable">
                                 <label x-text="item.name"></label>
                                 <input type="hidden" x-model="item.id" :name="`form-${index}-item`">
                                 <input type="number" min="0" x-model="item.quantity" :name="`form-${index}-quantity`">
@@ -151,17 +152,14 @@
                             </div>
                         </template>
 
-                        <input type="submit">
+                         <input id="subm" type="submit">
                     </form>
-
-
                 </div>
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                   <label for="subm">Enviar</label>
                 </div>
-
             </div>
         </div>
     </div>

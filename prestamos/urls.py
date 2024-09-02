@@ -5,6 +5,7 @@ from prestamos.views import OrderAuthorize, SettingsView, OrderHistoryListView, 
 from prestamos.views import ReportCreateView
 from prestamos.views import OrderCreateView
 from prestamos.views import OrderDetailView
+from prestamos.views import CartView
 
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
     path('orders/authorize/<int:pk>/', OrderAuthorize.as_view(), name='order_aprove'),
     path('orders/report/<int:pk>/', ReportCreateView.as_view(), name='order_report'),
     path('settings', SettingsView.as_view(), name='settings'),
+    path('cart', CartView.as_view(), name='cart'),
 ]

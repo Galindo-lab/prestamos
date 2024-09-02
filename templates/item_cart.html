@@ -1,0 +1,65 @@
+{% extends "bases/base-nav.html" %}
+
+{% block script %}
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('app', () => ({
+            items: JSON.parse(localStorage.getItem('selectedItems')) || [],
+
+            removeItem(index) {
+                this.items.splice(index, 1);
+                localStorage.setItem('selectedItems', JSON.stringify(this.items));
+                console.log(this.items);
+            },
+
+            updateQuantity(index, quantity) {
+                this.items[index].quantity = quantity;
+                localStorage.setItem('selectedItems', JSON.stringify(this.items));
+            }
+        }));
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Modal Content -->
+    <div class="modal-dialog modal-fullscreen modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Crear Orden</h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ order_form.as_p }}
+
+                    <h4>Items</h4>
+                    {{ item_formset.management_form }}
+
+                    <template x-for="(item, index) in items" :key="item.id">
+                        <div class="p-3 mb-2 bg-primary text-white">
+                            <label x-text="item.name"></label>
+                            <input type="hidden" x-model="item.id" :name="`form-${index}-item`">
+                            <input type="number" min="0" x-model="item.quantity"
+                                   @change="updateQuantity(index, $event.target.value)" :name="`form-${index}-quantity`">
+                            <button type="button" @click="removeItem(index)">x</button>
+                        </div>
+                    </template>
+
+                    <input id="subm" type="submit" class="btn btn-primary">
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <label for="subm" class="btn btn-primary">Enviar</label>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
