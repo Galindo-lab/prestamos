@@ -2,11 +2,12 @@
 
 <div class="card">
   {% if qr_visible %}
+  <div class="card-header text-muted small">Solicitud #{{ order.pk }}</div>
     <div class="card-img-top text-center border-bottom">
       <img class="my-4" alt="qr" src="{% qr_url_from_text request.build_absolute_uri border=3 size=14 %}" />
     </div>
   {% else %}
-    <div class="card-header text-secondary small">Solicitud #{{ order.pk }}</div>
+    <div class="card-header text-muted small">Solicitud #{{ order.pk }}</div>
   {% endif %}
 
   <div class="card-body">
