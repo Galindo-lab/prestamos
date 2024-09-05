@@ -17,10 +17,6 @@ from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
 from .models import Order, Report, Item, Category, OrderStatusChoices
 
 
-class CartView(LoginRequiredMixin, TemplateView):
-    template_name = "item_cart.html"
-    
-
 class SettingsView(LoginRequiredMixin, TemplateView):
     template_name = "settings.html"
 

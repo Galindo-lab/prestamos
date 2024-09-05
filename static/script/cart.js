@@ -9,7 +9,7 @@ document.addEventListener('alpine:init', () => {
         addItem(id, name) {
             if (this.items.find(item => item.id === id)) return;
 
-            this.items.push({ id: id, name: name, quantity: 1 });
+            this.items.push({id: id, name: name, quantity: 1});
             localStorage.setItem('selectedItems', JSON.stringify(this.items));
             console.log(this.items);
         },
@@ -25,4 +25,9 @@ document.addEventListener('alpine:init', () => {
             localStorage.setItem('selectedItems', JSON.stringify(this.items));
         }
     }));
+
+    // Escuchar evento antes de abandonar la página para asegurar sincronización
+    window.addEventListener('beforeunload', () => {
+        localStorage.setItem('selectedItems', JSON.stringify(Alpine.store('app').items));
+    });
 });
