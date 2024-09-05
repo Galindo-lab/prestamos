@@ -2,6 +2,11 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('app', () => ({
         items: JSON.parse(localStorage.getItem('selectedItems')) || [],
 
+        init() {
+            // Actualiza el valor de id_form-TOTAL_FORMS al cargar la página
+            this.updateTotalForms();
+        },
+
         getItemsLength() {
             return this.items.length;
         },
@@ -11,18 +16,27 @@ document.addEventListener('alpine:init', () => {
 
             this.items.push({id: id, name: name, quantity: 1});
             localStorage.setItem('selectedItems', JSON.stringify(this.items));
+            this.updateTotalForms(); // Actualiza el valor de TOTAL_FORMS
             console.log(this.items);
         },
 
         removeItem(index) {
             this.items.splice(index, 1);
             localStorage.setItem('selectedItems', JSON.stringify(this.items));
+            this.updateTotalForms(); // Actualiza el valor de TOTAL_FORMS
             console.log(this.items);
         },
 
         updateQuantity(index, quantity) {
             this.items[index].quantity = quantity;
             localStorage.setItem('selectedItems', JSON.stringify(this.items));
+        },
+
+        updateTotalForms() {
+            const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+            if (totalForms) {
+                totalForms.value = this.items.length;
+            }
         }
     }));
 

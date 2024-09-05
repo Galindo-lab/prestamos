@@ -16,6 +16,15 @@ from django.views.generic import UpdateView
 from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
 from .models import Order, Report, Item, Category, OrderStatusChoices
 
+"""
+class OrderConfirmView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        
+
+    def post(self, request, *args, **kwargs):
+"""
+    
+
 
 class SettingsView(LoginRequiredMixin, TemplateView):
     template_name = "settings.html"
@@ -77,53 +86,78 @@ class OrderAuthorize(LoginRequiredMixin, UpdateView):
 
 class OrderCreateView(LoginRequiredMixin, View):
     template = 'order_form.html'
+    confirm_template  = 'order_confirm.html'
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template, {
-            'order_form': OrderForm(),
+            # 'order_form': OrderForm(),
             'item_formset': OrderItemFormSet(),
             'items': Item.objects.all(),
             'categories': Category.objects.all()
         })
+    
 
     def post(self, request, *args, **kwargs):
         order_form = OrderForm(request.POST)
         item_formset = OrderItemFormSet(request.POST)
+        action = request.POST.get('action')
+        
+        for item_form in item_formset:
+            print(item_form)
+        
+        match action:
+            case 'itemsSelected':
+                print("1")
+                if item_formset.is_valid():
+                    return render(request, self.confirm_template, {
+                        'item_formset': item_formset,
+                        'order_form': OrderForm()
+                    })
+                
+            case 'order':
+                print("2")
+                if order_form.is_valid() and item_formset.is_valid():
+                    self.transaction_order(order_form, item_formset)
+                    
+                    
+            case _:     
+                print(item_formset)           
+                return render(request, self.template, {
+                    'item_formset': item_formset,
+                    'items': Item.objects.all(),
+                    'categories': Category.objects.all()
+                })
+                    
+                    
+    def transaction_order(self, order_form, item_formset):
+        try:
+            with transaction.atomic():
+                order_form.instance.user = self.request.user
+                order = order_form.save()
 
-        if order_form.is_valid() and item_formset.is_valid():
-            try:
-                with transaction.atomic():
+                for item_form in item_formset:
+                    # agregar unidades a la orden
+                    item, quantity = item_form.cleaned_data['item'], item_form.cleaned_data['quantity']
 
-                    order_form.instance.user = self.request.user
-                    order = order_form.save()
+                    if quantity < 0:
+                        # si solicito 0 unidades del articulo ignorar
+                        continue
 
-                    for item_form in item_formset:
-                        # agregar unidades a la orden
-                        item, quantity = item_form.cleaned_data['item'], item_form.cleaned_data['quantity']
+                    order.add_item(item, quantity)
 
-                        if quantity < 0:
-                            # si solicito 0 unidades del articulo ignorar
-                            continue
+                if order.units.count() <= 0:
+                    raise Exception("La orden no tiene unidades")
 
-                        order.add_item(item, quantity)
+        except Exception as e:
+            messages.error(request, e)
 
-                    if order.units.count() <= 0:
-                        raise Exception("La orden no tiene unidades")
-
-            except Exception as e:
-                messages.error(request, e)
-
-            else:
-                # redirigir a la pagina de detalles de la orden
-                messages.success(request, "La orden se ha creado exitosamente.")
-                return redirect('order_detail', order.pk)
-
-        return render(request, self.template, {
-            'order_form': order_form,
-            'item_formset': item_formset,
-            'items': Item.objects.all(),
-            'categories': Category.objects.all()
-        })
+        else:
+            # redirigir a la pagina de detalles de la orden
+            messages.success(request, "La orden se ha creado exitosamente.")
+            return redirect('order_detail', order.pk)
+                    
+        
+        
 
 
 class OrderHistoryListView(LoginRequiredMixin, ListView):

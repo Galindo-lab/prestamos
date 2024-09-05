@@ -1,0 +1,23 @@
+{% extends "bases/base-nav.html" %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block nav %}
+
+{% endblock %}
+
+
+{% block content %}
+{{ item_formset.management_form }}
+    {% for form in item_formset %}
+    <div class="formulario">
+        {{form}}
+    </div>
+    {% endfor %}
+
+    {{ order_form }}
+{% endblock %}
