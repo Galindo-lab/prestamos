@@ -16,15 +16,6 @@ from django.views.generic import UpdateView
 from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
 from .models import Order, Report, Item, Category, OrderStatusChoices
 
-"""
-class OrderConfirmView(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        
-
-    def post(self, request, *args, **kwargs):
-"""
-    
-
 
 class SettingsView(LoginRequiredMixin, TemplateView):
     template_name = "settings.html"
@@ -41,8 +32,7 @@ class ReportListView(LoginRequiredMixin, ListView):
             order_date__gt=timezone.now(), 
             status__in=[OrderStatusChoices.PENDING, OrderStatusChoices.APPROVED]
         )
-
-
+        
 
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
@@ -55,7 +45,6 @@ class OrderListView(LoginRequiredMixin, ListView):
             order_date__gt=timezone.now(),
             status__in=[OrderStatusChoices.DELIVERED],
         )
-        
 
 
 class ReportCreateView(LoginRequiredMixin, CreateView):
@@ -85,12 +74,12 @@ class OrderAuthorize(LoginRequiredMixin, UpdateView):
 
 
 class OrderCreateView(LoginRequiredMixin, View):
-    template = 'order_form.html'
-    confirm_template  = 'order_confirm.html'
+    select_item_template = 'order_form.html'
+    change_date_template  = 'order_confirm.html'
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template, {
-            # 'order_form': OrderForm(),
+        return render(request, self.select_item_template, {
+            'order_form': OrderForm(),
             'item_formset': OrderItemFormSet(),
             'items': Item.objects.all(),
             'categories': Category.objects.all()
@@ -100,72 +89,64 @@ class OrderCreateView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         order_form = OrderForm(request.POST)
         item_formset = OrderItemFormSet(request.POST)
-        action = request.POST.get('action')
+        order = None
         
-        for item_form in item_formset:
-            print(item_form)
-        
-        match action:
-            case 'itemsSelected':
-                print("1")
-                if item_formset.is_valid():
-                    return render(request, self.confirm_template, {
-                        'item_formset': item_formset,
-                        'order_form': OrderForm()
-                    })
+        if order_form.is_valid() and item_formset.is_valid():
+            try:
+                # hacer la orden 
+                order = self.transaction_order(request)
                 
-            case 'order':
-                print("2")
-                if order_form.is_valid() and item_formset.is_valid():
-                    self.transaction_order(order_form, item_formset)
-                    
-                    
-            case _:     
-                print(item_formset)           
-                return render(request, self.template, {
+            except Exception as e:
+                # hacer que el usuario seleccione otra fecha si no esta disponible
+                messages.error(request, e)
+                return render(request, self.change_date_template, {
                     'item_formset': item_formset,
-                    'items': Item.objects.all(),
-                    'categories': Category.objects.all()
-                })
+                    'order_form': order_form
+                }) 
+                
+            else:
+                # redirigir a la pagina de detalles de la orden
+                messages.success(request, "La orden se ha creado exitosamente.")
+                return redirect('order_detail', order.pk)
+            
+        # hacer que el usuario seleccione otra fecha 
+        return render(request, self.change_date_template, {
+            'item_formset': item_formset,
+            'order_form': order_form
+        }) 
                     
                     
-    def transaction_order(self, order_form, item_formset):
-        try:
-            with transaction.atomic():
-                order_form.instance.user = self.request.user
-                order = order_form.save()
-
-                for item_form in item_formset:
-                    # agregar unidades a la orden
-                    item, quantity = item_form.cleaned_data['item'], item_form.cleaned_data['quantity']
-
-                    if quantity < 0:
-                        # si solicito 0 unidades del articulo ignorar
-                        continue
-
-                    order.add_item(item, quantity)
-
-                if order.units.count() <= 0:
-                    raise Exception("La orden no tiene unidades")
-
-        except Exception as e:
-            messages.error(request, e)
-
-        else:
-            # redirigir a la pagina de detalles de la orden
-            messages.success(request, "La orden se ha creado exitosamente.")
-            return redirect('order_detail', order.pk)
-                    
+    def transaction_order(self, request) -> Order:
+        order_form = OrderForm(request.POST)
+        item_formset = OrderItemFormSet(request.POST)
         
-        
+        with transaction.atomic():
+            # agregar unidades a la orden
+            order_form.instance.user = self.request.user
+            order = order_form.save()
 
+            for item_form in item_formset:
+                item = item_form.cleaned_data['item']
+                quantity = item_form.cleaned_data['quantity']
+
+                if quantity < 0:
+                    # si solicito 0 unidades del articulo ignorar
+                    continue
+
+                order.add_item(item, quantity)
+
+            if order.units.count() <= 0:
+                raise ValueError("La orden no tiene unidades")
+        
+        return order
+                    
 
 class OrderHistoryListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'order_history_list.html'
     context_object_name = 'orders'
 
-    # TODO agregar esto a una configuracion del sistema
+    # agregar esto a una configuracion del sistema
     paginate_by = 100
 
     def get_queryset(self):

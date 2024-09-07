@@ -41,21 +41,14 @@
         <div class="row gy-2 gx-2 row-cols-2 row-cols-md-3 row-cols-xl-4" style="margin-bottom: 4.5em;">
             {% for articulo in items %}
                 <div class="col">
-                    
                     <div class="card d-flex flex-column">
-
                         <div class="card-img-top img-fluid d-flex flex-row-reverse" style="height: 150px;background-size: cover; background-position: center; background-image: url('https://picsum.photos/600/600');">
-                            
-                            <div class="d-flex align-items-end">
-
-                                <button class="btn m-2 btn-sm btn-light rounded-circle shadow" @click="addItem( {{ articulo.pk }}, '{{ articulo.name }}')">
+                            <div class="d-flex align-items-end p-2">
+                                <button class="btn btn-sm btn-primary rounded-circle shadow" @click="addItem( {{ articulo.pk }}, '{{ articulo.name }}')">
                                     <i class="bi bi-plus-lg"></i>
                                 </button>
-                            
                             </div>
                         </div>
-
-
                         <div class="card-body flex-grow-1">
                             <p class="card-title text-truncate m-0 small">{{ articulo.name }}</p>
                             <p class="small text-truncate text-secondary m-0"> {{ articulo.description }}</p>    
@@ -78,15 +71,23 @@
 
                 <div class="modal-body">
 
+                    {% if form.errors %}
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item list-group-item-danger small">
+                                <i class="bi bi-exclamation-circle"></i> Usuario o clave incorrectos, Intentarlo nuevamente.
+                            </li>
+                        </ul>
+                    {% endif %}
+
 
                     <form method="post">
                         {% csrf_token %}
+                        {{ order_form }}
                         {{ item_formset.management_form }}
 
                         <template x-for="(item, index) in items" :key="item.id">
                             <div class="bg-body-tertiary mb-2">
                                 <label x-text="item.name"></label>
-                                <br>
                                 <input type="hidden" x-model="item.id" :name="`form-${index}-item`">
                                 <input type="number" min="0" x-model="item.quantity"
                                        @change="updateQuantity(index, $event.target.value)"
@@ -95,7 +96,7 @@
                             </div>
                         </template>
 
-                        <input id="submit"  name="action" type="submit" class="d-none" value="itemsSelected" >
+                        <input id="submit" name="action" value="itemsSelected" type="submit" class="d-none"  >
                     </form>
                 </div>
 
@@ -106,9 +107,9 @@
 
     <div class="fixed-bottom container bg-body">
         <div class="d-grid my-2">
-          <button class="btn btn-primary btn-lg" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'">Cancelar Orden</button>
+            <button class="btn btn-outline-primary btn-lg" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'">Cancelar Orden</button>
         </div>
-      </div>
+    </div>
 
 {% endblock %}
 
