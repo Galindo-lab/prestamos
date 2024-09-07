@@ -1,5 +1,6 @@
 # views.py
 
+from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
@@ -84,86 +85,101 @@ class OrderCreateView(LoginRequiredMixin, View):
             'items': Item.objects.all(),
             'categories': Category.objects.all()
         })
-    
 
     def post(self, request, *args, **kwargs):
         order_form = OrderForm(request.POST)
         item_formset = OrderItemFormSet(request.POST)
-        order = None
             
         if order_form.is_valid() and item_formset.is_valid():
             try:
-                # hacer la orden 
+                # Try to create the order
                 order = self.transaction_order(request)
                 
             except Exception as e:
-                # Buscar horario alternativo el mismo día
-                alternative_time = self.find_alternative_time(item_formset, order_form.cleaned_data['order_date'])
-                if alternative_time:
-                    start_time, end_time = alternative_time
-                    messages.error(request, f"{e}. Horario alternativo disponible: {start_time.strftime('%H:%M')} - {end_time.strftime('%H:%M')}")
+                # Si hay un error, sugerir alternativas
+                alternative_slots = self.suggest_alternatives(order_form, item_formset)
+                
+                if alternative_slots:
+                    # Convertir las alternativas en un formato de cadena y añadirlas al mensaje
+                    formatted_slots = ", ".join(
+                        [f"Artículo: {slot['item']} desde {slot['start_time'].strftime('%I:%M %p')} hasta {slot['end_time'].strftime('%I:%M %p')}" 
+                         for slot in alternative_slots]
+                    )
+                    messages.error(request, f"{e}. Aquí hay algunas alternativas: {formatted_slots}")
                 else:
-                    messages.error(request, f"{e}. No se encontraron horarios alternativos el mismo día.")
+                    messages.error(request, f"{e}. No se encontraron horarios alternativos.")
                 
                 return render(request, self.change_date_template, {
                     'item_formset': item_formset,
                     'order_form': order_form
                 }) 
-                
             else:
-                # redirigir a la pagina de detalles de la orden
                 messages.success(request, "La orden se ha creado exitosamente.")
                 return redirect('order_detail', order.pk)
             
-        # Si los formularios no son válidos, mostrar de nuevo el formulario
+        # Si el formulario es inválido
         return render(request, self.change_date_template, {
             'item_formset': item_formset,
             'order_form': order_form
-        }) 
-                    
-                    
+        })
+
+
+
+
+
+
     def transaction_order(self, request) -> Order:
         order_form = OrderForm(request.POST)
         item_formset = OrderItemFormSet(request.POST)
         
         with transaction.atomic():
-            # agregar unidades a la orden
+            # Create the order and add units
             order_form.instance.user = self.request.user
             order = order_form.save()
 
             for item_form in item_formset:
-                if item_form.is_valid(): 
+                if item_form.is_valid():
                     item = item_form.cleaned_data['item']
                     quantity = item_form.cleaned_data['quantity']
 
                     if quantity < 0:
-                        # si solicito 0 unidades del articulo ignorar
-                        continue
+                        continue  # Skip if quantity is less than 0
 
                     order.add_item(item, quantity)
 
             if order.units.count() <= 0:
-                raise ValueError("La orden no tiene unidades")
+                raise ValueError("La orden no tiene unidades disponibles.")
         
         return order
-    
-    def find_alternative_time(self, item_formset, order_date):
+
+    def suggest_alternatives(self, order_form, item_formset):
         """
-        Busca un horario alternativo para todos los artículos en el mismo día.
-        :param item_formset: Formset de artículos seleccionados.
-        :param order_date: Fecha de inicio de la orden.
-        :return: Un horario alternativo (start_time, end_time) o None si no hay disponibilidad.
+        Sugiere solo las primeras 3 opciones de horarios alternativos para la orden.
+        todavia no funciona bien solo es una prueba
         """
-        end_date = order_date.replace(hour=23, minute=59)  # Limitar la búsqueda al mismo día
-        for form in item_formset:
-            if form.is_valid():
-                item = form.cleaned_data['item']
-                quantity = form.cleaned_data['quantity']
-                alternative = item.find_alternative_availability(order_date, end_date)
-                if not alternative:
-                    return None  # Si algún artículo no tiene disponibilidad, retornar None
-        return alternative  # Retorna el primer horario alternativo disponible para todos
-                    
+        alternatives = []
+        order_date = order_form.cleaned_data['order_date']
+        return_date = order_form.cleaned_data['return_date']
+        max_alternatives = 3  # Máximo número de alternativas a mostrar
+
+        # Buscar alternativas con incremento de duración
+        for item_form in item_formset:
+            if item_form.is_valid():
+                item = item_form.cleaned_data['item']
+                alternative = item.find_alternative_availability(order_date, return_date)
+                if alternative:
+                    alternatives.append({
+                        'item': item,
+                        'start_time': alternative[0],
+                        'end_time': alternative[1]
+                    })
+
+                # Detener la búsqueda cuando se hayan encontrado 3 alternativas
+                if len(alternatives) >= max_alternatives:
+                    break
+
+        return alternatives
+
                     
                     
                     

@@ -65,7 +65,7 @@ class UnitInlineForOrder(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'created_at', 'status', 'user')
+    list_display = ('id', 'order_date', 'status', 'user')
     search_fields = ('user__username', 'user__email')
     list_filter = ('order_date', 'return_date', 'status')
     exclude = ('units',)

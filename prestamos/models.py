@@ -40,35 +40,49 @@ class Item(models.Model):
     category = models.ManyToManyField(Category, related_name='items', blank=True)
     
     
-    def find_alternative_availability(self, start_date, end_date):
+    def find_alternative_availability(self, start_date, end_date, max_duration_increase=timedelta(hours=2)):
         """
-        Busca disponibilidad en horas dentro del mismo día.
-        :param start_date: Fecha de inicio de la búsqueda
-        :param end_date: Fecha final (mismo día)
-        :return: La primera hora disponible o None si no hay disponibilidad
+        Busca horarios alternativos disponibles para el item en incrementos de duración.
+        
+        :param start_date: Fecha y hora de inicio de la búsqueda
+        :param end_date: Fecha y hora de fin de la búsqueda
+        :param max_duration_increase: Máximo incremento de la duración permitido
+        :return: Primer intervalo disponible como (start_time, end_time) o None si no hay disponibilidad
         """
+        duration = end_date - start_date  # Duración original de la orden
+        time_increment = timedelta(hours=1)  # Incrementos de búsqueda (en este caso, de 1 hora)
+        max_search_time = start_date + timedelta(days=1)  # Búsqueda en las próximas 24 horas
+
         current_time = start_date
-        delta = timedelta(hours=1)  # Incremento de una hora para la búsqueda
 
-        while current_time + delta <= end_date:
-            available_units = self.units_available(current_time, current_time + delta)
-            if available_units:  # Si hay unidades disponibles en esa hora
-                return current_time, current_time + delta
+        while current_time < max_search_time:
+            # Primero, buscar con la duración original
+            available_units = self.units_available(current_time, current_time + duration)
+            if available_units:  # Si hay unidades disponibles en ese rango de tiempo
+                return current_time, current_time + duration
 
-            current_time += delta
+            # Luego, buscar incrementando la duración, hasta un máximo de 2 horas adicionales
+            for increment in range(1, int(max_duration_increase.total_seconds() // 3600) + 1):
+                new_duration = duration + timedelta(hours=increment)
+                alternative_units = self.units_available(current_time, current_time + new_duration)
+                if alternative_units:  # Si hay unidades disponibles con la nueva duración
+                    return current_time, current_time + new_duration
 
-        # Si no encuentra disponibilidad durante el día
+            # Avanzar en el tiempo (en incrementos de una hora)
+            current_time += time_increment
+
+        # Si no se encuentra ninguna disponibilidad dentro del rango de búsqueda
         return None
-    
 
     def units_available(self, start_date, end_date):
         """
-
-        :param start_date:
-        :param end_date:
-        :return:
+        Verifica la disponibilidad de unidades del artículo entre las fechas especificadas.
+        
+        :param start_date: Fecha y hora de inicio
+        :param end_date: Fecha y hora de finalización
+        :return: Una lista de unidades disponibles
         """
-        return [item for item in Unit.objects.filter(item=self) if item.is_available(start_date, end_date)]
+        return [unit for unit in self.units.all() if unit.is_available(start_date, end_date)]
 
     def __str__(self):
         return self.name
