@@ -27,7 +27,7 @@ Formulario de artículos y unidades
 class OrderItemForm(forms.Form):
     item = forms.ModelChoiceField(
         queryset=Item.objects.all(),
-        widget=forms.TextInput()
+        widget=forms.Select()
     )
     quantity = forms.IntegerField(min_value=0)
 
