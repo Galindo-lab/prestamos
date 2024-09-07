@@ -97,8 +97,14 @@ class OrderCreateView(LoginRequiredMixin, View):
                 order = self.transaction_order(request)
                 
             except Exception as e:
-                # hacer que el usuario seleccione otra fecha si no esta disponible
-                messages.error(request, e)
+                # Buscar horario alternativo el mismo día
+                alternative_time = self.find_alternative_time(item_formset, order_form.cleaned_data['order_date'])
+                if alternative_time:
+                    start_time, end_time = alternative_time
+                    messages.error(request, f"{e}. Horario alternativo disponible: {start_time.strftime('%H:%M')} - {end_time.strftime('%H:%M')}")
+                else:
+                    messages.error(request, f"{e}. No se encontraron horarios alternativos el mismo día.")
+                
                 return render(request, self.change_date_template, {
                     'item_formset': item_formset,
                     'order_form': order_form
@@ -109,7 +115,7 @@ class OrderCreateView(LoginRequiredMixin, View):
                 messages.success(request, "La orden se ha creado exitosamente.")
                 return redirect('order_detail', order.pk)
             
-        # hacer que el usuario seleccione otra fecha 
+        # Si los formularios no son válidos, mostrar de nuevo el formulario
         return render(request, self.change_date_template, {
             'item_formset': item_formset,
             'order_form': order_form
@@ -140,6 +146,26 @@ class OrderCreateView(LoginRequiredMixin, View):
                 raise ValueError("La orden no tiene unidades")
         
         return order
+    
+    def find_alternative_time(self, item_formset, order_date):
+        """
+        Busca un horario alternativo para todos los artículos en el mismo día.
+        :param item_formset: Formset de artículos seleccionados.
+        :param order_date: Fecha de inicio de la orden.
+        :return: Un horario alternativo (start_time, end_time) o None si no hay disponibilidad.
+        """
+        end_date = order_date.replace(hour=23, minute=59)  # Limitar la búsqueda al mismo día
+        for form in item_formset:
+            if form.is_valid():
+                item = form.cleaned_data['item']
+                quantity = form.cleaned_data['quantity']
+                alternative = item.find_alternative_availability(order_date, end_date)
+                if not alternative:
+                    return None  # Si algún artículo no tiene disponibilidad, retornar None
+        return alternative  # Retorna el primer horario alternativo disponible para todos
+                    
+                    
+                    
                     
 
 class OrderHistoryListView(LoginRequiredMixin, ListView):

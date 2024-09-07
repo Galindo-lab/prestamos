@@ -65,9 +65,9 @@ class UnitInlineForOrder(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'created_at', 'user')
+    list_display = ('id', 'created_at', 'status', 'user')
     search_fields = ('user__username', 'user__email')
-    list_filter = ('order_date', 'return_date')
+    list_filter = ('order_date', 'return_date', 'status')
     exclude = ('units',)
     autocomplete_fields = ['user']
     inlines = [UnitInlineForOrder]
