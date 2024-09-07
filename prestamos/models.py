@@ -1,6 +1,6 @@
 from random import shuffle
 
-import uuid
+from datetime import timedelta
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
@@ -38,6 +38,28 @@ class Item(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     category = models.ManyToManyField(Category, related_name='items', blank=True)
+    
+    
+    def find_alternative_availability(self, start_date, end_date):
+        """
+        Busca disponibilidad en horas dentro del mismo día.
+        :param start_date: Fecha de inicio de la búsqueda
+        :param end_date: Fecha final (mismo día)
+        :return: La primera hora disponible o None si no hay disponibilidad
+        """
+        current_time = start_date
+        delta = timedelta(hours=1)  # Incremento de una hora para la búsqueda
+
+        while current_time + delta <= end_date:
+            available_units = self.units_available(current_time, current_time + delta)
+            if available_units:  # Si hay unidades disponibles en esa hora
+                return current_time, current_time + delta
+
+            current_time += delta
+
+        # Si no encuentra disponibilidad durante el día
+        return None
+    
 
     def units_available(self, start_date, end_date):
         """
@@ -65,6 +87,26 @@ class Unit(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='units')
     serial_number = models.CharField(max_length=255)
     available = models.BooleanField(default=True)
+    
+    def find_alternative_availability(self, start_date, end_date):
+        """
+        Busca disponibilidad en horas dentro del mismo día.
+        :param start_date: Fecha de inicio de la búsqueda
+        :param end_date: Fecha final (mismo día)
+        :return: La primera hora disponible o None si no hay disponibilidad
+        """
+        current_time = start_date
+        delta = timedelta(hours=1)  # Incremento de una hora para la búsqueda
+
+        while current_time + delta <= end_date:
+            available_units = self.units_available(current_time, current_time + delta)
+            if available_units:  # Si hay unidades disponibles en esa hora
+                return current_time, current_time + delta
+
+            current_time += delta
+
+        # Si no encuentra disponibilidad durante el día
+        return None
 
     def is_available(self, start_date, end_date):
         overlapping_orders = self.orders.filter(models.Q(order_date__lt=end_date, return_date__gt=start_date,

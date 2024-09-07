@@ -90,7 +90,7 @@ class OrderCreateView(LoginRequiredMixin, View):
         order_form = OrderForm(request.POST)
         item_formset = OrderItemFormSet(request.POST)
         order = None
-        
+            
         if order_form.is_valid() and item_formset.is_valid():
             try:
                 # hacer la orden 
@@ -126,14 +126,15 @@ class OrderCreateView(LoginRequiredMixin, View):
             order = order_form.save()
 
             for item_form in item_formset:
-                item = item_form.cleaned_data['item']
-                quantity = item_form.cleaned_data['quantity']
+                if item_form.is_valid(): 
+                    item = item_form.cleaned_data['item']
+                    quantity = item_form.cleaned_data['quantity']
 
-                if quantity < 0:
-                    # si solicito 0 unidades del articulo ignorar
-                    continue
+                    if quantity < 0:
+                        # si solicito 0 unidades del articulo ignorar
+                        continue
 
-                order.add_item(item, quantity)
+                    order.add_item(item, quantity)
 
             if order.units.count() <= 0:
                 raise ValueError("La orden no tiene unidades")

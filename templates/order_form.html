@@ -10,7 +10,7 @@
 {% block nav %}
     <div class="container-fluid">
         <div class="navbar-brand fw-medium">Artículos</div>
-        <a class="btn" href="{{ request.META.HTTP_REFERER }}"><i class="bi bi-x-lg"></i></a>
+        <a class="btn" href="{% url 'order_list' %}"><i class="bi bi-x-lg"></i></a>
     </div>
 {% endblock %}
 
@@ -70,15 +70,6 @@
                 </div>
 
                 <div class="modal-body">
-
-                    {% if form.errors %}
-                        <ul class="list-group mb-3">
-                            <li class="list-group-item list-group-item-danger small">
-                                <i class="bi bi-exclamation-circle"></i> Usuario o clave incorrectos, Intentarlo nuevamente.
-                            </li>
-                        </ul>
-                    {% endif %}
-
 
                     <form method="post">
                         {% csrf_token %}
