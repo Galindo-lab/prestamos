@@ -32,6 +32,18 @@ document.addEventListener('alpine:init', () => {
             localStorage.setItem('selectedItems', JSON.stringify(this.items));
         },
 
+        increaseQuantity(index) {
+            this.items[index].quantity += 1;
+            localStorage.setItem('selectedItems', JSON.stringify(this.items));
+        },
+
+        decreaseQuantity(index) {
+            if (this.items[index].quantity > 1) {
+                this.items[index].quantity -= 1;
+                localStorage.setItem('selectedItems', JSON.stringify(this.items));
+            }
+        },
+
         updateTotalForms() {
             const totalForms = document.getElementById('id_form-TOTAL_FORMS');
             if (totalForms) {
