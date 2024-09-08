@@ -2,6 +2,36 @@
 {% load widget_tweaks %}
 {% load static %}
 
+{% block script %}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('orderForm', () => ({
+                order_date: '{{ order_form.order_date.value }}',
+                return_date: '{{ order_form.return_date.value }}',
+                setDates(start, end) {
+                    this.order_date = start;
+                    this.return_date = end;
+                }
+            }));
+        });
+
+        function counterData(name) {
+            return {
+                name: name,  // El nombre se pasa como parámetro
+                value: 0,    // Valor inicial del elemento
+                increment() {
+                    this.value += 1;  // Incrementar el valor por 1
+                },
+                decrement() {
+                    if (this.value > 0) {
+                        this.value -= 1;  // Decrementar el valor por 1
+                    }
+                }
+            }
+        }
+    </script>
+{% endblock %}
+
 {% block nav %}
     <div class="container-fluid">
         <div class="navbar-brand fw-medium">Orden</div>
@@ -11,17 +41,17 @@
 
 {% block content %}
     <div class="container mt-3" style="margin-bottom: 4.5em;"
-         x-data="{ order_date: '{{ order_form.order_date.value }}', return_date: '{{ order_form.return_date.value }}', setDates(start, end) { this.order_date = start; this.return_date = end; }}">
+         x-data="orderForm">
 
         <!-- Mostrar mensajes -->
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-info mb-3">
+                <div class="alert alert-primary mb-3">
                     {{ message|safe }}
 
                     <!-- Mostrar slots alternativos -->
                     {% if alternative_slots %}
-                        <ul class="m-0">
+                        <ul class="mt-2 mb-0">
                             {% for alternative_slot in alternative_slots %}
                                 <li class="text-decoration-underline cursor-pointer"
                                     @click="setDates('{{ alternative_slot.start_time|date:'Y-m-d\\TH:i' }}', '{{ alternative_slot.end_time|date:'Y-m-d\\TH:i' }}')">
@@ -37,7 +67,7 @@
         {% endif %}
 
         <!-- Mostrar errores del formulario -->
-        {% if order_form.errors or item_formset.errors %}
+        {% if order_form.errors %}
             <ul class="list-group mb-3">
                 <!-- Errores generales del formulario (non-field errors) -->
                 {% for error in order_form.non_field_errors %}
@@ -50,30 +80,13 @@
                         <li class="list-group-item list-group-item-danger">{{ field.label }}: {{ error }}</li>
                     {% endfor %}
                 {% endfor %}
-
-
-                <!-- Errores en el formset -->
-                {% for form in item_formset %}
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <li class="list-group-item list-group-item-danger">{{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-
-                    {% for error in form.non_field_errors %}
-                        <li class="list-group-item list-group-item-danger">{{ error }}</li>
-                    {% endfor %}
-                {% endfor %}
             </ul>
         {% endif %}
-
-
-
 
         <form class="m-auto" method="post">
             {% csrf_token %}
 
-            <div>
+            <div class="mb-3">
                 <!-- Formulario de orden -->
                 <div class="input-group mb-3 border rounded">
                     <div class="form-floating">
@@ -88,59 +101,62 @@
                         <label for="floatingReturnDate">Fecha Devolución</label>
                     </div>
                 </div>
-
             </div>
 
-            <ul class="list-group mt-4">
+            <ul class="list-group mb-3">
+                <!-- Errores en el formset -->
+                {% for form in item_formset %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li class="list-group-item list-group-item-danger">{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+
+                    {% for error in form.non_field_errors %}
+                        <li class="list-group-item list-group-item-danger">{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+
+            <ul class="list-group">
                 {{ item_formset.management_form }}
 
-
                 {% for item_form in item_formset %}
-
                     <li class="list-group-item border-0 p-0 mb-2">
                         <div class="d-flex align-items-center mb-2">
-
                             <div class="flex-shrink-0">
-                                <img class="border rounded" width="70" src="https://picsum.photos/600/600"
-                                     alt="...">
+                                <img class="border rounded" width="70" src="https://picsum.photos/600/600" alt="...">
                             </div>
 
-                            <div class="flex-grow-1 ms-3">
-
+                            <div class="flex-grow-1 ms-3" x-data="counterData('miElemento')">
                                 <!-- Campo Item: ocupa más espacio con col-10 -->
                                 <div class="">
                                     {% render_field item_form.item class="form-control border-0 bg-body p-0 mb-1" %}
                                 </div>
 
                                 <!-- Campo Quantity: ocupa menos espacio con col-2 -->
-                                <div class="">
-                                    <div class="input-group">
-                                        <button class="btn btn-outline-primary" type="button" id="button-addon2">
-                                            <i class="bi bi-dash"></i>
-                                        </button>
-                                        {% render_field item_form.quantity class="form-control text-center " %}
-                                        <button class="btn btn-outline-primary" type="button" id="button-addon2">
-                                            <i class="bi bi-plus-lg"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
 
+                                <div class="input-group">
+                                    <button class="btn btn-outline-primary" @click.prevent="decrement()"><i
+                                            class="bi bi-dash"></i></button>
+                                    {% render_field item_form.quantity x-model="value" type="number" class="form-control text-center" x-init="value = parseInt($el.value)" %}
+                                    <button class="btn btn-outline-primary" @click.prevent="increment()"><i
+                                            class="bi bi-plus-lg"></i></button>
+                                </div>
+
+                            </div>
                         </div>
                     </li>
-
                 {% endfor %}
             </ul>
 
-
+            <button class="d-none" type="submit" id="aaa"></button>
         </form>
     </div>
 
-    <!-- Alpine.js -->
     <div class="fixed-bottom container bg-body">
         <div class="d-grid my-2">
-
-            <button class="btn btn-primary btn-lg" type="submit">Confirmar</button>
+            <label class="btn btn-primary btn-lg" for="aaa">Confirmar</label>
         </div>
     </div>
 {% endblock %}
