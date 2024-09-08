@@ -3,38 +3,144 @@
 {% load static %}
 
 {% block nav %}
-<div class="container-fluid">
-    <div class="navbar-brand fw-medium">Ajustes</div>
-    <a class="btn" href="{{ request.META.HTTP_REFERER }}"><i class="bi bi-x-lg"></i></a>
-</div>
+    <div class="container-fluid">
+        <div class="navbar-brand fw-medium">Orden</div>
+        <a class="btn" href="{{ request.META.HTTP_REFERER }}"><i class="bi bi-x-lg"></i></a>
+    </div>
 {% endblock %}
 
 {% block content %}
-{% if messages %}
-{% for message in messages %}
-  <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
-{% endfor %}
-{% endif %}
+    <div class="container mt-3" style="margin-bottom: 4.5em;"
+         x-data="{ order_date: '{{ order_form.order_date.value }}', return_date: '{{ order_form.return_date.value }}', setDates(start, end) { this.order_date = start; this.return_date = end; }}">
 
-        <form class="container m-auto" method="post">
+        <!-- Mostrar mensajes -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info mb-3">
+                    {{ message|safe }}
+
+                    <!-- Mostrar slots alternativos -->
+                    {% if alternative_slots %}
+                        <ul class="m-0">
+                            {% for alternative_slot in alternative_slots %}
+                                <li class="text-decoration-underline cursor-pointer"
+                                    @click="setDates('{{ alternative_slot.start_time|date:'Y-m-d\\TH:i' }}', '{{ alternative_slot.end_time|date:'Y-m-d\\TH:i' }}')">
+                                    {{ alternative_slot.start_time|date:"j M" }} de
+                                    {{ alternative_slot.start_time|time:"g:i a" }} a
+                                    {{ alternative_slot.end_time|time:"g:i a" }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Mostrar errores del formulario -->
+        {% if order_form.errors or item_formset.errors %}
+            <ul class="list-group mb-3">
+                <!-- Errores generales del formulario (non-field errors) -->
+                {% for error in order_form.non_field_errors %}
+                    <li class="list-group-item list-group-item-danger">{{ error }}</li>
+                {% endfor %}
+
+                <!-- Errores de cada campo del formulario de orden -->
+                {% for field in order_form %}
+                    {% for error in field.errors %}
+                        <li class="list-group-item list-group-item-danger">{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+
+
+                <!-- Errores en el formset -->
+                {% for form in item_formset %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li class="list-group-item list-group-item-danger">{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+
+                    {% for error in form.non_field_errors %}
+                        <li class="list-group-item list-group-item-danger">{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+
+
+
+        <form class="m-auto" method="post">
             {% csrf_token %}
 
-            {{ order_form.as_p }}
+            <div>
+                <!-- Formulario de orden -->
+                <div class="input-group mb-3 border rounded">
+                    <div class="form-floating">
+                        {% render_field order_form.order_date class="form-control border border-0" id="floatingOrderDate" placeholder="Fecha Inicio" x-model="order_date" %}
+                        <label for="floatingOrderDate">Fecha Inicio</label>
+                    </div>
+                </div>
 
-            <div class="container">
-                {{ item_formset.management_form }}
-                {{item_formset}}
+                <div class="input-group mb-3 border rounded">
+                    <div class="form-floating">
+                        {% render_field order_form.return_date class="form-control border border-0" id="floatingReturnDate" placeholder="Fecha Devolución" x-model="return_date" %}
+                        <label for="floatingReturnDate">Fecha Devolución</label>
+                    </div>
+                </div>
 
             </div>
 
+            <ul class="list-group mt-4">
+                {{ item_formset.management_form }}
 
-            <button class="mt-3" type="submit">Confirmar</button>
-        </form>
 
-        {% comment "" %}
-                        {% for form in item_formset %}
-                    {% render_field form.item  %}
-                    {% render_field form.quantity  %}
+                {% for item_form in item_formset %}
+
+                    <li class="list-group-item border-0 p-0 mb-2">
+                        <div class="d-flex align-items-center mb-2">
+
+                            <div class="flex-shrink-0">
+                                <img class="border rounded" width="70" src="https://picsum.photos/600/600"
+                                     alt="...">
+                            </div>
+
+                            <div class="flex-grow-1 ms-3">
+
+                                <!-- Campo Item: ocupa más espacio con col-10 -->
+                                <div class="">
+                                    {% render_field item_form.item class="form-control border-0 bg-body p-0 mb-1" %}
+                                </div>
+
+                                <!-- Campo Quantity: ocupa menos espacio con col-2 -->
+                                <div class="">
+                                    <div class="input-group">
+                                        <button class="btn btn-outline-primary" type="button" id="button-addon2">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                        {% render_field item_form.quantity class="form-control text-center " %}
+                                        <button class="btn btn-outline-primary" type="button" id="button-addon2">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
                 {% endfor %}
-        {% endcomment %}
+            </ul>
+
+
+        </form>
+    </div>
+
+    <!-- Alpine.js -->
+    <div class="fixed-bottom container bg-body">
+        <div class="d-grid my-2">
+
+            <button class="btn btn-primary btn-lg" type="submit">Confirmar</button>
+        </div>
+    </div>
 {% endblock %}

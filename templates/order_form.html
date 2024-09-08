@@ -42,16 +42,18 @@
             {% for articulo in items %}
                 <div class="col">
                     <div class="card d-flex flex-column">
-                        <div class="card-img-top img-fluid d-flex flex-row-reverse" style="height: 150px;background-size: cover; background-position: center; background-image: url('https://picsum.photos/600/600');">
+                        <div class="card-img-top img-fluid d-flex flex-row-reverse"
+                             style="height: 150px;background-size: cover; background-position: center; background-image: url('https://picsum.photos/600/600');">
                             <div class="d-flex align-items-end p-2">
-                                <button class="btn btn-sm btn-primary rounded-circle shadow" @click="addItem( {{ articulo.pk }}, '{{ articulo.name }}')">
+                                <button class="btn btn-sm btn-primary rounded-circle shadow"
+                                        @click="addItem( {{ articulo.pk }}, '{{ articulo.name }}')">
                                     <i class="bi bi-plus-lg"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="card-body flex-grow-1">
                             <p class="card-title text-truncate m-0 small">{{ articulo.name }}</p>
-                            <p class="small text-truncate text-secondary m-0"> {{ articulo.description }}</p>    
+                            <p class="small text-truncate text-secondary m-0"> {{ articulo.description }}</p>
                         </div>
                     </div>
                 </div>
@@ -65,7 +67,7 @@
             <div class="modal-content vh-100">
 
                 <div class="modal-header">
-                    <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>   
+                    <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
                     <label type="button" class="btn btn-primary ms-auto" for="submit">Ordenar</button>
                 </div>
 
@@ -97,12 +99,13 @@
 
                                 <div class="d-flex align-items-center mb-2">
                                     <div class="flex-shrink-0">
-                                        <img class="border rounded" width="70" src="https://picsum.photos/600/600" alt="...">
+                                        <img class="border rounded" width="70" src="https://picsum.photos/600/600"
+                                             alt="...">
                                     </div>
-                                
+
                                     <div class="flex-grow-1 ms-3">
                                         <span class="link-underline link-underline-opacity-0" x-text="item.name"></span>
-                                
+
                                         <div class="d-flex align-items-center my-1">
 
                                             <input type="hidden" x-model="item.id" :name="`form-${index}-item`">
@@ -110,60 +113,33 @@
                                             <div class="input-group">
 
                                                 <!-- Botón que cambia entre eliminar (bote de basura) y restar (bi-dash) -->
-                                                <button class="btn btn-outline-primary" type="button" @click="item.quantity == 1 ? removeItem(index) : decreaseQuantity(index)">
+                                                <button class="btn btn-outline-primary" type="button"
+                                                        @click="item.quantity == 1 ? removeItem(index) : decreaseQuantity(index)">
                                                     <i :class="item.quantity == 1 ? 'bi bi-trash' : 'bi bi-dash'"></i>
                                                 </button>
-                                        
+
                                                 <!-- Campo para mostrar y actualizar la cantidad -->
-                                                <input class="form-control text-center" type="number" x-model="item.quantity" @change="updateQuantity(index, $event.target.value)" :name="`form-${index}-quantity`">
-                                        
+                                                <input class="form-control text-center" type="number"
+                                                       x-model="item.quantity"
+                                                       @change="updateQuantity(index, $event.target.value)"
+                                                       :name="`form-${index}-quantity`">
+
                                                 <!-- Botón para agregar cantidad -->
-                                                <button class="btn btn-outline-primary" type="button" id="button-addon2" @click="increaseQuantity(index)">
+                                                <button class="btn btn-outline-primary" type="button" id="button-addon2"
+                                                        @click="increaseQuantity(index)">
                                                     <i class="bi bi-plus-lg"></i>
                                                 </button>
                                             </div>
                                         </div>
-                                        
-                                    </div>
-                                </div>
-                                
-                                
-
-                                {% comment "" %}
-
-
-                                <div class="d-flex mb-2">
-                                    <img class="img-fluid rounded" width="70" width="70" src="https://picsum.photos/600/600">
-
-                                    <div class="row ms-1">
-                                        <span class="fw-bold">
-                                            <a href="#" class="text-dark link-underline link-underline-opacity-0"
-                                                x-text="item.name">
-                                            </a>
-                                        </span>
-
-                                        <div class="d-flex">
-                                            <input type="hidden" x-model="item.id" :name="`form-${index}-item`">
-
-                                            <button class="btn btn-outline-primary" type="button" @click="removeItem(index)">x</button>
-                                            <button class="btn btn-outline-primary" type="button" @click="removeItem(index)">-</button>
-                                            <input class="" type="number" min="0" x-model="item.quantity"
-                                                   @change="updateQuantity(index, $event.target.value)"
-                                                   :name="`form-${index}-quantity`">
-                                            <button type="button" @click="removeItem(index)">+</button>
-
-                                        </div>
 
                                     </div>
                                 </div>
 
-                                {% endcomment %}
-                                
                             </template>
                         </div>
 
 
-                        <input id="submit" name="action" value="itemsSelected" type="submit" class="d-none"  >
+                        <input id="submit" name="action" value="itemsSelected" type="submit" class="d-none">
                     </form>
                 </div>
 
@@ -171,11 +147,13 @@
         </div>
     </div>
 
-    
+
 
     <div class="fixed-bottom container bg-body" x-show="items.length > 0">
         <div class="d-grid my-2">
-            <button class="btn btn-outline-primary btn-lg" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'">Cancelar Orden</button>
+            <button class="btn btn-outline-primary btn-lg" type="button" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'">
+            </button>
         </div>
     </div>
 

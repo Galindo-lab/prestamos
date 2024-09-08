@@ -1,5 +1,6 @@
 # views.py
 
+import math
 from django.core.exceptions import ValidationError
 from random import shuffle
 from datetime import timedelta
@@ -72,7 +73,6 @@ class OrderAuthorize(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('order_list')
 
     def form_valid(self, form):
-        form.instance.approved_by = self.request.user
         return super().form_valid(form)
 
 
@@ -91,6 +91,7 @@ class OrderCreateView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         order_form = OrderForm(request.POST)
         item_formset = OrderItemFormSet(request.POST)
+        alternative_slots = []
             
         if order_form.is_valid() and item_formset.is_valid():
             try:
@@ -99,23 +100,13 @@ class OrderCreateView(LoginRequiredMixin, View):
                 
                 
             except Exception as e:
-                # If any other error, try suggesting alternatives
                 alternative_slots = self.suggest_alternatives(order_form, item_formset)
-                
+
                 if alternative_slots:
-                    # Convertir las alternativas en un formato de cadena y añadirlas al mensaje
-                    formatted_slots = ", ".join(
-                        [f"Artículo: {slot['item']} desde {slot['start_time'].strftime('%I:%M %p')} hasta {slot['end_time'].strftime('%I:%M %p')}" 
-                        for slot in alternative_slots]
-                    )
-                    messages.error(request, f"{e}. Aquí hay algunas alternativas: {formatted_slots}")
+                    # Añadir el mensaje de error con las alternativas
+                    messages.error(request, f"{e}. Horarios Alterativos:")
                 else:
                     messages.error(request, f"{e}. No se encontraron horarios alternativos.")
-                
-                return render(request, self.change_date_template, {
-                    'item_formset': item_formset,
-                    'order_form': order_form
-                }) 
                 
             else:
                 messages.success(request, "La orden se ha creado exitosamente.")
@@ -124,11 +115,9 @@ class OrderCreateView(LoginRequiredMixin, View):
         # Si el formulario es inválido
         return render(request, self.change_date_template, {
             'item_formset': item_formset,
-            'order_form': order_form
+            'order_form': order_form,
+            'alternative_slots': alternative_slots
         })
-
-
-
 
 
 
@@ -159,7 +148,7 @@ class OrderCreateView(LoginRequiredMixin, View):
                         raise Exception("No hay suficientes unidades de '" + str(item.name) + "' diponibles")
 
                     shuffle(units)  # revolver los elementos de la lista
-                    self.units.add(*(units[:quantity]))  # agregar la cantidad de unidades especificadas
+                    order.units.add(*(units[:quantity]))  # agregar la cantidad de unidades especificadas
 
 
             if order.units.count() <= 0:
@@ -171,32 +160,53 @@ class OrderCreateView(LoginRequiredMixin, View):
 
     def suggest_alternatives(self, order_form, item_formset):
         """
-        Sugiere solo las primeras 3 opciones de horarios alternativos para la orden.
-        todavia no funciona bien solo es
+        Sugiere alternativas de horarios donde TODOS los artículos solicitados estén disponibles simultáneamente.
         """
-        alternatives = []
         order_date = order_form.cleaned_data['order_date']
         return_date = order_form.cleaned_data['return_date']
-        max_alternatives = 3  # Máximo número de alternativas a mostrar
 
-        # Buscar alternativas con incremento de duración
-        for item_form in item_formset:
-            if item_form.is_valid():
-                item = item_form.cleaned_data['item']
+        max_alternatives = 3  # Limitar a 3 alternativas
+        alternatives = []
+
+        # Inicializamos un rango de búsqueda en el tiempo original de la orden
+        current_start_time = order_date
+        duration = return_date - order_date
+        time_increment = timedelta(minutes= math.ceil(duration.total_seconds()/60) )  # Incremento de 1 hora en la búsqueda
+
+        # Limitar el tiempo máximo de búsqueda a 24 horas adicionales
+        max_search_time = order_date + timedelta(days=1)
+
+        while current_start_time < max_search_time and len(alternatives) < max_alternatives:
+            all_items_available = True
+
+            for item_form in item_formset:
+                if not item_form.is_valid():
+                    continue
                 
-                alternative = item.find_alternative_availability(order_date, return_date)
-                if alternative:
-                    alternatives.append({
-                        'item': item,
-                        'start_time': alternative[0],
-                        'end_time': alternative[1]
-                    })
+                item = item_form.cleaned_data['item']
+                quantity = item_form.cleaned_data['quantity']
 
-                # Detener la búsqueda cuando se hayan encontrado 3 alternativas
-                if len(alternatives) >= max_alternatives:
-                    break
+                if quantity < 1:
+                    continue
+
+                # Verificar si el artículo tiene suficientes unidades disponibles en el intervalo actual
+                available_units = item.units_available(current_start_time, current_start_time + duration)
+                if len(available_units) < quantity:
+                    all_items_available = False
+                    break  # Si uno de los artículos no tiene suficientes unidades, pasamos a la siguiente iteración
+            
+            if all_items_available:
+                # Si todos los artículos están disponibles en este intervalo, añadimos la alternativa
+                alternatives.append({
+                    'start_time': current_start_time,
+                    'end_time': current_start_time + duration
+                })
+            
+            # Incrementamos el tiempo de búsqueda en una hora
+            current_start_time += time_increment
 
         return alternatives
+
 
                     
                     
