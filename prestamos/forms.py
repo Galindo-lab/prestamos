@@ -29,8 +29,22 @@ class OrderItemForm(forms.Form):
         queryset=Item.objects.all(),
         widget=forms.Select()
     )
-    quantity = forms.IntegerField(min_value=0)
+    quantity = forms.IntegerField(min_value=1)
 
+    def clean(self):
+        cleaned_data = super().clean()
+        item = cleaned_data.get('item')
+        quantity = cleaned_data.get('quantity')
+        order_date = self.initial.get('order_date')
+        return_date = self.initial.get('return_date')
+
+        if item and quantity:
+            # Verificar si el artículo tiene suficientes unidades disponibles
+            available_units = item.avalable_units()
+            if len(available_units) < quantity:
+                raise ValidationError(f"Solo existen {len(available_units)} unidad(es) del artículo '{item.name}'")
+
+        return cleaned_data
 
 # cantidad maxima de artículos por solicitud
 OrderItemFormSet = formset_factory(OrderItemForm, max_num=50, validate_max=True)

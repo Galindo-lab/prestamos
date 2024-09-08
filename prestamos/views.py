@@ -1,5 +1,7 @@
 # views.py
 
+from django.core.exceptions import ValidationError
+from random import shuffle
 from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -95,15 +97,16 @@ class OrderCreateView(LoginRequiredMixin, View):
                 # Try to create the order
                 order = self.transaction_order(request)
                 
+                
             except Exception as e:
-                # Si hay un error, sugerir alternativas
+                # If any other error, try suggesting alternatives
                 alternative_slots = self.suggest_alternatives(order_form, item_formset)
                 
                 if alternative_slots:
                     # Convertir las alternativas en un formato de cadena y añadirlas al mensaje
                     formatted_slots = ", ".join(
                         [f"Artículo: {slot['item']} desde {slot['start_time'].strftime('%I:%M %p')} hasta {slot['end_time'].strftime('%I:%M %p')}" 
-                         for slot in alternative_slots]
+                        for slot in alternative_slots]
                     )
                     messages.error(request, f"{e}. Aquí hay algunas alternativas: {formatted_slots}")
                 else:
@@ -113,6 +116,7 @@ class OrderCreateView(LoginRequiredMixin, View):
                     'item_formset': item_formset,
                     'order_form': order_form
                 }) 
+                
             else:
                 messages.success(request, "La orden se ha creado exitosamente.")
                 return redirect('order_detail', order.pk)
@@ -141,21 +145,34 @@ class OrderCreateView(LoginRequiredMixin, View):
                 if item_form.is_valid():
                     item = item_form.cleaned_data['item']
                     quantity = item_form.cleaned_data['quantity']
-
+                    order_date = order_form.cleaned_data['order_date']
+                    return_date = order_form.cleaned_data['return_date']
+                    
                     if quantity < 0:
-                        continue  # Skip if quantity is less than 0
+                        # Skip if quantity is less than 0
+                        continue 
 
-                    order.add_item(item, quantity)
+                    # order.add_item(item, quantity)
+                    units = item.units_available(order_date, return_date)
+
+                    if quantity > len(units):  # Veríficar que hay suficientes unidades
+                        raise Exception("No hay suficientes unidades de '" + str(item.name) + "' diponibles")
+
+                    shuffle(units)  # revolver los elementos de la lista
+                    self.units.add(*(units[:quantity]))  # agregar la cantidad de unidades especificadas
+
 
             if order.units.count() <= 0:
                 raise ValueError("La orden no tiene unidades disponibles.")
         
         return order
 
+
+
     def suggest_alternatives(self, order_form, item_formset):
         """
         Sugiere solo las primeras 3 opciones de horarios alternativos para la orden.
-        todavia no funciona bien solo es una prueba
+        todavia no funciona bien solo es
         """
         alternatives = []
         order_date = order_form.cleaned_data['order_date']
@@ -166,6 +183,7 @@ class OrderCreateView(LoginRequiredMixin, View):
         for item_form in item_formset:
             if item_form.is_valid():
                 item = item_form.cleaned_data['item']
+                
                 alternative = item.find_alternative_availability(order_date, return_date)
                 if alternative:
                     alternatives.append({

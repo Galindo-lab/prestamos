@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
+
 
 """
 Información de artículos
@@ -38,6 +40,10 @@ class Item(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     category = models.ManyToManyField(Category, related_name='items', blank=True)
+    
+    
+    def avalable_units(self):
+        return Unit.objects.filter(item=self, available=True)
     
     
     def find_alternative_availability(self, start_date, end_date, max_duration_increase=timedelta(hours=2)):
@@ -181,7 +187,7 @@ class Order(models.Model):
         units = item.units_available(self.order_date, self.return_date)
 
         if quantity > len(units):  # Veríficar que hay suficientes unidades
-            raise Exception("No hay suficientes unidades de '" + str(item.name) + "' diponibles")
+            raise ValidationError("No hay suficientes unidades de '" + str(item.name) + "' diponibles")
 
         shuffle(units)  # revolver los elementos de la lista
         self.units.add(*(units[:quantity]))  # agregar la cantidad de unidades especificadas
