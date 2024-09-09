@@ -5,7 +5,6 @@
 
 ### Instalación
 ```
-
 # 1. Clona el repositorio
 git clone https://github.com/usuario/proyecto-django.git
 cd proyecto-django
