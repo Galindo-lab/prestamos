@@ -45,7 +45,7 @@
   {% if order.status in 'pending, approved' %}
     <div class="fixed-bottom container bg-body">
       <div class="d-grid my-2 ">
-        <button class="btn btn-primary btn-lg" type="button">Cancelar Orden</button>
+        <a href="{% url 'order_cancel' order.pk %}" class="btn btn-primary btn-lg" type="button">Cancelar Orden</a>
       </div>
     </div>
   {% endif %}

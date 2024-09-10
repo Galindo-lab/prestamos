@@ -139,6 +139,10 @@ class Order(models.Model):
     status = models.CharField(max_length=10, choices=OrderStatusChoices.choices, default=OrderStatusChoices.PENDING)
     approved_by = models.ForeignKey(to=User, related_name='approved_orders', null=True, blank=True,
                                     on_delete=models.SET_NULL, default=None)
+    
+    def cancel(self):
+        self.status = OrderStatusChoices.CANCELLED
+        self.save()
 
     def add_item(self, item, quantity):
         """

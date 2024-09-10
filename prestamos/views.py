@@ -103,10 +103,10 @@ class OrderCreateView(LoginRequiredMixin, View):
         if order_form.is_valid() and item_formset.is_valid():
             try:
                 # Try to create the order
-                order = self.transaction_order(request)
-
+                order = self.transaction_order(order_form, item_formset)
 
             except Exception as e:
+                # mostrar opciones para el equipo
                 alternative_slots = self.suggest_alternatives(order_form, item_formset)
 
                 if alternative_slots:
@@ -126,9 +126,7 @@ class OrderCreateView(LoginRequiredMixin, View):
             'alternative_slots': alternative_slots
         })
 
-    def transaction_order(self, request) -> Order:
-        order_form = OrderForm(request.POST)
-        item_formset = OrderItemFormSet(request.POST)
+    def transaction_order(self, order_form, item_formset) -> Order:
 
         with transaction.atomic():
             # Create the order and add units
@@ -216,7 +214,7 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
     template_name = 'order_history_list.html'
     context_object_name = 'orders'
 
-    # agregar esto a una configuracion del sistema
+    # agregar esto a una configuración del sistema
     paginate_by = 100
 
     def get_queryset(self):
@@ -234,3 +232,13 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
+
+
+class CancelOrderView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+        order = get_object_or_404(Order, pk=pk)
+        order.cancel()
+        messages.success(request, "La orden ha sido cancelada.")
+        return redirect('order_detail', order.pk) 
+        
+        
