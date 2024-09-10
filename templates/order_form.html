@@ -25,14 +25,18 @@
             </div>
         </div>
 
-
         <div class="mb-3">
             <div class="btn-group-sm">
+                <a class="btn btn-outline-primary {% if not request.resolver_match.kwargs.category %}active{% endif %}"
+                   href="{% url 'order_create' %}">
+                    Todos
+                </a>
+
                 {% for category in categories %}
-                    <input type="radio" class="btn-check" name="btnradio" id="btnradio{{ forloop.counter0 }}"
-                           autocomplete="off">
-                    <label class="btn btn-outline-primary"
-                           for="btnradio{{ forloop.counter0 }}">{{ category.name }}</label>
+                    <a class="btn btn-outline-primary {% if request.resolver_match.kwargs.category|stringformat:"s" == category.name|stringformat:"s" %}active{% endif %}"
+                       href="{% url 'order_create' category.name %}">
+                        {{ category.name }}
+                    </a>
                 {% endfor %}
             </div>
         </div>

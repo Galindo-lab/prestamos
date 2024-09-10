@@ -91,8 +91,8 @@ class OrderCreateView(LoginRequiredMixin, View):
         return render(request, self.select_item_template, {
             'order_form': OrderForm(),
             'item_formset': OrderItemFormSet(),
+            'categories': Category.objects.all(),
             'items': items,
-            'categories': Category.objects.all()
         })
 
     def post(self, request, *args, **kwargs):
