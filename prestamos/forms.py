@@ -80,6 +80,6 @@ class OrderForm(forms.ModelForm):
         return_date = cleaned_data.get('return_date')
 
         if order_date and return_date and order_date >= return_date:
-            raise ValidationError('La fecha de inicio de la orden debe ser previa a la fecha de devolución.')
+            raise ValidationError('La fecha de inicio de la orden debe ser anterior a la fecha de devolución.')
 
         return cleaned_data
