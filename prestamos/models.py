@@ -1,12 +1,11 @@
+from datetime import timedelta
 from random import shuffle
 
-from datetime import timedelta
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
-
 
 """
 Información de artículos
@@ -40,45 +39,9 @@ class Item(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     category = models.ManyToManyField(Category, related_name='items', blank=True)
-    
-    
+
     def avalable_units(self):
         return Unit.objects.filter(item=self, available=True)
-    
-    
-    def find_alternative_availability(self, start_date, end_date, max_duration_increase=timedelta(hours=2)):
-        """
-        Busca horarios alternativos disponibles para el item en incrementos de duración.
-        
-        :param start_date: Fecha y hora de inicio de la búsqueda
-        :param end_date: Fecha y hora de fin de la búsqueda
-        :param max_duration_increase: Máximo incremento de la duración permitido
-        :return: Primer intervalo disponible como (start_time, end_time) o None si no hay disponibilidad
-        """
-        duration = end_date - start_date  # Duración original de la orden
-        time_increment = timedelta(hours=1)  # Incrementos de búsqueda (en este caso, de 1 hora)
-        max_search_time = start_date + timedelta(days=1)  # Búsqueda en las próximas 24 horas
-
-        current_time = start_date
-
-        while current_time < max_search_time:
-            # Primero, buscar con la duración original
-            available_units = self.units_available(current_time, current_time + duration)
-            if available_units:  # Si hay unidades disponibles en ese rango de tiempo
-                return current_time, current_time + duration
-
-            # Luego, buscar incrementando la duración, hasta un máximo de 2 horas adicionales
-            for increment in range(1, int(max_duration_increase.total_seconds() // 3600) + 1):
-                new_duration = duration + timedelta(hours=increment)
-                alternative_units = self.units_available(current_time, current_time + new_duration)
-                if alternative_units:  # Si hay unidades disponibles con la nueva duración
-                    return current_time, current_time + new_duration
-
-            # Avanzar en el tiempo (en incrementos de una hora)
-            current_time += time_increment
-
-        # Si no se encuentra ninguna disponibilidad dentro del rango de búsqueda
-        return None
 
     def units_available(self, start_date, end_date):
         """
@@ -107,7 +70,7 @@ class Unit(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='units')
     serial_number = models.CharField(max_length=255)
     available = models.BooleanField(default=True)
-    
+
     def find_alternative_availability(self, start_date, end_date):
         """
         Busca disponibilidad en horas dentro del mismo día.
