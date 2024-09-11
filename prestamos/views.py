@@ -90,7 +90,8 @@ class OrderCreateView(LoginRequiredMixin, View):
     select_item_template = 'order_form.html'
 
     def get(self, request, category=None):
-        items, selected_category = self.get_items_by_category(category)
+        search_query = request.GET.get('search', '')  # Obtener el término de búsqueda de la URL
+        items, selected_category = self.get_items_by_category(category, search_query)
 
         return render(request, self.select_item_template, {
             'order_form': OrderForm(),
@@ -134,16 +135,19 @@ class OrderCreateView(LoginRequiredMixin, View):
             'items': items,
         })
 
-    def get_items_by_category(self, category):
+    def get_items_by_category(self, category, search_query=''):
         """
-        Obtiene los artículos filtrados por categoría, si se proporciona una.
-        Devuelve los artículos y la categoría seleccionada.
+        Obtiene los artículos filtrados por categoría y por término de búsqueda, si se proporcionan.
         """
         if category:
             category_obj = get_object_or_404(Category, name=category)
             items = category_obj.items.all()
         else:
             items = Item.objects.all()
+
+        # Filtrar por el término de búsqueda
+        if search_query:
+            items = items.filter(name__icontains=search_query)
 
         return items, category
 
