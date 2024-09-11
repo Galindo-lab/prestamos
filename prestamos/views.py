@@ -78,7 +78,6 @@ class OrderAuthorize(LoginRequiredMixin, UpdateView):
 
 class OrderCreateView(LoginRequiredMixin, View):
     select_item_template = 'order_form.html'
-    change_date_template = 'order_confirm.html'
 
     def get(self, request, category=None):
         items, selected_category = self.get_items_by_category(category)
