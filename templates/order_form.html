@@ -4,7 +4,88 @@
 {% load static %}
 
 {% block script %}
-    <script src="{% static 'script/cart.js' %}"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('app', () => ({
+                items: JSON.parse(localStorage.getItem('selectedItems')) || [],
+                order_date: '{{ order_form.order_date.value }}',
+                return_date: '{{ order_form.return_date.value }}',
+
+                init() {
+                    // Actualiza el valor de id_form-TOTAL_FORMS al cargar la página
+                    this.updateTotalForms();
+                },
+
+                getItemsLength() {
+                    return this.items.length;
+                },
+
+                addItem(id, name, imageUrl) {
+                    if (this.items.find(item => item.id === id)) return;
+
+                    this.items.push({id: id, name: name, quantity: 1, imageUrl: imageUrl});
+                    localStorage.setItem('selectedItems', JSON.stringify(this.items));
+                    this.updateTotalForms(); // Actualiza el valor de TOTAL_FORMS
+                    console.log(this.items);
+                },
+
+                removeItem(index) {
+                    this.items.splice(index, 1);
+                    localStorage.setItem('selectedItems', JSON.stringify(this.items));
+                    this.updateTotalForms(); // Actualiza el valor de TOTAL_FORMS
+                    console.log(this.items);
+                },
+
+                updateQuantity(index, quantity) {
+                    this.items[index].quantity = quantity;
+                    localStorage.setItem('selectedItems', JSON.stringify(this.items));
+                },
+
+                increaseQuantity(index) {
+                    this.items[index].quantity += 1;
+                    localStorage.setItem('selectedItems', JSON.stringify(this.items));
+                },
+
+                decreaseQuantity(index) {
+                    if (this.items[index].quantity > 1) {
+                        this.items[index].quantity -= 1;
+                        localStorage.setItem('selectedItems', JSON.stringify(this.items));
+                    }
+                },
+
+                // Nueva función para comprobar si el artículo ya está agregado
+                isItemAdded(id) {
+                    return this.items.some(item => item.id === id);
+                },
+
+
+                updateTotalForms() {
+                    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+                    if (totalForms) {
+                        totalForms.value = this.items.length;
+                    }
+                },
+
+                setDates(start, end) {
+                    this.order_date = start;
+                    this.return_date = end;
+                }
+            }));
+
+            // Escuchar evento antes de abandonar la página para asegurar sincronización
+            window.addEventListener('beforeunload', () => {
+                localStorage.setItem('selectedItems', JSON.stringify(Alpine.store('app').items));
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var abrirModal = {{ abrir_modal|yesno:"true,false" }};  // Convertir el valor a true/false
+            if (abrirModal) {
+                var modal = new bootstrap.Modal(document.getElementById('exampleModal'), {});
+                modal.show();
+            }
+        });
+    </script>
 {% endblock %}
 
 {% block nav %}
@@ -88,38 +169,97 @@
 
                 <div class="modal-body">
 
+
                     <form method="post">
                         {% csrf_token %}
 
                         {# Formulario de orden #}
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-primary mb-3">
+                                    {{ message|safe }}
+
+                                    <!-- Mostrar slots alternativos -->
+                                    {% if alternative_slots %}
+                                        <ul class="mt-2 mb-0">
+                                            {% for alternative_slot in alternative_slots %}
+                                                <li class="text-decoration-underline cursor-pointer"
+                                                    @click="setDates('{{ alternative_slot.start_time|date:'Y-m-d\\TH:i' }}', '{{ alternative_slot.end_time|date:'Y-m-d\\TH:i' }}')">
+                                                    {{ alternative_slot.start_time|date:"j M" }} de
+                                                    {{ alternative_slot.start_time|time:"g:i a" }} a
+                                                    {{ alternative_slot.end_time|time:"g:i a" }}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+
+
+                        <!-- Mostrar errores del formulario -->
+                        {% if order_form.errors %}
+                            <ul class="list-group mb-3">
+                                <!-- Errores generales del formulario (non-field errors) -->
+                                {% for error in order_form.non_field_errors %}
+                                    <li class="list-group-item list-group-item-danger">{{ error }}</li>
+                                {% endfor %}
+
+                                <!-- Errores de cada campo del formulario de orden -->
+                                {% for field in order_form %}
+                                    {% for error in field.errors %}
+                                        <li class="list-group-item list-group-item-danger">{{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
                         <div class="input-group mb-3 border rounded">
                             <div class="form-floating">
-                                {% render_field order_form.order_date class="form-control border border-0" id="floatingInput" placeholder="Inicio" %}
+                                {% render_field order_form.order_date class="form-control border border-0" id="floatingInput" placeholder="Inicio" x-model="order_date" %}
                                 <label for="floatingInput">Fecha Inicio</label>
                             </div>
                         </div>
 
                         <div class="input-group mb-3 border rounded">
                             <div class="form-floating">
-                                {% render_field order_form.return_date class="form-control border border-0" id="floatingInput" placeholder="Inicio" %}
+                                {% render_field order_form.return_date class="form-control border border-0" id="floatingInput" placeholder="Inicio" x-model="return_date" %}
                                 <label for="floatingInput">Devolución</label>
                             </div>
                         </div>
 
                         {# formset de articulos #}
                         <div class="mt-4">
+
+
+                            <ul class="list-group mb-3">
+                                <!-- Errores en el formset -->
+                                {% for form in item_formset %}
+                                    {% for field in form %}
+                                        {% for error in field.errors %}
+                                            <li class="list-group-item list-group-item-danger">{{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+
+                                    {% for error in form.non_field_errors %}
+                                        <li class="list-group-item list-group-item-danger">{{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+
                             {{ item_formset.management_form }}
 
                             <template x-for="(item, index) in items" :key="item.id">
 
                                 <div class="d-flex align-items-center mb-2">
                                     <div class="flex-shrink-0">
-                                        <img class="border rounded" width="70" :src="item.imageUrl"
-                                             alt="...">
+                                        <img class="border rounded" width="70" :src="item.imageUrl">
                                     </div>
 
                                     <div class="flex-grow-1 ms-3">
-                                        <span class="link-underline link-underline-opacity-0 d-block small"
+                                        <span class="link-underline link-underline-opacity-0 d-block small mb-2"
                                               x-text="item.name" style="max-width: 100%;"></span>
 
                                         <div class="d-flex align-items-center my-1">
@@ -165,13 +305,14 @@
 
 
 
-    <div class="fixed-bottom container bg-body" x-show="items.length > 0">
+    <div class="fixed-bottom container bg-body" :class="{'d-none': items.length === 0}">
         <div class="d-grid my-2">
             <button class="btn btn-primary btn-lg" type="button" data-bs-toggle="modal"
                     data-bs-target="#exampleModal" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'">Cancelar Orden
             </button>
         </div>
     </div>
+
 
 {% endblock %}
 

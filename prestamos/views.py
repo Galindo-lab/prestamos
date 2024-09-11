@@ -81,12 +81,7 @@ class OrderCreateView(LoginRequiredMixin, View):
     change_date_template = 'order_confirm.html'
 
     def get(self, request, category=None):
-
-        if category:
-            category_obj = get_object_or_404(Category, name=category)
-            items = category_obj.items.all()
-        else:
-            items = Item.objects.all()
+        items, selected_category = self.get_items_by_category(category)
 
         return render(request, self.select_item_template, {
             'order_form': OrderForm(),
@@ -95,9 +90,10 @@ class OrderCreateView(LoginRequiredMixin, View):
             'items': items,
         })
 
-    def post(self, request):
+    def post(self, request, category=None):
         order_form = OrderForm(request.POST)
         item_formset = OrderItemFormSet(request.POST)
+        items, selected_category = self.get_items_by_category(category)
         alternative_slots = []
 
         if order_form.is_valid() and item_formset.is_valid():
@@ -120,11 +116,28 @@ class OrderCreateView(LoginRequiredMixin, View):
                 return redirect('order_detail', order.pk)
 
         # Si el formulario es inválido
-        return render(request, self.change_date_template, {
-            'item_formset': item_formset,
+        return render(request, self.select_item_template, {
             'order_form': order_form,
-            'alternative_slots': alternative_slots
+            'item_formset': item_formset,
+            'categories': Category.objects.all(),
+            'alternative_slots': alternative_slots,
+            'abrir_modal': True,
+            'items': items,
         })
+
+
+    def get_items_by_category(self, category):
+        """
+        Obtiene los artículos filtrados por categoría, si se proporciona una.
+        Devuelve los artículos y la categoría seleccionada.
+        """
+        if category:
+            category_obj = get_object_or_404(Category, name=category)
+            items = category_obj.items.all()
+        else:
+            items = Item.objects.all()
+
+        return items, category
 
     def transaction_order(self, order_form, item_formset) -> Order:
 
@@ -239,6 +252,4 @@ class CancelOrderView(LoginRequiredMixin, View):
         order = get_object_or_404(Order, pk=pk)
         order.cancel()
         messages.success(request, "La orden ha sido cancelada.")
-        return redirect('order_detail', order.pk) 
-        
-        
+        return redirect('order_detail', order.pk)
