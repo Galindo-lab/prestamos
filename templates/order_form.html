@@ -52,13 +52,19 @@
                              style="height: 150px;background-size: cover; background-position: center; background-image: url('{{ articulo.image.url }}');">
 
                             <div class="d-flex align-items-end p-2">
-                                <button class="btn btn-sm btn-primary rounded-circle shadow"
-                                        @click="addItem( {{ articulo.pk }}, '{{ articulo.name }}')">
-                                    <i class="bi bi-plus-lg"></i>
+                                <button class="btn btn-sm  rounded-pill shadow"
+                                        :class="isItemAdded({{ articulo.pk }}) ? 'btn-light' : 'btn-primary'"
+
+                                        @click='addItem( {{ articulo.pk }}, "{{ articulo.name }}", "{{ articulo.image.url }}");'>
+
+                                    <span x-text="isItemAdded({{ articulo.pk }}) ? 'Agregado' : ''"></span>
+                                    <!-- Muestra el ícono de plus solo si el artículo no está agregado -->
+                                    <i x-show="!isItemAdded({{ articulo.pk }})" class="bi bi-plus-lg"></i>
+
                                 </button>
                             </div>
-                        </div>
 
+                        </div>
 
                         <div class="card-body flex-grow-1">
                             <p class="card-title text-truncate m-0 small">{{ articulo.name }}</p>
@@ -108,12 +114,13 @@
 
                                 <div class="d-flex align-items-center mb-2">
                                     <div class="flex-shrink-0">
-                                        <img class="border rounded" width="70" src="https://picsum.photos/600/600"
+                                        <img class="border rounded" width="70" :src="item.imageUrl"
                                              alt="...">
                                     </div>
 
                                     <div class="flex-grow-1 ms-3">
-                                        <span class="link-underline link-underline-opacity-0" x-text="item.name"></span>
+                                        <span class="link-underline link-underline-opacity-0 d-block small"
+                                              x-text="item.name" style="max-width: 100%;"></span>
 
                                         <div class="d-flex align-items-center my-1">
 
@@ -160,7 +167,7 @@
 
     <div class="fixed-bottom container bg-body" x-show="items.length > 0">
         <div class="d-grid my-2">
-            <button class="btn btn-outline-primary btn-lg" type="button" data-bs-toggle="modal"
+            <button class="btn btn-primary btn-lg" type="button" data-bs-toggle="modal"
                     data-bs-target="#exampleModal" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'">Cancelar Orden
             </button>
         </div>

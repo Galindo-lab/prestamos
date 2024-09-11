@@ -11,10 +11,10 @@ document.addEventListener('alpine:init', () => {
             return this.items.length;
         },
 
-        addItem(id, name) {
+        addItem(id, name, imageUrl) {
             if (this.items.find(item => item.id === id)) return;
 
-            this.items.push({id: id, name: name, quantity: 1});
+            this.items.push({id: id, name: name, quantity: 1, imageUrl: imageUrl});
             localStorage.setItem('selectedItems', JSON.stringify(this.items));
             this.updateTotalForms(); // Actualiza el valor de TOTAL_FORMS
             console.log(this.items);
@@ -43,6 +43,12 @@ document.addEventListener('alpine:init', () => {
                 localStorage.setItem('selectedItems', JSON.stringify(this.items));
             }
         },
+
+        // Nueva función para comprobar si el artículo ya está agregado
+        isItemAdded(id) {
+            return this.items.some(item => item.id === id);
+        },
+
 
         updateTotalForms() {
             const totalForms = document.getElementById('id_form-TOTAL_FORMS');
