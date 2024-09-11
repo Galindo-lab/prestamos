@@ -33,7 +33,7 @@ class UnitInlineForItem(admin.TabularInline):
 
 @admin.register(Item)
 class ItemAdmin(ImportExportModelAdmin):
-    list_display = ('name', 'description')
+    list_display = ('name',)
     search_fields = ('name',)
     list_filter = ('category',)
     filter_horizontal = ('category',)
