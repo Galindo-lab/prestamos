@@ -219,19 +219,19 @@
                         <div class="input-group mb-3 border rounded">
                             <div class="form-floating">
                                 {% render_field order_form.order_date class="form-control border border-0" id="floatingInput" placeholder="Inicio" x-model="order_date" %}
-                                <label for="floatingInput">Fecha Inicio</label>
+                                <label for="floatingInput">Fecha de entrega</label>
                             </div>
                         </div>
 
                         <div class="input-group mb-3 border rounded">
                             <div class="form-floating">
                                 {% render_field order_form.return_date class="form-control border border-0" id="floatingInput" placeholder="Inicio" x-model="return_date" %}
-                                <label for="floatingInput">Devolución</label>
+                                <label for="floatingInput">Fecha de devolución</label>
                             </div>
                         </div>
 
                         {# formset de articulos #}
-                        <div class="mt-4">
+                        <div class="mt-2">
 
 
                             <ul class="list-group mb-3">
