@@ -80,7 +80,7 @@ class OrderCreateView(LoginRequiredMixin, View):
     select_item_template = 'order_form.html'
     change_date_template = 'order_confirm.html'
 
-    def get(self, request, category=None, *args, **kwargs):
+    def get(self, request, category=None):
 
         if category:
             category_obj = get_object_or_404(Category, name=category)
@@ -95,7 +95,7 @@ class OrderCreateView(LoginRequiredMixin, View):
             'items': items,
         })
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         order_form = OrderForm(request.POST)
         item_formset = OrderItemFormSet(request.POST)
         alternative_slots = []

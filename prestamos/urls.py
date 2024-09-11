@@ -1,11 +1,13 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.auth.views import LoginView, LogoutView
-from django.urls import path, reverse_lazy
+from django.urls import path
 
-from prestamos.views import OrderAuthorize, SettingsView, OrderHistoryListView, OrderListView, ReportListView, CancelOrderView
-from prestamos.views import ReportCreateView
+from prestamos.views import OrderAuthorize, SettingsView, OrderHistoryListView, OrderListView, ReportListView, \
+    CancelOrderView
 from prestamos.views import OrderCreateView
 from prestamos.views import OrderDetailView
-
+from prestamos.views import ReportCreateView
 
 urlpatterns = [
     # login y logout
@@ -24,6 +26,6 @@ urlpatterns = [
     path('orders/authorize/<int:pk>/', OrderAuthorize.as_view(), name='order_aprove'),
     path('orders/report/<int:pk>/', ReportCreateView.as_view(), name='order_report'),
     path('orders/cancel/<int:pk>', CancelOrderView.as_view(), name="order_cancel"),
-    
+
     path('settings', SettingsView.as_view(), name='settings')
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

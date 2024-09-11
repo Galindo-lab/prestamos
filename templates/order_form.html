@@ -46,8 +46,10 @@
             {% for articulo in items %}
                 <div class="col">
                     <div class="card d-flex flex-column">
+
                         <div class="card-img-top img-fluid d-flex flex-row-reverse"
-                             style="height: 150px;background-size: cover; background-position: center; background-image: url('https://picsum.photos/600/600');">
+                             style="height: 150px;background-size: cover; background-position: center; background-image: url('{{ articulo.image.url }}');">
+
                             <div class="d-flex align-items-end p-2">
                                 <button class="btn btn-sm btn-primary rounded-circle shadow"
                                         @click="addItem( {{ articulo.pk }}, '{{ articulo.name }}')">
@@ -55,6 +57,8 @@
                                 </button>
                             </div>
                         </div>
+
+
                         <div class="card-body flex-grow-1">
                             <p class="card-title text-truncate m-0 small">{{ articulo.name }}</p>
                             <p class="small text-truncate text-secondary m-0"> {{ articulo.description }}</p>

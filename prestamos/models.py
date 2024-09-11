@@ -36,6 +36,7 @@ class Item(models.Model):
         verbose_name = "Artículo"
         verbose_name_plural = "Artículos"
 
+    image = models.ImageField(default='default.png')
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     category = models.ManyToManyField(Category, related_name='items', blank=True)
