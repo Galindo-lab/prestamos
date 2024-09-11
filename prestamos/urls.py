@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path
 
 from prestamos.views import OrderAuthorize, SettingsView, OrderHistoryListView, OrderListView, ReportListView, \
-    CancelOrderView
+    CancelOrderView, UserProfileView
 from prestamos.views import OrderCreateView
 from prestamos.views import OrderDetailView
 from prestamos.views import ReportCreateView
@@ -27,5 +27,7 @@ urlpatterns = [
     path('orders/report/<int:pk>/', ReportCreateView.as_view(), name='order_report'),
     path('orders/cancel/<int:pk>', CancelOrderView.as_view(), name="order_cancel"),
 
-    path('settings', SettingsView.as_view(), name='settings')
+    path('settings', SettingsView.as_view(), name='settings'),
+
+    path('profile/', UserProfileView.as_view(), name='user_profile'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

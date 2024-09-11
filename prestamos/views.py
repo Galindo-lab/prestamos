@@ -21,6 +21,16 @@ from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
 from .models import Order, Report, Item, Category, OrderStatusChoices
 
 
+class UserProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'user_profile.html'  # Aquí debes especificar tu plantilla
+
+    # Método para pasar el contexto con la información del usuario logueado
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user  # Añadimos el usuario logueado al contexto
+        return context
+
+
 class SettingsView(LoginRequiredMixin, TemplateView):
     template_name = "settings.html"
 
@@ -123,7 +133,6 @@ class OrderCreateView(LoginRequiredMixin, View):
             'abrir_modal': True,
             'items': items,
         })
-
 
     def get_items_by_category(self, category):
         """

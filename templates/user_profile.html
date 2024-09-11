@@ -1,0 +1,45 @@
+{% extends 'bases/base-nav.html' %}
+
+{% block nav %}
+
+    {% include 'navegation/top.html' with title='Usuario' %}
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-3" style="margin-bottom: 6em;">
+        {% for message in messages %}
+            <div class="alert alert-primary d-flex align-items-center">
+                <i class="bi bi-check-circle-fill"></i><span class="ps-1">{{ message }}</span>
+            </div>
+        {% endfor %}
+
+        {# Detalles del usuario #}
+        <div class="card mt-3">
+            <div class="card-header text-secondary small">Detalles del Usuario</div>
+            <div class="card-body">
+                <p><strong>Nombre de Usuario:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Nombre Completo:</strong> {{ user.get_full_name }}</p>
+                <p><strong>Fecha de Registro:</strong> {{ user.date_joined }}</p>
+            </div>
+        </div>
+
+        {# Mostrar detalles adicionales si existen #}
+        {% if user.profile %}
+            <div class="card mt-3">
+                <div class="card-header text-muted small">Información Adicional</div>
+                <div class="card-body">
+                    <p><strong>Biografía:</strong> {{ user.profile.bio }}</p>
+                    <p><strong>Ubicación:</strong> {{ user.profile.location }}</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    {# Barra inferior #}
+    <div class="fixed-bottom">
+        {# barra de navegacion inferior #}
+        {% include 'navegation/bottom.html' with option=4 %}
+    </div>
+
+{% endblock %}
