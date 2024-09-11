@@ -26,23 +26,24 @@
         </div>
 
         <div class="mb-3">
-            <div class="btn-group-sm">
-                <a class="btn btn-outline-primary {% if not request.resolver_match.kwargs.category %}active{% endif %}"
+            <div class="btn-group-sm gap-2 d-flex flex-nowrap overflow-auto">
+                <a class="btn btn-outline-primary rounded-pill mb-1 text-nowrap {% if not request.resolver_match.kwargs.category %}active{% endif %}"
                    href="{% url 'order_create' %}">
                     Todos
                 </a>
 
                 {% for category in categories %}
-                    <a class="btn btn-outline-primary {% if request.resolver_match.kwargs.category|stringformat:"s" == category.name|stringformat:"s" %}active{% endif %}"
+                    <a class="btn btn-outline-primary rounded-pill mb-1 text-nowrap {% if request.resolver_match.kwargs.category|stringformat:"s" == category.name|stringformat:"s" %}active{% endif %}"
                        href="{% url 'order_create' category.name %}">
                         {{ category.name }}
                     </a>
                 {% endfor %}
+
             </div>
         </div>
 
 
-        <div class="row gy-2 gx-2 row-cols-2 row-cols-md-3 row-cols-xl-4" style="margin-bottom: 4.5em;">
+        <div class="row gy-2 gx-2 row-cols-2" style="margin-bottom: 4.5em;">
             {% for articulo in items %}
                 <div class="col">
                     <div class="card d-flex flex-column">

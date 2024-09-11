@@ -66,7 +66,7 @@ class Command(BaseCommand):
                 if cover_url and isinstance(cover_url, str):  # Verificar que cover_url sea una cadena válida
                     image_path = self.download_image(cover_url, title)
                     if image_path:
-                        item_obj.imagen.save(os.path.basename(image_path), File(open(image_path, 'rb')))
+                        item_obj.image.save(os.path.basename(image_path), File(open(image_path, 'rb')))
                         self.stdout.write(self.style.SUCCESS(f'Portada guardada para el libro: {title}'))
 
                 item_obj.save()
