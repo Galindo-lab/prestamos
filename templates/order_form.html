@@ -8,6 +8,7 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('app', () => ({
                 items: JSON.parse(localStorage.getItem('selectedItems')) || [],
+                itemDetails: {name: '', description: '', imageUrl: ''},
                 order_date: '{{ order_form.order_date.value }}',
                 return_date: '{{ order_form.return_date.value }}',
 
@@ -18,15 +19,6 @@
 
                 getItemsLength() {
                     return this.items.length;
-                },
-
-                addItem(id, name, imageUrl) {
-                    if (this.items.find(item => item.id === id)) return;
-
-                    this.items.push({id: id, name: name, quantity: 1, imageUrl: imageUrl});
-                    localStorage.setItem('selectedItems', JSON.stringify(this.items));
-                    this.updateTotalForms(); // Actualiza el valor de TOTAL_FORMS
-                    console.log(this.items);
                 },
 
                 removeItem(index) {
@@ -68,6 +60,23 @@
                 setDates(start, end) {
                     this.order_date = start;
                     this.return_date = end;
+                },
+
+                addItem(id, name, imageUrl) {
+                    if (this.items.find(item => item.id === id)) return;
+                    this.items.push({id: id, name: name, quantity: 1, imageUrl: imageUrl});
+                    localStorage.setItem('selectedItems', JSON.stringify(this.items));
+                },
+
+                // Nueva función para mostrar detalles basada en el evento y los atributos data-*
+                showDetails(event) {
+                    const card = event.currentTarget;
+                    this.itemDetails.name = card.getAttribute('data-name');
+                    this.itemDetails.description = card.getAttribute('data-description');
+                    this.itemDetails.imageUrl = card.getAttribute('data-image-url');
+
+                    var modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+                    modal.show();
                 }
             }));
 
@@ -132,22 +141,22 @@
                 <div class="col">
                     <div class="card d-flex flex-column">
 
+
+                        <!-- Almacenar los datos en atributos data-* -->
                         <div class="card-img-top img-fluid d-flex flex-row-reverse"
-                             style="height: 150px;background-size: cover; background-position: center; background-image: url('{{ articulo.image.url }}');">
-
+                             style="height: 150px;background-size: cover; background-position: center; background-image: url('{{ articulo.image.url }}');"
+                             @click="showDetails($event)"
+                             data-name="{{ articulo.name }}"
+                             data-description="{{ articulo.description }}"
+                             data-image-url="{{ articulo.image.url }}">
                             <div class="d-flex align-items-end p-2">
-                                <button class="btn btn-sm  rounded-pill shadow"
+                                <button class="btn btn-sm rounded-pill shadow"
                                         :class="isItemAdded({{ articulo.pk }}) ? 'btn-light' : 'btn-primary'"
-
-                                        @click='addItem( {{ articulo.pk }}, "{{ articulo.name }}", "{{ articulo.image.url }}");'>
-
+                                        @click.stop='addItem({{ articulo.pk }}, "{{ articulo.name }}", "{{ articulo.image.url }}");'>
                                     <span x-text="isItemAdded({{ articulo.pk }}) ? 'Agregado' : ''"></span>
-                                    <!-- Muestra el ícono de plus solo si el artículo no está agregado -->
                                     <i x-show="!isItemAdded({{ articulo.pk }})" class="bi bi-plus-lg"></i>
-
                                 </button>
                             </div>
-
                         </div>
 
                         <div class="card-body flex-grow-1">
@@ -160,20 +169,50 @@
         </div>
     </div>
 
-    <div class="modal fade" id="exampleModal" data-bs-backdrop="static" tabindex="-1"
+
+
+
+
+
+    <!-- Modal para mostrar detalles del artículo -->
+    <div class="modal fade modal-dialog-scrollable" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel" x-text="itemDetails.name"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img :src="itemDetails.imageUrl" class="img-fluid mb-3" alt="Imagen del artículo">
+                    <p x-text="itemDetails.description"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div class="modal fade modal-dialog-scrollable " id="exampleModal" data-bs-backdrop="static" tabindex="-1"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content vh-100">
 
+
                 <div class="modal-header">
                     <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <label type="button" class="btn btn-primary ms-auto" for="submit">Ordenar</button>
+                    <input id="submit" name="action" value="Ordenar" type="submit" class="btn btn-primary ms-auto">
                 </div>
 
                 <div class="modal-body">
-
-
                     <form method="post">
+
                         {% csrf_token %}
 
                         {# Formulario de orden #}
@@ -226,7 +265,7 @@
                             </div>
                         </div>
 
-                        <div class="input-group mb-3 border rounded">
+                        <div class="input-group mb-2 border rounded">
                             <div class="form-floating">
                                 {% render_field order_form.return_date class="form-control border border-0" id="floatingInput" placeholder="Inicio" x-model="return_date" %}
                                 <label for="floatingInput">Fecha de devolución</label>
@@ -235,7 +274,6 @@
 
                         {# formset de articulos #}
                         <div class="mt-2">
-
 
                             <ul class="list-group mb-3">
                                 <!-- Errores en el formset -->
@@ -256,7 +294,7 @@
 
                             <template x-for="(item, index) in items" :key="item.id">
 
-                                <div class="d-flex align-items-center mb-2">
+                                <div class="d-flex mb-2">
                                     <div class="flex-shrink-0">
                                         <img class="border rounded" width="70" :src="item.imageUrl">
                                     </div>
@@ -296,10 +334,8 @@
 
                             </template>
                         </div>
-
-
-                        <input id="submit" name="action" value="itemsSelected" type="submit" class="d-none">
                     </form>
+
                 </div>
 
             </div>
@@ -310,7 +346,8 @@
 
     <div class="fixed-bottom container bg-body" :class="{'d-none': items.length === 0}">
         <div class="d-grid my-2">
-            <button class="btn btn-primary btn-lg" type="button" data-bs-toggle="modal"
+            <button
+                    class="btn btn-primary btn-lg" type="button" data-bs-toggle="modal"
                     data-bs-target="#exampleModal" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'">Cancelar Orden
             </button>
         </div>
