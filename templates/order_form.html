@@ -8,7 +8,7 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('app', () => ({
                 items: JSON.parse(localStorage.getItem('selectedItems')) || [],
-                itemDetails: {name: '', description: '', imageUrl: ''},
+                itemDetails: {id: '', name: '', description: '', imageUrl: ''},
                 order_date: '{{ order_form.order_date.value }}',
                 return_date: '{{ order_form.return_date.value }}',
 
@@ -69,8 +69,9 @@
                 },
 
                 // Nueva función para mostrar detalles basada en el evento y los atributos data-*
-                showDetails(event) {
+                showDetails(event, id) {
                     const card = event.currentTarget;
+                    this.itemDetails.id = id;  // Añadir el ID del artículo
                     this.itemDetails.name = card.getAttribute('data-name');
                     this.itemDetails.description = card.getAttribute('data-description');
                     this.itemDetails.imageUrl = card.getAttribute('data-image-url');
@@ -145,7 +146,7 @@
                         <!-- Almacenar los datos en atributos data-* -->
                         <div class="card-img-top img-fluid d-flex flex-row-reverse"
                              style="height: 150px;background-size: cover; background-position: center; background-image: url('{{ articulo.image.url }}');"
-                             @click="showDetails($event)"
+                             @click="showDetails($event, {{ articulo.pk }})"
                              data-name="{{ articulo.name }}"
                              data-description="{{ articulo.description }}"
                              data-image-url="{{ articulo.image.url }}">
@@ -169,35 +170,35 @@
         </div>
     </div>
 
-
-
-
-
-
     <!-- Modal para mostrar detalles del artículo -->
     <div class="modal fade modal-dialog-scrollable" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel"
          aria-hidden="true">
         <div class="modal-dialog">
+            
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="detailsModalLabel" x-text="itemDetails.name"></h5>
+                    <h5 class="modal-title text-truncate" id="detailsModalLabel" x-text="itemDetails.name"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <img :src="itemDetails.imageUrl" class="img-fluid mb-3" alt="Imagen del artículo">
                     <p x-text="itemDetails.description"></p>
+                        
+
+                </div>
+                <div class="modal-footer">
+                    <!-- Verificación si el artículo está agregado -->
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-primary" 
+                                @click="addItem(itemDetails.id, itemDetails.name, itemDetails.imageUrl)"
+                                :disabled="isItemAdded(itemDetails.id)">
+                            <span x-text="isItemAdded(itemDetails.id) ? 'Ya en el Carrito' : 'Agregar al Carrito'"></span>
+                        </button>
+
                 </div>
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
-
 
     <div class="modal fade modal-dialog-scrollable " id="exampleModal" data-bs-backdrop="static" tabindex="-1"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -207,12 +208,12 @@
 
                 <div class="modal-header">
                     <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <input id="submit" name="action" value="Ordenar" type="submit" class="btn btn-primary ms-auto">
+                    <label id="submit" for="ordenar" name="action" type="submit" class="btn btn-primary ms-auto">Ordenar</label>
                 </div>
 
                 <div class="modal-body">
                     <form method="post">
-
+                        <input type="submit" id="ordenar" class="d-none">
                         {% csrf_token %}
 
                         {# Formulario de orden #}
@@ -243,7 +244,7 @@
 
                         <!-- Mostrar errores del formulario -->
                         {% if order_form.errors %}
-                            <ul class="list-group mb-3">
+                            <ul class="list-group mb-2">
                                 <!-- Errores generales del formulario (non-field errors) -->
                                 {% for error in order_form.non_field_errors %}
                                     <li class="list-group-item list-group-item-danger">{{ error }}</li>
@@ -275,7 +276,7 @@
                         {# formset de articulos #}
                         <div class="mt-2">
 
-                            <ul class="list-group mb-3">
+                            <ul class="list-group mb-2">
                                 <!-- Errores en el formset -->
                                 {% for form in item_formset %}
                                     {% for field in form %}
@@ -299,7 +300,7 @@
                                         <img class="border rounded" width="70" :src="item.imageUrl">
                                     </div>
 
-                                    <div class="flex-grow-1 ms-3">
+                                    <div class="flex-grow-1 ms-3 ">
                                         <span class="link-underline link-underline-opacity-0 d-block small mb-2"
                                               x-text="item.name" style="max-width: 100%;"></span>
 
@@ -355,5 +356,3 @@
 
 
 {% endblock %}
-
-
