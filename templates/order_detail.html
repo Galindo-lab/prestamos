@@ -4,7 +4,13 @@
 {% block nav %}
   <div class="container-fluid">
     <div class="navbar-brand fw-medium">Orden #{{ order.id }} </div>
-    <a class="btn" href="{{ request.META.HTTP_REFERER }}"><i class="bi bi-x-lg"></i></a>
+
+    {% if order.status in 'pending, approved' %}
+      <a class="btn" href="{% url 'report_list' %}"><i class="bi bi-x-lg"></i></a>
+    {% else %}
+      <a class="btn" href="{% url 'order_history_list' %}"><i class="bi bi-x-lg"></i></a>
+    {% endif %}
+
   </div>
 {% endblock %}
 
