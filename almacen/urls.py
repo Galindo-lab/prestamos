@@ -18,10 +18,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from django.views.static import serve
+from django.urls import include, re_path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('prestamos.urls')),
     path('', include('pwa.urls')),
     path('qr_code/', include('qr_code.urls', namespace="qr_code")),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+    # datos estaticos en produccion:  https://stackoverflow.com/a/49722734
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
