@@ -1,6 +1,9 @@
 # forms.py
+from datetime import time
+
 from django import forms
 from django.core.exceptions import ValidationError
+from extra_settings.models import Setting
 from django.forms import formset_factory
 
 from .models import Order, Item, Report
@@ -81,7 +84,20 @@ class OrderForm(forms.ModelForm):
         order_date = cleaned_data.get('order_date')
         return_date = cleaned_data.get('return_date')
 
+        opening_time = Setting.get("STORE_OPENING_TIME", default=time(1, 0))
+        closing_time = Setting.get("STORE_CLOSING_TIME", default=time(00, 00))
+
+        # Convertimos las horas a formato de 12 horas con AM/PM solo para los mensajes de error
+        opening_time_12hr = opening_time.strftime("%I:%M %p")
+        closing_time_12hr = closing_time.strftime("%I:%M %p")
+
+        if order_date.time() < opening_time or return_date.time() < opening_time:
+            raise ValidationError(f'Lo más temprano que puede ordenar es {opening_time_12hr}')
+
+        if order_date.time() > closing_time or return_date.time() > closing_time:
+            raise ValidationError(f'Lo más tarde que puede ordenar es {closing_time_12hr}')
+
         if order_date and return_date and order_date >= return_date:
-            raise ValidationError('La fecha de inicio de la orden debe ser anterior a la fecha de devolución.')
+            raise ValidationError('La fecha de entrega debe ser anterior a la fecha de devolución.')
 
         return cleaned_data
