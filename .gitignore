@@ -1,0 +1,52 @@
+# Archivos y directorios de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+venv/
+ENV/
+env/
+.venv/
+
+# Archivos de distribución
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Bases de datos
+db.sqlite3
+
+# Archivos de logs
+*.log
+
+# Archivos de configuración de Django
+*.pot
+*.pyc
+__pycache__/
+
+# Ignorar archivos de media de Django
+/media/
+
+# Archivos estáticos
+/static/
+staticfiles/
+
+# Configuraciones de IDEs
+.vscode/
+.idea/
+
+# Otros
+*.swp
+*.swo
