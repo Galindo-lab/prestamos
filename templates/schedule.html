@@ -10,33 +10,53 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container mt-3">
-    <span class=" fw-bold"><i class="bi bi-calendar-week me-2"></i>Horario de Atención</span>
+  <div class="container my-3 mb-5">
+    <!-- Horario de Atención -->
+    <div class="mt-4">
+      <h5><i class="bi bi-calendar-week me-2"></i>Horario de Atención</h5>
+      <p>Las consultas enviadas fuera del horario establecido no serán atendidas de inmediato. El almacén opera desde <b>{{ opening_time|time:"g:i A" }} hasta {{ closing_time|time:"g:i A" }}</b>, los siguientes días:</p>
+      
+      <ul class="fw-bold">
+        {% for day in opening_days %}
+          <li>
+            {% if day == 'Monday' %}
+              Lunes
+            {% elif day == 'Tuesday' %}
+              Martes
+            {% elif day == 'Wednesday' %}
+              Miércoles
+            {% elif day == 'Thursday' %}
+              Jueves
+            {% elif day == 'Friday' %}
+              Viernes
+            {% elif day == 'Saturday' %}
+              Sábado
+            {% elif day == 'Sunday' %}
+              Domingo
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
 
-    <p  class="mt-1">
-     Desde {{ opening_time }} hasta {{ closing_time }}.
-    </p>
+    <!-- Sección de Contacto de Almacén -->
+    <div class="mt-4">
+      <h5><i class="bi bi-building me-2"></i>Contacto del Almacén</h5>
+      <p>Para consultas relacionadas con el almacén, contáctenos directamente.</p>
+      <ul>
+        <li class="fw-bold">Teléfono: <a href="tel:{{ warehouse_phone }}">{{ warehouse_phone }}</a></li>
+        <li class="fw-bold">Email: <a href="mailto:{{ warehouse_email }}">{{ warehouse_email }}</a></li>
+      </ul>
+    </div>
 
-    <ul class="">
-      {% for dia in dias_en_ingles %}
-        <li class="">
-          {% if dia == 'Monday' %}
-            Lunes
-          {% elif dia == 'Tuesday' %}
-            Martes
-          {% elif dia == 'Wednesday' %}
-            Miércoles
-          {% elif dia == 'Thursday' %}
-            Jueves
-          {% elif dia == 'Friday' %}
-            Viernes
-          {% elif dia == 'Saturday' %}
-            Sábado
-          {% elif dia == 'Sunday' %}
-            Domingo
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
+    <!-- Sección de Contacto de Soporte -->
+    <div class="mt-4">
+      <h5><i class="bi bi-telephone me-2"></i>Contacto de Soporte</h5>
+      <p>Si tienes alguna pregunta o problema, puedes contactar a nuestro equipo de soporte.</p>
+      <ul class="fw-bold">
+        <li class="fw-bold">Teléfono: <a href="tel:{{ support_phone }}">{{ support_phone }}</a></li>
+        <li class="fw-bold">Email: <a href="mailto:{{ support_email }}">{{ support_email }}</a></li>
+      </ul>
+    </div>
   </div>
 {% endblock %}

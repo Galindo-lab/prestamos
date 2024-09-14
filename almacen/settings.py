@@ -168,6 +168,36 @@ EXTRA_SETTINGS_DEFAULTS = [
         "value": False,
         "description": "Block new requests if the account has active reports",
         "editable": True,
+    },
+    # Información de contacto del almacén
+    {
+        "name": "WAREHOUSE_PHONE",
+        "type": "string",
+        "value": "+00 000000000",
+        "description": "Warehouse contact phone number",
+        "editable": True,
+    },
+    {
+        "name": "WAREHOUSE_EMAIL",
+        "type": "string",
+        "value": "warehouse@doe.com",
+        "description": "Warehouse contact email",
+        "editable": True,
+    },
+    # Información de contacto del soporte
+    {
+        "name": "SUPPORT_PHONE",
+        "type": "string",
+        "value": "+00 000000000",
+        "description": "Support contact phone number",
+        "editable": True,
+    },
+    {
+        "name": "SUPPORT_EMAIL",
+        "type": "string",
+        "value": "joe@doe.com",
+        "description": "Support contact email",
+        "editable": True,
     }
 ]
 
