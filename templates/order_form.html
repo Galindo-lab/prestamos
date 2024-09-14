@@ -113,6 +113,8 @@
                 <div class="input-group input-group-lg">
                     <input type="search" name="search" class="form-control" placeholder="Buscar..."
                            value="{{ request.GET.search }}">
+                    <!-- Campo oculto para pasar la categoría actual -->
+                    <input type="hidden" name="category" value="{{ request.GET.category }}">
                     <button class="btn btn-outline-secondary" type="submit" id="basic-addon1"><i
                             class="bi bi-search"></i></button>
                 </div>
@@ -121,21 +123,20 @@
 
         <div class="mb-3">
             <div class="btn-group-sm gap-2 d-flex flex-nowrap overflow-auto">
-                <a class="btn btn-outline-primary rounded-pill mb-1 text-nowrap {% if not request.resolver_match.kwargs.category %}active{% endif %}"
-                   href="{% url 'order_create' %}">
+                <a class="btn btn-outline-primary rounded-pill mb-1 text-nowrap {% if not request.GET.category %}active{% endif %}"
+                   href="{% url 'order_create' %}?search={{ request.GET.search }}">
                     Todos
                 </a>
 
                 {% for category in categories %}
-                    <a class="btn btn-outline-primary rounded-pill mb-1 text-nowrap {% if request.resolver_match.kwargs.category|stringformat:"s" == category.name|stringformat:"s" %}active{% endif %}"
-                       href="{% url 'order_create' category.name %}">
+                    <a class="btn btn-outline-primary rounded-pill mb-1 text-nowrap {% if request.GET.category|stringformat:"s" == category.name|stringformat:"s" %}active{% endif %}"
+                       href="{% url 'order_create' %}?category={{ category.name }}&search={{ request.GET.search }}">
                         {{ category.name }}
                     </a>
                 {% endfor %}
 
             </div>
         </div>
-
 
         <div class="row gy-2 gx-2 row-cols-2" style="margin-bottom: 4.5em;">
             {% for articulo in items %}
@@ -183,8 +184,6 @@
                 <div class="modal-body">
                     <img :src="itemDetails.imageUrl" class="img-fluid mb-3" alt="Imagen del artículo">
                     <p x-text="itemDetails.description"></p>
-
-
                 </div>
                 <div class="modal-footer">
                     <!-- Verificación si el artículo está agregado -->
@@ -345,15 +344,19 @@
     </div>
 
 
-
-    <div class="fixed-bottom container bg-body" :class="{'d-none': items.length === 0}">
+    {# evita el flick #}
+    <div class="fixed-bottom container bg-body d-none" x-init="$el.classList.remove('d-none')"
+         x-show="items.length > 0">
         <div class="d-grid my-2">
             <button
                     class="btn btn-primary btn-lg" type="button" data-bs-toggle="modal"
-                    data-bs-target="#exampleModal" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'">Cancelar Orden
+                    data-bs-target="#exampleModal" x-text="'Ver Carrito ( ' + getItemsLength() + ' )'">
+                Cancelar Orden
             </button>
         </div>
     </div>
+
+
 
 
 {% endblock %}
