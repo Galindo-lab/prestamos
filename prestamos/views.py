@@ -26,17 +26,17 @@ from .models import Order, Report, Item, Category, OrderStatusChoices
 class ScheduleView(LoginRequiredMixin, View):
     template = "schedule.html"
     
-    def get(self, request, category=None):
-        opening_time = Setting.get("STORE_OPENING_TIME", default=time(1, 0))
-        closing_time = Setting.get("STORE_CLOSING_TIME", default=time(00, 00))
-        opening_days = Setting.get("STORE_OPEN_DAYS", default="Indefinido").split(',')
-        
-        return render(request, self.template,  {
-            'dias_en_ingles': opening_days,
-            'opening_time': opening_time,
-            'closing_time': closing_time
+    def get(self, request):
+        # Renderizar la plantilla con los datos obtenidos directamente desde Setting.get()
+        return render(request, self.template, {
+            'opening_days': Setting.get("STORE_OPEN_DAYS", default="Indefinido").split(','),  # Días de apertura
+            'opening_time': Setting.get("STORE_OPENING_TIME", default=time(9, 0)),  # Horario de apertura
+            'closing_time': Setting.get("STORE_CLOSING_TIME", default=time(18, 0)),  # Horario de cierre
+            'warehouse_phone': Setting.get("WAREHOUSE_PHONE", default="+00 000000000"),  # Teléfono del almacén
+            'warehouse_email': Setting.get("WAREHOUSE_EMAIL", default="warehouse@doe.com"),  # Email del almacén
+            'support_phone': Setting.get("SUPPORT_PHONE", default="+00 000000000"),  # Teléfono de soporte
+            'support_email': Setting.get("SUPPORT_EMAIL", default="joe@doe.com"),  # Email de soporte
         })
-        
 
 
 class UserProfileView(LoginRequiredMixin, TemplateView):
