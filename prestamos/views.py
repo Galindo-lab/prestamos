@@ -3,6 +3,7 @@
 import math
 from datetime import timedelta
 from random import shuffle
+from datetime import time
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,8 +18,25 @@ from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import UpdateView
 
+from extra_settings.models import Setting
+
 from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
 from .models import Order, Report, Item, Category, OrderStatusChoices
+
+class ScheduleView(LoginRequiredMixin, View):
+    template = "schedule.html"
+    
+    def get(self, request, category=None):
+        opening_time = Setting.get("STORE_OPENING_TIME", default=time(1, 0))
+        closing_time = Setting.get("STORE_CLOSING_TIME", default=time(00, 00))
+        opening_days = Setting.get("STORE_OPEN_DAYS", default="Indefinido").split(',')
+        
+        return render(request, self.template,  {
+            'dias_en_ingles': opening_days,
+            'opening_time': opening_time,
+            'closing_time': closing_time
+        })
+        
 
 
 class UserProfileView(LoginRequiredMixin, TemplateView):

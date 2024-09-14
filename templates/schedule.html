@@ -1,0 +1,42 @@
+<!-- templates/order_form.html -->
+{% extends 'bases/base-nav.html' %}
+{% load extra_settings %}
+
+{% block nav %}
+  <div class="container-fluid">
+    <div class="navbar-brand fw-medium">Acerca de</div>
+    <a class="btn" href="{{ request.META.HTTP_REFERER }}"><i class="bi bi-x-lg"></i></a>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="container mt-3">
+    <span class=" fw-bold"><i class="bi bi-calendar-week me-2"></i>Horario de Atención</span>
+
+    <p  class="mt-1">
+     Desde {{ opening_time }} hasta {{ closing_time }}.
+    </p>
+
+    <ul class="">
+      {% for dia in dias_en_ingles %}
+        <li class="">
+          {% if dia == 'Monday' %}
+            Lunes
+          {% elif dia == 'Tuesday' %}
+            Martes
+          {% elif dia == 'Wednesday' %}
+            Miércoles
+          {% elif dia == 'Thursday' %}
+            Jueves
+          {% elif dia == 'Friday' %}
+            Viernes
+          {% elif dia == 'Saturday' %}
+            Sábado
+          {% elif dia == 'Sunday' %}
+            Domingo
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
