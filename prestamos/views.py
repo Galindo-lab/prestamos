@@ -115,14 +115,13 @@ class OrderAuthorize(LoginRequiredMixin, UpdateView):
 
 class OrderCreateView(LoginRequiredMixin, View):
     select_item_template = 'order_form.html'
-    paginate_by = 10  # Número de artículos por página
 
     def get(self, request, category=None):
         search_query = request.GET.get('search', '')  # Obtener el término de búsqueda de la URL
         items, selected_category = self.get_items_by_category(request.GET.get('category', ''), search_query)
 
         # Paginación
-        paginator = Paginator(items, self.paginate_by)
+        paginator = Paginator(items, Setting.get("CATALOG_ITEMS_PAGINATION", default=10))
         page = request.GET.get('page', 1)
 
         try:
@@ -168,7 +167,7 @@ class OrderCreateView(LoginRequiredMixin, View):
                 return redirect('order_detail', order.pk)
 
         # Si el formulario es inválido o hay excepciones, realizar la paginación nuevamente
-        paginator = Paginator(items, self.paginate_by)
+        paginator = Paginator(items, Setting.get("CATALOG_ITEMS_PAGINATION", default=10))
         page = request.GET.get('page', 1)
 
         try:

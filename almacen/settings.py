@@ -198,6 +198,13 @@ EXTRA_SETTINGS_DEFAULTS = [
         "value": "joe@doe.com",
         "description": "Support contact email",
         "editable": True,
+    },
+    {
+        "name": "CATALOG_ITEMS_PAGINATION",
+        "type": "int",
+        "value": 20,
+        "description": "Elementos en una pagina del catalogo",
+        "editable": True,
     }
 ]
 
