@@ -7,6 +7,7 @@ from datetime import time
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
 from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
@@ -104,24 +105,47 @@ class OrderAuthorize(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
+
+
+
+
+
+
+
+
 class OrderCreateView(LoginRequiredMixin, View):
     select_item_template = 'order_form.html'
+    paginate_by = 10  # Número de artículos por página
 
     def get(self, request, category=None):
         search_query = request.GET.get('search', '')  # Obtener el término de búsqueda de la URL
-        items, selected_category = self.get_items_by_category(category, search_query)
+        items, selected_category = self.get_items_by_category(request.GET.get('category', ''), search_query)
+
+        # Paginación
+        paginator = Paginator(items, self.paginate_by)
+        page = request.GET.get('page', 1)
+
+        try:
+            paginated_items = paginator.page(page)
+        except PageNotAnInteger:
+            paginated_items = paginator.page(1)
+        except EmptyPage:
+            paginated_items = paginator.page(paginator.num_pages)
 
         return render(request, self.select_item_template, {
             'order_form': OrderForm(),
             'item_formset': OrderItemFormSet(),
             'categories': Category.objects.all(),
-            'items': items,
+            'items': paginated_items,  # Usar items paginados
+            'paginator': paginator,
+            'page_obj': paginated_items,
+            'is_paginated': paginated_items.has_other_pages(),
         })
 
     def post(self, request, category=None):
         order_form = OrderForm(request.POST)
         item_formset = OrderItemFormSet(request.POST)
-        items, selected_category = self.get_items_by_category(category)
+        items, selected_category = self.get_items_by_category(request.GET.get('category', ''))
         alternative_slots = []
 
         if order_form.is_valid() and item_formset.is_valid():
@@ -130,12 +154,12 @@ class OrderCreateView(LoginRequiredMixin, View):
                 order = self.transaction_order(order_form, item_formset)
 
             except Exception as e:
-                # mostrar opciones para el equipo
+                # Mostrar opciones para el equipo
                 alternative_slots = self.suggest_alternatives(order_form, item_formset)
 
                 if alternative_slots:
                     # Añadir el mensaje de error con las alternativas
-                    messages.error(request, f"{e}. Horarios Alterativos:")
+                    messages.error(request, f"{e}. Horarios Alternativos:")
                 else:
                     messages.error(request, f"{e}. No se encontraron horarios alternativos.")
 
@@ -143,14 +167,27 @@ class OrderCreateView(LoginRequiredMixin, View):
                 messages.success(request, "La orden se ha creado exitosamente.")
                 return redirect('order_detail', order.pk)
 
-        # Si el formulario es inválido
+        # Si el formulario es inválido o hay excepciones, realizar la paginación nuevamente
+        paginator = Paginator(items, self.paginate_by)
+        page = request.GET.get('page', 1)
+
+        try:
+            paginated_items = paginator.page(page)
+        except PageNotAnInteger:
+            paginated_items = paginator.page(1)
+        except EmptyPage:
+            paginated_items = paginator.page(paginator.num_pages)
+
         return render(request, self.select_item_template, {
             'order_form': order_form,
             'item_formset': item_formset,
             'categories': Category.objects.all(),
             'alternative_slots': alternative_slots,
             'abrir_modal': True,
-            'items': items,
+            'items': paginated_items,  # Usar items paginados
+            'paginator': paginator,
+            'page_obj': paginated_items,
+            'is_paginated': paginated_items.has_other_pages(),
         })
 
     def get_items_by_category(self, category, search_query=''):
@@ -170,7 +207,6 @@ class OrderCreateView(LoginRequiredMixin, View):
         return items, category
 
     def transaction_order(self, order_form, item_formset) -> Order:
-
         with transaction.atomic():
             # Create the order and add units
             order_form.instance.user = self.request.user
@@ -187,14 +223,13 @@ class OrderCreateView(LoginRequiredMixin, View):
                         # Skip if quantity is less than 0
                         continue
 
-                        # order.add_item(item, quantity)
                     units = item.units_available(order_date, return_date)
 
-                    if quantity > len(units):  # Veríficar que hay suficientes unidades
-                        raise Exception("No hay suficientes unidades de '" + str(item.name) + "' diponibles")
+                    if quantity > len(units):  # Verificar que hay suficientes unidades
+                        raise Exception(f"No hay suficientes unidades de '{item.name}' disponibles")
 
-                    shuffle(units)  # revolver los elementos de la lista
-                    order.units.add(*(units[:quantity]))  # agregar la cantidad de unidades especificadas
+                    shuffle(units)  # Revolver los elementos de la lista
+                    order.units.add(*units[:quantity])  # Agregar la cantidad de unidades especificadas
 
             if order.units.count() <= 0:
                 raise ValueError("La orden no tiene unidades disponibles.")
@@ -214,8 +249,7 @@ class OrderCreateView(LoginRequiredMixin, View):
         # Inicializamos un rango de búsqueda en el tiempo original de la orden
         current_start_time = order_date
         duration = return_date - order_date
-        time_increment = timedelta(
-            minutes=math.ceil(duration.total_seconds() / 60))  # Incremento de 1 hora en la búsqueda
+        time_increment = timedelta(minutes=math.ceil(duration.total_seconds() / 60))  # Incremento en minutos según la duración
 
         # Limitar el tiempo máximo de búsqueda a 24 horas adicionales
         max_search_time = order_date + timedelta(days=1)
@@ -246,10 +280,36 @@ class OrderCreateView(LoginRequiredMixin, View):
                     'end_time': current_start_time + duration
                 })
 
-            # Incrementamos el tiempo de búsqueda en una hora
+            # Incrementamos el tiempo de búsqueda según el incremento definido
             current_start_time += time_increment
 
         return alternatives
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class OrderHistoryListView(LoginRequiredMixin, ListView):

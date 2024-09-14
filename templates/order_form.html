@@ -107,7 +107,7 @@
 
 {% block content %}
 
-    <div class="container">
+    <div class="container" style="margin-bottom: 4.5em;">
         <div class="mt-3 mb-3">
             <form method="get">
                 <div class="input-group input-group-lg">
@@ -138,11 +138,12 @@
             </div>
         </div>
 
-        <div class="row gy-2 gx-2 row-cols-2" style="margin-bottom: 4.5em;">
+
+        {# Lista de ariticulos #}
+        <div class="row gy-2 gx-2 row-cols-2">
             {% for articulo in items %}
                 <div class="col">
                     <div class="card d-flex flex-column">
-
 
                         <!-- Almacenar los datos en atributos data-* -->
                         <div class="card-img-top img-fluid d-flex flex-row-reverse"
@@ -169,7 +170,66 @@
                 </div>
             {% endfor %}
         </div>
+
+
+        {% if is_paginated %}
+            <div class="mt-3 mb-3 mx-auto">
+                <ul class="pagination justify-content-center">
+                    <!-- Enlace a la página anterior -->
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?{{ request.GET.urlencode|safe }}&page={{ page_obj.previous_page_number }}"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+              <span class="page-link" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </span>
+                        </li>
+                    {% endif %}
+
+                    <!-- Números de página -->
+                    {% for num in paginator.page_range %}
+                        {% if num == 1 or num == paginator.num_pages or num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="?{{ request.GET.urlencode|safe }}&page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Enlace a la página siguiente -->
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?{{ request.GET.urlencode|safe }}&page={{ page_obj.next_page_number }}"
+                               aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+              <span class="page-link" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endif %}
     </div>
+
+
 
     <!-- Modal para mostrar detalles del artículo -->
     <div class="modal fade modal-dialog-scrollable" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel"
@@ -342,6 +402,33 @@
             </div>
         </div>
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     {# evita el flick #}
