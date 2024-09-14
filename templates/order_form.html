@@ -174,7 +174,7 @@
     <div class="modal fade modal-dialog-scrollable" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel"
          aria-hidden="true">
         <div class="modal-dialog">
-            
+
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-truncate" id="detailsModalLabel" x-text="itemDetails.name"></h5>
@@ -183,17 +183,17 @@
                 <div class="modal-body">
                     <img :src="itemDetails.imageUrl" class="img-fluid mb-3" alt="Imagen del artículo">
                     <p x-text="itemDetails.description"></p>
-                        
+
 
                 </div>
                 <div class="modal-footer">
                     <!-- Verificación si el artículo está agregado -->
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button class="btn btn-primary" 
-                                @click="addItem(itemDetails.id, itemDetails.name, itemDetails.imageUrl)"
-                                :disabled="isItemAdded(itemDetails.id)">
-                            <span x-text="isItemAdded(itemDetails.id) ? 'Ya en el Carrito' : 'Agregar al Carrito'"></span>
-                        </button>
+                    <button class="btn btn-primary"
+                            @click="addItem(itemDetails.id, itemDetails.name, itemDetails.imageUrl)"
+                            :disabled="isItemAdded(itemDetails.id)">
+                        <span x-text="isItemAdded(itemDetails.id) ? 'Ya en el Carrito' : 'Agregar al Carrito'"></span>
+                    </button>
 
                 </div>
             </div>
@@ -208,7 +208,8 @@
 
                 <div class="modal-header">
                     <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <label id="submit" for="ordenar" name="action" type="submit" class="btn btn-primary ms-auto">Ordenar</label>
+                    <label id="submit" for="ordenar" name="action" type="submit"
+                           class="btn btn-primary ms-auto">Ordenar</label>
                 </div>
 
                 <div class="modal-body">

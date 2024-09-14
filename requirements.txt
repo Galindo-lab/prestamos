@@ -1,4 +1,5 @@
 alabaster==0.7.16
+annotated-types==0.7.0
 asgiref==3.7.2
 babel==2.16.0
 certifi==2024.7.4
@@ -12,6 +13,7 @@ django-extra-settings==0.12.0
 django-import-export==4.1.0
 django-phonenumber-field==7.3.0
 django-pwa==2.0.0
+django-qr-code==4.1.0
 django-widget-tweaks==1.4.12
 docutils==0.20.1
 et-xmlfile==1.1.0
@@ -26,12 +28,16 @@ packaging==24.1
 pandas==2.2.1
 phonenumbers==8.13.30
 pillow==10.3.0
+pydantic==2.8.2
+pydantic_core==2.20.1
 Pygments==2.18.0
 PyMySQL==1.1.0
 python-dateutil==2.9.0.post0
 python-slugify==8.0.4
 pytz==2024.1
 requests==2.32.3
+segno==1.6.1
+setuptools==73.0.1
 six==1.16.0
 snowballstemmer==2.2.0
 Sphinx==7.2.6

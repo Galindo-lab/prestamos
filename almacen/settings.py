@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'colorfield',
     'django.contrib.admin',
     'import_export',
+    'extra_settings',
     'qr_code',
     'widget_tweaks',
     'pwa',
@@ -108,11 +109,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = 'es-mx'
-
 TIME_ZONE = 'America/Tijuana'
-
 USE_I18N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
@@ -135,6 +133,44 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'order_list'
 LOGOUT_REDIRECT_URL = '/'
 
+# admin personalizado
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
+
+# extra settings
+# settings.py
+
+EXTRA_SETTINGS_DEFAULTS = [
+    {
+        "name": "STORE_OPENING_TIME",
+        "type": "time",
+        "value": "09:00",
+        "description": "Store opening time",
+        "editable": True,
+    },
+    {
+        "name": "STORE_CLOSING_TIME",
+        "type": "time",
+        "value": "18:00",
+        "description": "Store closing time",
+        "editable": True,
+    },
+    {
+        "name": "STORE_OPEN_DAYS",
+        "type": "string",
+        "value": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday",
+        "description": "Days of the week the store is open, separated by commas",
+        "editable": True,
+    },
+    {
+        "name": "BLOCK_REQUESTS_IF_REPORTS",
+        "type": "bool",
+        "value": False,
+        "description": "Block new requests if the account has active reports",
+        "editable": True,
+    }
+]
+
 # PWA
 PWA_APP_DIR = 'ltr'
 PWA_APP_LANG = LANGUAGE_CODE
@@ -153,26 +189,55 @@ PWA_APP_ICONS = [
         'sizes': '160x160'
     }
 ]
+
 PWA_APP_ICONS_APPLE = [
     {
         'src': 'static/img.jpg',
         'sizes': '160x160'
     }
 ]
+
 PWA_APP_SPLASH_SCREEN = [
     {
         'src': 'static/img.jpg',
         'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
     }
 ]
+
 PWA_APP_SCREENSHOTS = [
     {
-        'src': 'static/screenshot.jpg',
+        'src': 'static/screenshot/1.png',
         'sizes': '750x1334',
-        "type": "image/jpg"
-    }
+        "type": "image/png"
+    },
+    {
+        'src': 'static/screenshot/2.png',
+        'sizes': '750x1334',
+        "type": "image/png"
+    },
+    {
+        'src': 'static/screenshot/3.png',
+        'sizes': '750x1334',
+        "type": "image/png"
+    },
+    {
+        'src': 'static/screenshot/4.png',
+        'sizes': '750x1334',
+        "type": "image/png"
+    },
+    {
+        'src': 'static/screenshot/5.png',
+        'sizes': '750x1334',
+        "type": "image/png"
+    },
+    {
+        'src': 'static/screenshot/6.png',
+        'sizes': '750x1334',
+        "type": "image/png"
+    },
+    {
+        'src': 'static/screenshot/7.png',
+        'sizes': '750x1334',
+        "type": "image/png"
+    },
 ]
-
-# admin personalizado
-X_FRAME_OPTIONS = "SAMEORIGIN"
-SILENCED_SYSTEM_CHECKS = ["security.W019"]
