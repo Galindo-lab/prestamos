@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-5c$9*aa*opbnod$ey4s-53ircc%%&of)8q2t%8==cfawyrtyto'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 IP_LOCALHOST = "127.0.0.1"
 LOCALHOST = "localhost"
@@ -37,7 +37,7 @@ DOMAIN = os.getenv('APP_RUN_DOMAIN')
 
 ALLOWED_HOSTS = [IP_LOCALHOST, LOCALHOST, HOST, DOMAIN]
 
-SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_PRELOAD = False
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SESSION_COOKIE_SECURE = False 
 CSRF_COOKIE_SECURE = False

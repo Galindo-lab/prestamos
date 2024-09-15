@@ -21,7 +21,7 @@ services:
     command: >
       sh -c "
         python3 manage.py collectstatic --noinput &&
-        python3 manage.py makemigrations prestamos --settings=almacen.prod &&
+        python3 manage.py makemigrations prestamos --settings=almacen.prod ;
         python3 manage.py migrate --settings=almacen.prod &&
         service apache2 start &&
         apache2ctl configtest &&
