@@ -1,9 +1,11 @@
 ### Requisitos
-
-*   Python 3.x
-*   pip
+* Python 3.x
+* pip
+* docker
 
 ### Instalación
+Accede al panel de administración en `http://localhost:8000/admin/`.
+
 ```
 # 1. Clona el repositorio
 git clone https://github.com/usuario/proyecto-django.git
@@ -27,4 +29,3 @@ python manage.py runserver
     
 ```
 
-Accede al panel de administración en `http://localhost:8000/admin/`.
