@@ -44,10 +44,10 @@ COPY . /app/
 
 # Set appropriate permissions for directories and files
 RUN chmod 775 /app
-RUN chmod 775 /app/PEMA
+RUN chmod 775 /app/almacen
 RUN chmod 775 /app/prestamos
-RUN chmod 775 /app/PEMA/static
-RUN chmod 775 /app/prestamos/wsgi.py
+RUN chmod 775 /app/static
+RUN chmod 775 /app/almacen/wsgi.py
 RUN chmod 777 /app/media
 RUN chmod -R 777 /app/media
 RUN chmod -R 777 /app/data

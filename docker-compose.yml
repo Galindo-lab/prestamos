@@ -20,14 +20,12 @@ services:
       dockerfile: Dockerfile
     command: >
       sh -c "
-        python3 manage.py makemigrations PEMA --settings=prestamos.prod &&
-        python3 manage.py migrate --settings=prestamos.prod &&
-        python3 manage.py crear_roles --settings=prestamos.prod &&
-        python3 manage.py loaddata tema_cepa.json &&
         python3 manage.py collectstatic --noinput &&
+        python3 manage.py makemigrations prestamos --settings=almacen.prod &&
+        python3 manage.py migrate --settings=almacen.prod &&
         service apache2 start &&
         apache2ctl configtest &&
-        python3 manage.py runserver --settings=prestamos.prod
+        python3 manage.py runserver --settings=almacen.prod
       "
     restart: always
     ports:
@@ -41,7 +39,7 @@ services:
       - .env # Load environment variables from the .env file
     volumes:
       - .:/app # Mount the current directory to /app inside the container
-      - ./pema.conf:/etc/apache2/sites-available/000-default.conf # Use a custom Apache configuration file
+      - ./app.conf:/etc/apache2/sites-available/000-default.conf # Use a custom Apache configuration file
     depends_on:
       - db # Ensure the app service starts only after the db service is up and running
 
