@@ -1,45 +1,49 @@
 {% extends 'bases/base-nav.html' %}
 
 {% block nav %}
-
     {% include 'navegation/top.html' with title='Usuario' %}
 {% endblock %}
 
 {% block content %}
-    <div class="container mt-3" style="margin-bottom: 6em;">
-        {% for message in messages %}
-            <div class="alert alert-primary d-flex align-items-center">
-                <i class="bi bi-check-circle-fill"></i><span class="ps-1">{{ message }}</span>
+<div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="mb-4">
+                <h3 class="text-primary">
+                    <i class="bi bi-person-circle"></i> Nombre de usuario
+                </h3>
+                <p class="fs-5">{{ user.username }}</p>
             </div>
-        {% endfor %}
-
-        {# Detalles del usuario #}
-        <div class="card mt-3">
-            <div class="card-header text-secondary small">Detalles del Usuario</div>
-            <div class="card-body">
-                <p><strong>Nombre de Usuario:</strong> {{ user.username }}</p>
-                <p><strong>Email:</strong> {{ user.email }}</p>
-                <p><strong>Nombre Completo:</strong> {{ user.get_full_name }}</p>
-                <p><strong>Fecha de Registro:</strong> {{ user.date_joined }}</p>
+            <div class="mb-4">
+                <h3 class="text-primary">
+                    <i class="bi bi-envelope"></i> Correo electrónico
+                </h3>
+                <p class="fs-5">{{ user.email }}</p>
+            </div>
+            <div class="mb-4">
+                <h3 class="text-primary">
+                    <i class="bi bi-person-fill"></i> Nombre
+                </h3>
+                <p class="fs-5">{{ user.first_name }}</p>
+            </div>
+            <div class="mb-4">
+                <h3 class="text-primary">
+                    <i class="bi bi-person-fill"></i> Apellido
+                </h3>
+                <p class="fs-5">{{ user.last_name }}</p>
+            </div>
+            <div class="text-center mt-4">
+                <a href="#" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-pencil-square"></i> Editar Perfil
+                </a>
             </div>
         </div>
-
-        {# Mostrar detalles adicionales si existen #}
-        {% if user.profile %}
-            <div class="card mt-3">
-                <div class="card-header text-muted small">Información Adicional</div>
-                <div class="card-body">
-                    <p><strong>Biografía:</strong> {{ user.profile.bio }}</p>
-                    <p><strong>Ubicación:</strong> {{ user.profile.location }}</p>
-                </div>
-            </div>
-        {% endif %}
     </div>
+</div>
 
-    {# Barra inferior #}
-    <div class="fixed-bottom">
-        {# barra de navegacion inferior #}
-        {% include 'navegation/bottom.html' with option=4 %}
-    </div>
-
+{# Barra inferior #}
+<div class="fixed-bottom">
+    {# Barra de navegación inferior #}
+    {% include 'navegation/bottom.html' with option=4 %}
+</div>
 {% endblock %}
