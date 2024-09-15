@@ -1,0 +1,49 @@
+services:
+  db:
+    image: mysql:8.0.39
+    container_name: pema-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD} # Set a secure password for the MySQL root user
+      MYSQL_DATABASE: ${DATABASE_NAME} # Define the database name, typically set as "pema-db"
+      MYSQL_USER: 'admin' # Set the admin username for MySQL
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD} # Set a secure password for the MySQL admin user
+    ports:
+      - "3306:3306" # Expose MySQL's default port (3306); if it's in use on the host machine, use 3307:3306
+    volumes:
+      - mysql_data:/var/lib/mysql # Persist MySQL data on the host machine
+
+  app:
+    container_name: pema-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      sh -c "
+        python3 manage.py makemigrations PEMA --settings=prestamos.prod &&
+        python3 manage.py migrate --settings=prestamos.prod &&
+        python3 manage.py crear_roles --settings=prestamos.prod &&
+        python3 manage.py loaddata tema_cepa.json &&
+        python3 manage.py collectstatic --noinput &&
+        service apache2 start &&
+        apache2ctl configtest &&
+        python3 manage.py runserver --settings=prestamos.prod
+      "
+    restart: always
+    ports:
+      # If this is not a virtual machine and there are other applications on the same machine (NOT applicable for the current server)
+        # - The host's web server (Nginx or Apache) should listen on port 80 and reverse proxy to the container's localhost:81
+        # - The port can be 81:80 or any other unused port on the host machine
+      # If this is a virtual machine (Applies currently)
+        # - "80:80" # Map port 80 of the host to port 80 of the container
+      - "80:80"
+    env_file:
+      - .env # Load environment variables from the .env file
+    volumes:
+      - .:/app # Mount the current directory to /app inside the container
+      - ./pema.conf:/etc/apache2/sites-available/000-default.conf # Use a custom Apache configuration file
+    depends_on:
+      - db # Ensure the app service starts only after the db service is up and running
+
+volumes:
+  mysql_data:
