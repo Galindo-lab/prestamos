@@ -1,63 +1,45 @@
-# Use Ubuntu 22.04 as the base image
-FROM ubuntu:22.04
+FROM python:3.11-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV DEBIAN_FRONTEND=noninteractive
 
-# Set the working directory in the container to /app
-WORKDIR /app
-
-# Update package lists and install dependencies
+# Instalar dependencias del sistema y mod_wsgi
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    build-essential \
-    curl \
-    apache2 \
-    apache2-utils \
-    python3-dev \
-    python3.10 \
-    libapache2-mod-wsgi-py3 \
-    python3-pip \
-    python3.10-venv \
-    pkg-config \
-    default-libmysqlclient-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y \
+        apache2 \
+        libapache2-mod-wsgi-py3 \
+        build-essential \
+        libssl-dev \
+        libffi-dev \
+        python3-dev \
+        pkg-config \
+        default-libmysqlclient-dev \
+        netcat-openbsd \
+        && \
+    apt-get clean
 
-# Upgrade pip to the latest version
+# Actualizar pip e instalar requerimientos de Python
 RUN pip install --upgrade pip
+COPY requirements.txt /code/
+RUN pip install -r /code/requirements.txt
 
-# Enable Apache's WSGI module
+# Configurar directorio de trabajo
+WORKDIR /code
+
+# Copiar archivos del proyecto
+COPY . /code/
+
+# Habilitar mod_wsgi en Apache
 RUN a2enmod wsgi
 
-# Copy the dependencies file to the working directory
-COPY requirements.txt /app/
+# Copiar configuración de Apache
+RUN cp /code/000-default.conf /etc/apache2/sites-available/000-default.conf
 
-# Install Python dependencies from requirements.txt
-RUN pip3 cache purge && \
-    pip3 install -r requirements.txt --no-cache-dir
+# Copiar y configurar entrypoint
+RUN chmod +x /code/entrypoint.sh
+ENTRYPOINT ["/code/entrypoint.sh"]
 
-# Copy the entire project to the working directory
-COPY . /app/
-
-# Set appropriate permissions for directories and files
-RUN chmod 775 /app
-RUN chmod 775 /app/almacen
-RUN chmod 775 /app/prestamos
-RUN chmod 775 /app/static
-RUN chmod 775 /app/almacen/wsgi.py
-RUN chmod 777 /app/media
-RUN chmod -R 777 /app/media
-RUN chmod -R 777 /app/data
-RUN chmod -R 777 /var/www
-
-# Enable the default Apache virtual host configuration
-RUN a2ensite 000-default.conf
-
-# Expose port 80 for HTTP traffic
+# Exponer el puerto 80
 EXPOSE 80
 
-# Start Apache in the foreground
-CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+# Iniciar Apache
+CMD ["apachectl", "-D", "FOREGROUND"]
