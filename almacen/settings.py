@@ -121,15 +121,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # Directorio donde collectstatic recopilará los archivos estáticos
+# https://docs.djangoproject.com/en/5.0/howto/static-files/
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / STATIC_URL
 
-# Opcional: Si tienes directorios adicionales de archivos estáticos
-STATICFILES_DIRS = [BASE_DIR / 'static']  # Directorios adicionales (no deben ser iguales a STATIC_ROOT)
-
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Archivos subidos desde django
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / MEDIA_URL #'/media/'
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 
 
 # Default primary key field type
