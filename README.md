@@ -3,7 +3,7 @@
 * pip
 * docker
 
-### Instalación
+### Instalación 
 Accede al panel de administración en `http://localhost:8000/admin/`.
 
 ```
@@ -11,21 +11,10 @@ Accede al panel de administración en `http://localhost:8000/admin/`.
 git clone https://github.com/usuario/proyecto-django.git
 cd proyecto-django
 
-# 2. Crea y activa un entorno virtual
-python -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
+# 2. Activa docker
+sudo docker compose up --build
 
-# 3. Instala dependencias
-pip install -r requirements.txt
-
-# 4. Aplica migraciones
-python manage.py migrate
-
-# 5. Crea un superusuario
-python manage.py createsuperuser
-
-# 6. Inicia el servidor
-python manage.py runserver
-    
+# 3. revisar localhost
+localhost
 ```
 

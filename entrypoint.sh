@@ -12,12 +12,12 @@ done
 
 echo "La base de datos está lista. Ejecutando migraciones y colectando archivos estáticos."
 
-# Cambiar los permisos del directorio media
-chmod -R 777 /code/media
-
 # Ejecutar migraciones y colectar archivos estáticos
 python manage.py collectstatic --noinput
 python manage.py migrate
+
+# Cambiar los permisos del directorio media
+chmod -R 777 /code/media
 
 # Iniciar Apache en primer plano
 exec "$@"
