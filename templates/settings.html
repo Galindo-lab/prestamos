@@ -4,16 +4,16 @@
     <script>
         document.addEventListener('alpine:init', () => {
             // Inicializar el store de Alpine con el tema actual o el tema por defecto (light)
-            Alpine.store('theme', localStorage.getItem('theme') || 'light');
+            Alpine.store('appTheme', localStorage.getItem('appTheme') || 'light');
 
             // Función para guardar el tema en localStorage y actualizar el atributo data-bs-theme
             window.saveTheme = function () {
-                localStorage.setItem('theme', Alpine.store('theme'));
-                document.documentElement.setAttribute('data-bs-theme', Alpine.store('theme'));
+                localStorage.setItem('appTheme', Alpine.store('appTheme'));
+                document.documentElement.setAttribute('data-bs-theme', Alpine.store('appTheme'));
             };
 
             // Aplicar el tema al cargar la página
-            document.documentElement.setAttribute('data-bs-theme', Alpine.store('theme'));
+            document.documentElement.setAttribute('data-bs-theme', Alpine.store('appTheme'));
         });
     </script>
 {% endblock %}
@@ -35,8 +35,8 @@
     <div class="container">
         <div class="form-check form-check-reverse form-switch mt-2 flex-d">
             <input class="form-check-input " type="checkbox" role="switch" id="themeSwitch"
-                :checked="$store.theme === 'dark'"
-                @change="$store.theme = $event.target.checked ? 'dark' : 'light'; saveTheme()">
+                :checked="$store.appTheme === 'dark'"
+                @change="$store.appTheme = $event.target.checked ? 'dark' : 'light'; saveTheme()">
             <div class="flex-fill text-start">
                 <label class="form-check-label " for="themeSwitch">Tema oscuro</label>
             </div>

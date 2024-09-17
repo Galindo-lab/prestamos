@@ -117,12 +117,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / STATIC_URL
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
-# Archivos subidos desde django
 MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / MEDIA_URL #'/media/'
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
