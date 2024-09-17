@@ -5,8 +5,65 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-3">
-    <div class="row justify-content-center">
+    <div class="container mt-3">
+
+<div class="card">
+    <div class="card-header small">
+        Información básica
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-4 small text-secondary">Nombre:</div>
+                <div class="col-8">{{ user.first_name }}</div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-4 small text-secondary">Apellido(s):</div>
+                <div class="col-8">{{ user.last_name }}</div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-4 small text-secondary">Matrícula:</div>
+                <div class="col-8">#{{ user.username }}</div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+
+
+<div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="small">Información de contacto</span>
+        <button class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-pencil"></i>
+        </button>
+    </div>
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-4 small text-secondary">Email:</div>
+                <div class="col-8">{{ user.email }}</div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-4 small text-secondary">Teléfono:</div>
+                <div class="col-8">{{ user.phone }}</div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+
+
+    {% comment %}
+
+        <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="mb-4">
                 <h3 class="text-primary">
@@ -39,11 +96,15 @@
             </div>
         </div>
     </div>
-</div>
+    {% endcomment %}
 
-{# Barra inferior #}
-<div class="fixed-bottom">
-    {# Barra de navegación inferior #}
-    {% include 'navegation/bottom.html' with option=4 %}
-</div>
+
+
+
+
+    {# Barra inferior #}
+    <div class="fixed-bottom">
+        {# Barra de navegación inferior #}
+        {% include 'navegation/bottom.html' with option=4 %}
+    </div>
 {% endblock %}
