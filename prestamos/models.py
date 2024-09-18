@@ -71,6 +71,13 @@ class Unit(models.Model):
     serial_number = models.CharField(max_length=255)
     available = models.BooleanField(default=True)
 
+    def is_available(self, start_date, end_date):
+        overlapping_orders = self.orders.filter(models.Q(order_date__lt=end_date, return_date__gt=start_date,
+                                                         status__in=[OrderStatusChoices.PENDING,
+                                                                     OrderStatusChoices.APPROVED,
+                                                                     OrderStatusChoices.DELIVERED]))
+        return not overlapping_orders.exists() and self.available
+
     def __str__(self):
         return f'{self.item.name} - {self.serial_number}'
 
@@ -113,13 +120,41 @@ class Order(models.Model):
     approved_by = models.ForeignKey(to=User, related_name='approved_orders', null=True, blank=True,
                                     on_delete=models.SET_NULL, default=None)
 
-    def cancel(self):
-        self.status = OrderStatusChoices.CANCELLED
+    def reject(self, user):
+        """Rechaza la orden solo si no ha sido aprobada."""
+        if self.status == OrderStatusChoices.APPROVED:
+            raise ValidationError("No se puede rechazar una orden que ya ha sido aprobada.")
+        self.status = OrderStatusChoices.REJECTED
+        self.approved_by = user
         self.save()
 
     def aprove(self, user):
+        """Aprueba la orden solo si está pendiente."""
+        if self.status != OrderStatusChoices.PENDING:
+            raise ValidationError("Solo se pueden aprobar órdenes que están pendientes.")
         self.status = OrderStatusChoices.APPROVED
         self.approved_by = user
+        self.save()
+
+    def cancel(self):
+        """Cancela la orden solo si no ha sido entregada."""
+        if self.status == OrderStatusChoices.DELIVERED:
+            raise ValidationError("No se puede cancelar una orden que ya ha sido entregada. Debe ser devuelta.")
+        self.status = OrderStatusChoices.CANCELLED
+        self.save()
+
+    def deliver(self):
+        """Marca la orden como entregada solo si ha sido aprobada."""
+        if self.status != OrderStatusChoices.APPROVED:
+            raise ValidationError("Solo las órdenes aprobadas pueden ser entregadas.")
+        self.status = OrderStatusChoices.DELIVERED
+        self.save()
+
+    def return_order(self):
+        """Marca la orden como devuelta solo si ha sido entregada."""
+        if self.status != OrderStatusChoices.DELIVERED:
+            raise ValidationError("Solo las órdenes entregadas pueden ser devueltas.")
+        self.status = OrderStatusChoices.RETURNED
         self.save()
 
     def add_item(self, item, quantity):
