@@ -1,6 +1,5 @@
 **Requisitos**
 --------------
-
 Para ejecutar el proyecto sin Docker, necesitarás tener instalados los siguientes programas:
 
 - Python 3.x
@@ -9,7 +8,6 @@ Para ejecutar el proyecto sin Docker, necesitarás tener instalados los siguient
 
 **Ejecución sin Docker**
 ------------------------
-
 Sigue estos pasos para ejecutar el proyecto sin usar Docker:
 
 1. **Crear y activar un entorno virtual**:
@@ -47,7 +45,6 @@ Sigue estos pasos para ejecutar el proyecto sin usar Docker:
 
 **Ejecución con Docker**
 ------------------------
-
 Si prefieres usar Docker, sigue estos pasos:
 
 1. **Iniciar Docker**:
