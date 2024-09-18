@@ -238,11 +238,14 @@
 
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-truncate" id="detailsModalLabel" x-text="itemDetails.name"></h5>
+                    <span class="modal-title text-truncate" id="detailsModalLabel" x-text="itemDetails.name"></span>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <img :src="itemDetails.imageUrl" class="img-fluid mb-3" alt="Imagen del artículo">
+                    <div class="align-center">
+                        <img :src="itemDetails.imageUrl" class="img-fluid mx-auto d-block mb-3" alt="Imagen del artículo">
+                    </div>
+                    <h5 class="" id="detailsModalLabel" x-text="itemDetails.name"></h5>
                     <p x-text="itemDetails.description"></p>
                 </div>
                 <div class="modal-footer">

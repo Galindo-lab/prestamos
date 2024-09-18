@@ -180,7 +180,7 @@ EXTRA_SETTINGS_DEFAULTS = [
     {
         "name": "WAREHOUSE_PHONE",
         "type": "string",
-        "value": "+00 000000000",
+        "value": "+00 0000000000",
         "description": "Warehouse contact phone number",
         "editable": True,
     },
@@ -195,7 +195,7 @@ EXTRA_SETTINGS_DEFAULTS = [
     {
         "name": "SUPPORT_PHONE",
         "type": "string",
-        "value": "+00 000000000",
+        "value": "+00 0000000000",
         "description": "Support contact phone number",
         "editable": True,
     },

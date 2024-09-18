@@ -1,9 +1,9 @@
 # views.py
 
 import math
-from datetime import timedelta
 from random import shuffle
-from datetime import time
+from datetime import datetime, time, timedelta
+
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -191,8 +191,10 @@ class OrderCreateView(LoginRequiredMixin, View):
 
     def get_items_by_category(self, category, search_query=''):
         """
-        Obtiene los artículos filtrados por categoría y por término de búsqueda, si se proporcionan.
+        Obtiene los artículos filtrados por categoría y por término de 
+        búsqueda, si se proporcionan.
         """
+        
         if category:
             category_obj = get_object_or_404(Category, name=category)
             items = category_obj.items.all()
@@ -237,8 +239,12 @@ class OrderCreateView(LoginRequiredMixin, View):
 
     def suggest_alternatives(self, order_form, item_formset):
         """
-        Sugiere alternativas de horarios donde TODOS los artículos solicitados estén disponibles simultáneamente.
+        Sugiere alternativas de horarios donde TODOS los artículos solicitados
+        estén disponibles simultáneamente, dentro del horario de apertura de la tienda.
         """
+                    
+        opening_time = Setting.get("STORE_OPENING_TIME", default=time(9, 0))  # Hora de apertura
+        closing_time = Setting.get("STORE_CLOSING_TIME", default=time(18, 0))  # Hora de cierre
         order_date = order_form.cleaned_data['order_date']
         return_date = order_form.cleaned_data['return_date']
 
@@ -255,6 +261,17 @@ class OrderCreateView(LoginRequiredMixin, View):
 
         while current_start_time < max_search_time and len(alternatives) < max_alternatives:
             all_items_available = True
+
+            # Verificar si la hora de inicio y fin están dentro del horario de apertura y cierre
+            start_time_only = current_start_time.time()
+            end_time_only = (current_start_time + duration).time()
+
+            start_in_hours = opening_time <= start_time_only <= closing_time
+            end_in_hours = opening_time <= end_time_only <= closing_time
+
+            if not start_in_hours or not end_in_hours:
+                current_start_time += time_increment
+                continue  # Si el horario no está dentro de los límites, se pasa al siguiente intervalo
 
             for item_form in item_formset:
                 if not item_form.is_valid():
@@ -283,6 +300,8 @@ class OrderCreateView(LoginRequiredMixin, View):
             current_start_time += time_increment
 
         return alternatives
+
+
 
 
 

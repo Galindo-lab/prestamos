@@ -16,8 +16,13 @@
                     <a class="dropdown-item py-2" href="{% url 'settings' %}">Ajustes</a>
                 </li>
                 <li>
-                    <a class="dropdown-item py-2" href="{% url 'schedule' %}">Acerca de</a>
+                    <a class="dropdown-item py-2" href="{% url 'schedule' %}">Horario</a>
                 </li>
+                    {% if user.is_staff %}
+                    <li>
+                        <a class="dropdown-item py-2" href="{% url 'admin:index' %}">Administración</a>
+                    </li>
+                    {% endif %}
                 <li>
                     <hr class="dropdown-divider">
                 </li>
