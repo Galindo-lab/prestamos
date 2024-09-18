@@ -1,9 +1,8 @@
 # views.py
 
 import math
+from datetime import time, timedelta
 from random import shuffle
-from datetime import datetime, time, timedelta
-
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,22 +16,21 @@ from django.views import View
 from django.views.generic import CreateView, TemplateView
 from django.views.generic import DetailView
 from django.views.generic import ListView
-from django.views.generic import UpdateView
-
 from extra_settings.models import Setting
 
-from .forms import OrderForm, AuthorizeForm, OrderItemFormSet, ReporteForm
+from .forms import OrderForm, OrderItemFormSet, ReporteForm
 from .models import Order, Report, Item, Category, OrderStatusChoices
+
 
 class ScheduleView(LoginRequiredMixin, View):
     template = "schedule.html"
-    
+
     def get(self, request):
         # Renderizar la plantilla con los datos obtenidos directamente desde Setting.get()
         return render(request, self.template, {
             'opening_days': Setting.get("STORE_OPEN_DAYS", default="Indefinido").split(','),  # Días de apertura
-            'opening_time': Setting.get("STORE_OPENING_TIME", default=time(9, 0)),  # Horario de apertura
-            'closing_time': Setting.get("STORE_CLOSING_TIME", default=time(18, 0)),  # Horario de cierre
+            'opening_time': Setting.get("STORE_OPENING_TIME", default=time(0, 0)),  # Horario de apertura
+            'closing_time': Setting.get("STORE_CLOSING_TIME", default=time(23, 0)),  # Horario de cierre
             'warehouse_phone': Setting.get("WAREHOUSE_PHONE", default="+00 000000000"),  # Teléfono del almacén
             'warehouse_email': Setting.get("WAREHOUSE_EMAIL", default="warehouse@doe.com"),  # Email del almacén
             'support_phone': Setting.get("SUPPORT_PHONE", default="+00 000000000"),  # Teléfono de soporte
@@ -93,24 +91,6 @@ class ReportCreateView(LoginRequiredMixin, CreateView):
         form.instance.order = get_object_or_404(Order, pk=pk)
 
         return super().form_valid(form)
-
-
-class OrderAuthorize(LoginRequiredMixin, UpdateView):
-    model = Order
-    form_class = AuthorizeForm
-    template_name = 'order_authorize.html'
-    success_url = reverse_lazy('order_list')
-
-    def form_valid(self, form):
-        return super().form_valid(form)
-
-
-
-
-
-
-
-
 
 
 class OrderCreateView(LoginRequiredMixin, View):
@@ -194,7 +174,7 @@ class OrderCreateView(LoginRequiredMixin, View):
         Obtiene los artículos filtrados por categoría y por término de 
         búsqueda, si se proporcionan.
         """
-        
+
         if category:
             category_obj = get_object_or_404(Category, name=category)
             items = category_obj.items.all()
@@ -242,7 +222,7 @@ class OrderCreateView(LoginRequiredMixin, View):
         Sugiere alternativas de horarios donde TODOS los artículos solicitados
         estén disponibles simultáneamente, dentro del horario de apertura de la tienda.
         """
-                    
+
         opening_time = Setting.get("STORE_OPENING_TIME", default=time(9, 0))  # Hora de apertura
         closing_time = Setting.get("STORE_CLOSING_TIME", default=time(18, 0))  # Hora de cierre
         order_date = order_form.cleaned_data['order_date']
@@ -254,7 +234,8 @@ class OrderCreateView(LoginRequiredMixin, View):
         # Inicializamos un rango de búsqueda en el tiempo original de la orden
         current_start_time = order_date
         duration = return_date - order_date
-        time_increment = timedelta(minutes=math.ceil(duration.total_seconds() / 60))  # Incremento en minutos según la duración
+        time_increment = timedelta(
+            minutes=math.ceil(duration.total_seconds() / 60))  # Incremento en minutos según la duración
 
         # Limitar el tiempo máximo de búsqueda a 24 horas adicionales
         max_search_time = order_date + timedelta(days=1)
@@ -302,34 +283,6 @@ class OrderCreateView(LoginRequiredMixin, View):
         return alternatives
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class OrderHistoryListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'order_history_list.html'
@@ -356,8 +309,20 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
 
 
 class CancelOrderView(LoginRequiredMixin, View):
+    # TODO: falta agregar una veriricacion, si es el dueño
+
     def get(self, request, pk, *args, **kwargs):
         order = get_object_or_404(Order, pk=pk)
         order.cancel()
         messages.success(request, "La orden ha sido cancelada.")
+        return redirect('order_detail', order.pk)
+
+
+class OrderAuthorize(LoginRequiredMixin, View):
+    # TODO: falta verificar permisos
+
+    def get(self, request, pk, *args, **kwargs):
+        order = get_object_or_404(Order, pk=pk)
+        order.aprove(request.user)
+        messages.success(request, "La orden ha sido autorizada.")
         return redirect('order_detail', order.pk)

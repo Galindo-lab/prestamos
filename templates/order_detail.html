@@ -44,6 +44,8 @@
         {% endfor %}
       </ul>
     </div>
+
+      <a href="{% url 'order_aprove' order.pk %}" class="btn btn-danger">Aprobar Orden</a>
   </div>
 
   {# Botón de Cancelar para ordenes pendientes #}

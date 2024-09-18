@@ -1,4 +1,3 @@
-from datetime import timedelta
 from random import shuffle
 
 from django.contrib.auth.models import User
@@ -72,33 +71,6 @@ class Unit(models.Model):
     serial_number = models.CharField(max_length=255)
     available = models.BooleanField(default=True)
 
-    def find_alternative_availability(self, start_date, end_date):
-        """
-        Busca disponibilidad en horas dentro del mismo día.
-        :param start_date: Fecha de inicio de la búsqueda
-        :param end_date: Fecha final (mismo día)
-        :return: La primera hora disponible o None si no hay disponibilidad
-        """
-        current_time = start_date
-        delta = timedelta(hours=1)  # Incremento de una hora para la búsqueda
-
-        while current_time + delta <= end_date:
-            available_units = self.units_available(current_time, current_time + delta)
-            if available_units:  # Si hay unidades disponibles en esa hora
-                return current_time, current_time + delta
-
-            current_time += delta
-
-        # Si no encuentra disponibilidad durante el día
-        return None
-
-    def is_available(self, start_date, end_date):
-        overlapping_orders = self.orders.filter(models.Q(order_date__lt=end_date, return_date__gt=start_date,
-                                                         status__in=[OrderStatusChoices.PENDING,
-                                                                     OrderStatusChoices.APPROVED,
-                                                                     OrderStatusChoices.DELIVERED]))
-        return not overlapping_orders.exists() and self.available
-
     def __str__(self):
         return f'{self.item.name} - {self.serial_number}'
 
@@ -140,9 +112,14 @@ class Order(models.Model):
     status = models.CharField(max_length=10, choices=OrderStatusChoices.choices, default=OrderStatusChoices.PENDING)
     approved_by = models.ForeignKey(to=User, related_name='approved_orders', null=True, blank=True,
                                     on_delete=models.SET_NULL, default=None)
-    
+
     def cancel(self):
         self.status = OrderStatusChoices.CANCELLED
+        self.save()
+
+    def aprove(self, user):
+        self.status = OrderStatusChoices.APPROVED
+        self.approved_by = user
         self.save()
 
     def add_item(self, item, quantity):
