@@ -2,79 +2,105 @@
 {% load qr_code %}
 
 {% block nav %}
-  <div class="container-fluid">
-    <div class="navbar-brand fw-medium">Orden #{{ order.id }} </div>
+    <div class="container-fluid">
+        <div class="navbar-brand fw-medium">Orden #{{ order.id }} </div>
 
-    {% if order.status in 'pending, approved' %}
-      <a class="btn" href="{% url 'report_list' %}"><i class="bi bi-x-lg"></i></a>
-    {% else %}
-      <a class="btn" href="{% url 'order_history_list' %}"><i class="bi bi-x-lg"></i></a>
-    {% endif %}
+        {% now "Y-m-d" as fecha_actual_str %}
+        {% with fecha_orden_str=order.return_date|date:"Y-m-d" %}
+            {% if fecha_orden_str <= fecha_actual_str %}
+                <!-- La fecha ya ha pasado o es hoy -->
+                <a class="btn" href="{% url 'order_history_list' %}">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            {% else %}
+                <!-- La fecha aún no ha pasado -->
+                {% if order.status == 'pending' or order.status == 'approved' %}
+                    <a class="btn" href="{% url 'report_list' %}">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                {% else %}
+                    <a class="btn" href="{% url 'order_history_list' %}">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                {% endif %}
+            {% endif %}
+        {% endwith %}
 
-  </div>
+
+    </div>
 {% endblock %}
 
 {% block content %}
-  <div class="container mt-3" style="margin-bottom: 6em;">
-    {% for message in messages %}
-    <div class="alert alert-info d-flex align-items-center">
-      <p class="m-0"><i class="bi bi-info-circle-fill"></i> {{ message }}</p>
+    <div class="container mt-3" style="margin-bottom: 6em;">
+        {% for message in messages %}
+            <div class="alert alert-info d-flex align-items-center">
+                <p class="m-0"><i class="bi bi-info-circle-fill"></i> {{ message }}</p>
+            </div>
+        {% endfor %}
+
+        {# Detalles de reporte #}
+        {% include 'components/order_details_card.html' with order=order qr_visible=True list=True %}
+
+        {% if order.get_report %}
+            <div class="card mt-3">
+                <div class="card-header text-secondary small">Reporte</div>
+                <p class="card-body pb-0">{{ order.get_report.details }}</p>
+            </div>
+        {% endif %}
+
+        <div class="card mt-3">
+            <div class="card-header text-muted small">Artículos</div>
+
+            <ul class="list-group list-group-flush">
+                {% for unit in order.units.all %}
+                    <li class="list-group-item">
+                        <div class="fw-medium">{{ unit.item.name }}</div>
+                        <span class="text-secondary small">{{ unit.serial_number }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% comment %}
+        <a href="{% url 'order_aprove' order.pk %}" class="btn btn-success">Aprobar Orden</a>
+        <a href="{% url 'deliver_order' order.pk %}" class="btn btn-primary">Entregar Orden</a>
+        <a href="{% url 'return_order' order.pk %}" class="btn btn-warning">Devolver Orden</a>
+        <a href="{% url 'reject_order' order.pk %}" class="btn btn-danger">Rechazar Orden</a>
+        <a href="{% url 'order_report' order.pk %}" class="btn btn-info">Crear Reporte</a>
+        <a href="{% url 'order_cancel' order.pk %}" class="btn btn-danger">Cancelar Orden</a>
+        {% endcomment %}
+
     </div>
-    {% endfor %}
 
-    {# Detalles de reporte #}
-    {% include 'components/order_details_card.html' with order=order qr_visible=True list=True %}
-
-    {% if order.get_report %}
-      <div class="card mt-3">
-        <div class="card-header text-secondary small">Reporte</div>
-        <p class="card-body pb-0">{{ order.get_report.details }}</p>
-      </div>
+    {# Botón de Cancelar para ordenes pendientes #}
+    {% if order.status in 'pending, approved' %}
+        <div class="fixed-bottom container bg-body">
+            <div class="d-grid my-2">
+                <button class="btn btn-primary btn-lg" type="button" data-bs-toggle="modal"
+                        data-bs-target="#cancelOrderModal">
+                    Cancelar Orden
+                </button>
+            </div>
+        </div>
     {% endif %}
 
-    <div class="card mt-3">
-      <div class="card-header text-muted small">Artículos</div>
-
-      <ul class="list-group list-group-flush">
-        {% for unit in order.units.all %}
-          <li class="list-group-item">
-            <div class="fw-medium">{{ unit.item.name }}</div>
-            <span class="text-secondary small">{{ unit.serial_number }}</span>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-
-      <a href="{% url 'order_aprove' order.pk %}" class="btn btn-danger">Aprobar Orden</a>
-  </div>
-
-  {# Botón de Cancelar para ordenes pendientes #}
-  {% if order.status in 'pending, approved' %}
-    <div class="fixed-bottom container bg-body">
-      <div class="d-grid my-2">
-        <button class="btn btn-primary btn-lg" type="button" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">
-          Cancelar Orden
-        </button>
-      </div>
-    </div>
-  {% endif %}
-
-  {# Modal de confirmación #}
-  <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="cancelOrderModalLabel">Confirmar cancelación</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+    {# Modal de confirmación #}
+    <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelOrderModalLabel">Confirmar cancelación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro que desea cancelar la orden?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, volver</button>
+                    <a href="{% url 'order_cancel' order.pk %}" class="btn btn-danger">Sí, cancelar orden</a>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          ¿Está seguro que desea cancelar la orden?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, volver</button>
-          <a href="{% url 'order_cancel' order.pk %}" class="btn btn-danger">Sí, cancelar orden</a>
-        </div>
-      </div>
     </div>
-  </div>
 {% endblock %}
