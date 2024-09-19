@@ -7,7 +7,7 @@
 
         {% now "Y-m-d" as fecha_actual_str %}
         {% with fecha_orden_str=order.return_date|date:"Y-m-d" %}
-            {% if fecha_orden_str <= fecha_actual_str %}
+            {% if fecha_orden_str < fecha_actual_str %}
                 <!-- La fecha ya ha pasado o es hoy -->
                 <a class="btn" href="{% url 'order_history_list' %}">
                     <i class="bi bi-x-lg"></i>

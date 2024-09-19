@@ -7,26 +7,30 @@
 {% block content %}
     <div class="container" style="margin-bottom: 6em;">
 
-        {# Lista única de órdenes #}
 
-        {% for order in orders %}
+        {% if orders %}
+
             <ul class="list-group list-group-flush mt-3">
-                <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start"
-                   href="{% url 'order_detail' order.pk %}">
-                    <div class="me-auto">
-                        <div class="fw-medium">{{ order.order_date|date:'F d, Y' }}</div>
-                        <span class="text-muted small">
+                {# Lista única de órdenes #}
+                {% for order in orders %}
+                    <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start"
+                       href="{% url 'order_detail' order.pk %}">
+                        <div class="me-auto">
+                            <div class="fw-medium">{{ order.order_date|date:'F d, Y' }}</div>
+                            <span class="text-muted small">
                             {% if order.status == "pending" %}
                                 Pendiente
                             {% else %}
                                 {{ order.get_status_display }}
                             {% endif %}
                         </span>
-                    </div>
-                    {# <span class="text-muted small">{{ order.created_at|date:'d/m/y' }}</span> #}
-                </a>
+                        </div>
+                        {# <span class="text-muted small">{{ order.created_at|date:'d/m/y' }}</span> #}
+                    </a>
+                {% endfor %}
             </ul>
-        {% empty %}
+
+        {% else %}
 
             <div class="align-items-center justify-content-center" style="margin-top: 8em;">
                 <div class="text-center row text-secondary">
@@ -36,7 +40,7 @@
                 </div>
             </div>
 
-        {% endfor %}
+        {% endif %}
 
     </div>
 

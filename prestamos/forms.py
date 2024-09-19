@@ -88,8 +88,8 @@ class OrderForm(forms.ModelForm):
         order_date = cleaned_data.get('order_date')
         return_date = cleaned_data.get('return_date')
 
-        self.validate_dates_sequence(order_date, return_date)
         self.validate_no_past_dates(order_date, return_date)
+        self.validate_dates_sequence(order_date, return_date)
         self.validate_open_days(order_date, return_date)
         self.validate_store_hours(order_date, return_date)
 
