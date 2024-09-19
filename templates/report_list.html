@@ -5,17 +5,12 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container mt-3" style="margin-bottom: 6em;">
-        {# Mensajes de error #}
-        {% for message in messages %}
-            <div class="alert alert-danger d-flex align-items-center">
-                <i class="bi bi-exclamation-circle-fill"></i><span class="ps-1">{{ message }}</span>
-            </div>
-        {% endfor %}
+    <div class="container" style="margin-bottom: 6em;">
 
         {# Lista única de órdenes #}
-        <ul class="list-group list-group-flush">
-            {% for order in orders %}
+
+        {% for order in orders %}
+            <ul class="list-group list-group-flush mt-3">
                 <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-start"
                    href="{% url 'order_detail' order.pk %}">
                     <div class="me-auto">
@@ -28,20 +23,21 @@
                             {% endif %}
                         </span>
                     </div>
-                    <span class="text-muted small">{{ order.created_at|date:'d/m/y' }}</span>
+                    {# <span class="text-muted small">{{ order.created_at|date:'d/m/y' }}</span> #}
                 </a>
-            {% empty %}
+            </ul>
+        {% empty %}
 
-                <div class="align-items-center justify-content-center" style="margin-top: 8em;">
-                    <div class="text-center row text-secondary">
-                        <i class="bi bi-calendar-x mb-2" style="font-size: 50px;"></i>
-                        <span class="h5 text-muted">No hay solicitudes próximas</span>
-                        <span class="small text-secondary">Actualmente no tienes solicitudes programadas.</span>
-                    </div>
+            <div class="align-items-center justify-content-center" style="margin-top: 8em;">
+                <div class="text-center row text-secondary">
+                    <i class="bi bi-calendar-x mb-2" style="font-size: 50px;"></i>
+                    <span class="h5 text-muted">No hay solicitudes próximas</span>
+                    <span class="small text-secondary">Actualmente no tienes solicitudes programadas.</span>
                 </div>
+            </div>
 
-            {% endfor %}
-        </ul>
+        {% endfor %}
+
     </div>
 
     {# Barra inferior #}
