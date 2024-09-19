@@ -22,7 +22,12 @@ class AuthorizeForm(forms.ModelForm):
         }
 
 
-"""
+"""    def clean(self):
+        cleaned_data = super().clean()
+        item = cleaned_data.get('item')
+        quantity = cleaned_data.get('quantity')
+        order_date = self.initial.get('order_date')
+        return_date = self.initial.get('return_date')
 Formulario de artículos y unidades
 """
 

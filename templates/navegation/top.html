@@ -13,23 +13,35 @@
                 style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 34px, 0px);"
                 data-popper-placement="bottom-end">
                 <li>
-                    <a class="dropdown-item py-2" href="{% url 'settings' %}">Ajustes</a>
+                    <a class="dropdown-item py-2" href="{% url 'settings' %}">
+                        <i class="bi bi-gear"></i>
+                        <span class="ms-2">Ajustes</span>
+                    </a>
                 </li>
                 <li>
-                    <a class="dropdown-item py-2" href="{% url 'schedule' %}">Horario</a>
+                    <a class="dropdown-item py-2" href="{% url 'schedule' %}">
+                        <i class="bi bi-box"></i>
+                        <span class="ms-2">Información del almacén</span>
+                    </a>
                 </li>
-                    {% if user.is_staff %}
-                    <li>
-                        <a class="dropdown-item py-2" href="{% url 'admin:index' %}">Administración</a>
-                    </li>
-                    {% endif %}
+                {% if user.is_staff %}
+                <li>
+                    <a class="dropdown-item py-2" href="{% url 'admin:index' %}">
+                        <i class="bi bi-shield-lock"></i>
+                        <span class="ms-2">Administración</span>
+                    </a>
+                </li>
+                {% endif %}
                 <li>
                     <hr class="dropdown-divider">
                 </li>
                 <li>
                     <form method="post" action="{% url 'logout' %}" class="d-inline">
                     {% csrf_token %}
-                    <button name="logout-submit" type="submit" class="dropdown-item py-2">Cerrar Sesión</button>
+                    <button name="logout-submit" type="submit" class="dropdown-item py-2">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="ms-2">Cerrar Sesión</span>
+                    </button>
                 </form>
                 </li>
             </ul>

@@ -33,14 +33,31 @@
 
 {% block content %}
     <div class="container">
-        <div class="form-check form-check-reverse form-switch mt-2 flex-d">
-            <input class="form-check-input " type="checkbox" role="switch" id="themeSwitch"
-                   :checked="$store.appTheme === 'dark'"
-                   @change="$store.appTheme = $event.target.checked ? 'dark' : 'light'; saveTheme()">
-            <div class="flex-fill text-start">
-                <label class="form-check-label " for="themeSwitch">Tema oscuro</label>
-            </div>
-        </div>
+
+
+        <ul class="list-group mt-3">
+            <li class="list-group-item ">
+                <div class="form-check form-check-reverse form-switch flex-d">
+                    <input class="form-check-input " type="checkbox" role="switch" id="themeSwitch"
+                           :checked="$store.appTheme === 'dark'"
+                           @change="$store.appTheme = $event.target.checked ? 'dark' : 'light'; saveTheme()">
+                    <div class="flex-fill text-start">
+                        <label class="form-check-label " for="themeSwitch">Tema oscuro</label>
+                    </div>
+                </div>
+            </li>
+
+
+            <li class="list-group-item list-group-item-action">
+                Actualizar información de contacto
+            </li>
+
+            <li class="list-group-item list-group-item-action">
+                Cambiar contraseña
+            </li>
+        </ul>
+
+
     </div>
 {% endblock %}
 
