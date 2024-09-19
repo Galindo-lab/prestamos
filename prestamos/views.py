@@ -6,8 +6,10 @@ from random import shuffle
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -292,11 +294,18 @@ class OrderHistoryListView(LoginRequiredMixin, ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        # ordenes del usuario que ya hayan pasado
+        # Incluye las órdenes del usuario que han pasado su fecha o que tienen uno de los estados específicos
         return Order.objects.filter(
-            user=self.request.user,
-            order_date__lt=timezone.now()
-        )
+            Q(user=self.request.user) &
+            (
+                Q(order_date__lt=timezone.now()) |  # Órdenes cuyo order_date ha pasado
+                Q(status__in=[
+                    OrderStatusChoices.CANCELLED,
+                    OrderStatusChoices.REJECTED,
+                    OrderStatusChoices.RETURNED
+                ])  # Órdenes en estos estados
+            )
+        ).order_by('-order_date')
 
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
@@ -308,21 +317,77 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
         return Order.objects.filter(user=self.request.user)
 
 
-class CancelOrderView(LoginRequiredMixin, View):
-    # TODO: falta agregar una veriricacion, si es el dueño
+class OrderAuthorize(LoginRequiredMixin, View):
+    """Vista para aprobar (autorizar) una orden solo si está pendiente."""
 
     def get(self, request, pk, *args, **kwargs):
         order = get_object_or_404(Order, pk=pk)
-        order.cancel()
-        messages.success(request, "La orden ha sido cancelada.")
+
+        # Verificar si la orden está pendiente antes de aprobarla
+        try:
+            order.aprove(request.user)  # Método actualizado en el modelo
+            messages.success(request, "La orden ha sido autorizada (aprobada).")
+        except ValidationError as e:
+            messages.error(request, str(e))
+
         return redirect('order_detail', order.pk)
 
 
-class OrderAuthorize(LoginRequiredMixin, View):
-    # TODO: falta verificar permisos
+class DeliverOrderView(LoginRequiredMixin, View):
+    """Vista para marcar una orden como entregada."""
 
     def get(self, request, pk, *args, **kwargs):
         order = get_object_or_404(Order, pk=pk)
-        order.aprove(request.user)
-        messages.success(request, "La orden ha sido autorizada.")
+
+        try:
+            order.deliver()  # Método actualizado en el modelo
+            messages.success(request, "La orden ha sido marcada como entregada.")
+        except ValidationError as e:
+            messages.error(request, str(e))
+
+        return redirect('order_detail', order.pk)
+
+
+class ReturnOrderView(LoginRequiredMixin, View):
+    """Vista para marcar una orden como devuelta."""
+
+    def get(self, request, pk, *args, **kwargs):
+        order = get_object_or_404(Order, pk=pk)
+
+        try:
+            order.return_order()  # Método actualizado en el modelo
+            messages.success(request, "La orden ha sido marcada como devuelta.")
+        except ValidationError as e:
+            messages.error(request, str(e))
+
+        return redirect('order_detail', order.pk)
+
+
+class RejectOrderView(LoginRequiredMixin, View):
+    """Vista para rechazar una orden."""
+
+    def get(self, request, pk, *args, **kwargs):
+        order = get_object_or_404(Order, pk=pk)
+
+        try:
+            order.reject(request.user)  # Método actualizado en el modelo
+            messages.success(request, "La orden ha sido rechazada.")
+        except ValidationError as e:
+            messages.error(request, str(e))
+
+        return redirect('order_detail', order.pk)
+
+
+class CancelOrderView(LoginRequiredMixin, View):
+    """Vista para cancelar una orden."""
+
+    def get(self, request, pk, *args, **kwargs):
+        order = get_object_or_404(Order, pk=pk)
+
+        try:
+            order.cancel()  # Método actualizado en el modelo
+            messages.success(request, "La orden ha sido cancelada.")
+        except ValidationError as e:
+            messages.error(request, str(e))
+
         return redirect('order_detail', order.pk)
