@@ -15,20 +15,20 @@
                 <li>
                     <a class="dropdown-item py-2" href="{% url 'settings' %}">
                         <i class="bi bi-gear"></i>
-                        <span class="ms-2">Ajustes</span>
+                        <span class="ms-1">Ajustes</span>
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item py-2" href="{% url 'schedule' %}">
                         <i class="bi bi-box"></i>
-                        <span class="ms-2">Información del almacén</span>
+                        <span class="ms-1">Información del almacén</span>
                     </a>
                 </li>
                 {% if user.is_staff %}
                 <li>
                     <a class="dropdown-item py-2" href="{% url 'admin:index' %}">
                         <i class="bi bi-shield-lock"></i>
-                        <span class="ms-2">Administración</span>
+                        <span class="ms-1">Administración</span>
                     </a>
                 </li>
                 {% endif %}
@@ -40,7 +40,7 @@
                     {% csrf_token %}
                     <button name="logout-submit" type="submit" class="dropdown-item py-2">
                         <i class="bi bi-box-arrow-right"></i>
-                        <span class="ms-2">Cerrar Sesión</span>
+                        <span class="ms-1">Cerrar Sesión</span>
                     </button>
                 </form>
                 </li>

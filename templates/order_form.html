@@ -166,6 +166,7 @@
                             <p class="card-title text-truncate m-0 small">{{ articulo.name }}</p>
                             <p class="small text-truncate text-secondary m-0"> {{ articulo.description }}</p>
                         </div>
+
                     </div>
                 </div>
             {% endfor %}
@@ -186,9 +187,9 @@
                         </li>
                     {% else %}
                         <li class="page-item disabled">
-              <span class="page-link" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </span>
+                          <span class="page-link" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                          </span>
                         </li>
                     {% endif %}
 
@@ -219,9 +220,9 @@
                         </li>
                     {% else %}
                         <li class="page-item disabled">
-              <span class="page-link" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </span>
+                          <span class="page-link" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                          </span>
                         </li>
                     {% endif %}
                 </ul>
@@ -243,7 +244,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="align-center">
-                        <img :src="itemDetails.imageUrl" class="img-fluid mx-auto d-block mb-3" alt="Imagen del artículo">
+                        <img :src="itemDetails.imageUrl" class="img-fluid mx-auto d-block mb-3"
+                             alt="Imagen del artículo">
                     </div>
                     <h5 class="" id="detailsModalLabel" x-text="itemDetails.name"></h5>
                     <p x-text="itemDetails.description"></p>
@@ -392,16 +394,12 @@
                                                 </button>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
-
                             </template>
                         </div>
                     </form>
-
                 </div>
-
             </div>
         </div>
     </div>
